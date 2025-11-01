@@ -1,23 +1,52 @@
 import java.awt.*;
 import javax.swing.*;
-
+import java.util.Random;
 public class MapPanel extends JPanel {
     private Main game;
     private JButton[][] tiles;
     private int playerX = 2; // starting position || CAN BE CHANGED
     private int playerY = 2;
-
-    private final int ROWS = 10;
-    private final int COLS = 10;
+    
+    private final int ROWS = 12;
+    private final int COLS = 12;
 
     private JLabel info; 
-
+    Random rand = new Random();
     public MapPanel(Main game){
         this.game = game;
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        // Info label
+        // Add at the top of MapPanel constructor, after setBackground
+    JPanel leftPanel = new JPanel();
+    leftPanel.setLayout(new BorderLayout());
+    leftPanel.setBackground(Color.DARK_GRAY);
+
+        // Stats button
+    JButton statsBtn = new JButton("Stats");
+    statsBtn.setFont(new Font("Consolas", Font.BOLD, 18));
+    statsBtn.setBackground(new Color(60, 60, 60));
+    statsBtn.setForeground(new Color(240, 220, 140));
+    statsBtn.setFocusPainted(false);
+
+        
+    JPanel statsBtnPanel = new JPanel();
+    statsBtnPanel.setBackground(Color.DARK_GRAY);
+    statsBtnPanel.add(statsBtn);
+
+    leftPanel.add(statsBtnPanel, BorderLayout.NORTH);
+    add(leftPanel, BorderLayout.WEST);
+
+    
+    statsBtn.addActionListener(e -> {
+    
+    StatPanel statPanel = new StatPanel(game.player);
+        add(statPanel, BorderLayout.EAST);
+        revalidate();
+        repaint();
+    });
+
+        
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
         info.setFont(new Font("Consolas", Font.BOLD, 16));
@@ -27,13 +56,14 @@ public class MapPanel extends JPanel {
         // map
         JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 2, 2));
         gridPanel.setBackground(Color.BLACK);
+           
         tiles = new JButton[ROWS][COLS];
 
         for(int i=0;i<ROWS;i++){
             for(int j=0;j<COLS;j++){
                 JButton tile = new JButton();
                 tile.setEnabled(false);
-                tile.setFont(new Font("Consolas", Font.BOLD, 12));
+                tile.setFont(new Font("Consolas", Font.BOLD, 24));
                 tiles[i][j] = tile;
                 gridPanel.add(tile);
             }
@@ -42,8 +72,13 @@ public class MapPanel extends JPanel {
         // trial buildings
         tiles[0][1].setText("Shop");
         tiles[0][3].setText("Inn");
-        tiles[4][2].setText("Castle");
-
+        int randomXSpawn = rand.nextInt(6) + 5;
+        int randomYSpawn = rand.nextInt(6) + 5;
+        tiles[randomXSpawn][randomYSpawn].setText("Castle");
+        int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
+        int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
+        
+        
         add(gridPanel, BorderLayout.CENTER);
 
         //buttons
@@ -71,7 +106,25 @@ public class MapPanel extends JPanel {
         btnEast.addActionListener(e -> movePlayer("East"));
         btnWest.addActionListener(e -> movePlayer("West"));
 
+        //add option to  move player with wasd controls
         updatePlayerPosition();
+
+        
+
+        //work on this later (randomLocationCreator)
+        if(playerX == secretAreaLocationX && playerY == secretAreaLocationY){
+            int randomArea = rand.nextInt(3);
+            String secretName = "???";
+            switch(randomArea){
+                case 1: secretName = "Church";
+                break;
+                case 2: secretName = "Cemetery";
+                break;
+                case 3: secretName = "Medic";
+            }
+            
+            tiles[secretAreaLocationX][secretAreaLocationY].setText(secretName);
+        }else{tiles[secretAreaLocationX][secretAreaLocationY].setText("???");}
     }
 
     private void styleButton(JButton btn){
@@ -99,17 +152,36 @@ public class MapPanel extends JPanel {
         playerY = newY;
         updatePlayerPosition();
 
+        boolean inShop = tiles[playerX][playerY].getText().equals("Shop");
+
+        if(inShop){
+            System.out.println("Entering ShopPanel...");
+            SwingUtilities.invokeLater(() -> {
+                game.setContentPane(new ShopPanel(game, game.player));
+                game.revalidate();
+                game.repaint();
+            });
+            return; // exit after opening shop
+        }
+    
+
         String tileName = tiles[playerX][playerY].getText();
         if(tileName.equals("")) {
             // random encounter sa goblin
-            int r = (int)(Math.random() * 3); // 0,1,2
-            if(r == 0){
+            int r = (int)(Math.random() * 10); // 0 - 9
+            if (inShop){
+                r = 100;
+            }
+            if(r == 0 || r == 3 || r == 6 ){
                 game.startBattle();
+            } else if (r == 1 || r == 2){
+                game.addPotion();
+                info.setText("You found a potion left behind by another unfortunate hero.");
             } else {
-                info.setText("You walk on the grass. Nothing happened.");
+            info.setText("You walk on the grass. Nothing happened.");
             }
         } else {
-            info.setText("You are at: " + tileName);
+            info.setText("You are at: " + tileName + playerX + playerY+inShop);
         }
     }
 
@@ -124,5 +196,7 @@ public class MapPanel extends JPanel {
         }
         // where player
         tiles[playerX][playerY].setBackground(Color.WHITE);
+
+        
     }
 }

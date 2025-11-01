@@ -4,8 +4,8 @@ import javax.swing.JTextArea;
 public class Enemy extends Character {
     Random rand = new Random();
 
-    public Enemy(String name, int health, int attackPower, int defense){
-        super(name, health, attackPower, defense);
+    public Enemy(String name, int health, int attackPower, int defense, int potionAmount, int coins){
+        super(name, health, attackPower, defense, potionAmount, coins);
     }
 
     @Override

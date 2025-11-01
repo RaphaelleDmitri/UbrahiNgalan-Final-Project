@@ -9,11 +9,13 @@ public class MainMenuPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15,0,15,0);
 
-        JLabel title = new JLabel("JAVA RPG");
+        JLabel title = new JLabel("A Java RPG by Ubrahi Ngalan");
         title.setFont(new Font("Consolas", Font.BOLD, 40));
         title.setForeground(new Color(230,205,70));
         gbc.gridx = 0; gbc.gridy = 0;
         add(title, gbc);
+
+        
 
         JButton start = new JButton("START GAME");
         JButton exit  = new JButton("EXIT");
@@ -29,7 +31,7 @@ public class MainMenuPanel extends JPanel {
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 18));
+        btn.setFont(new Font("Consolas", Font.BOLD, 40));
         btn.setFocusPainted(false);
     }
 }

@@ -1,12 +1,13 @@
 import java.awt.*;
 import javax.swing.*;
-
+import java.util.Random;
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
     private Enemy enemy;
     private JTextArea log;
     private JLabel stats;
+    Random rand = new Random();
 
     public BattlePanel(Main game, Player player, Enemy enemy){
         this.game = game;
@@ -26,7 +27,7 @@ public class BattlePanel extends JPanel {
         log.setEditable(false);
         log.setBackground(new Color(40,40,40));
         log.setForeground(Color.WHITE);
-        log.setFont(new Font("Consolas", Font.PLAIN, 15));
+        log.setFont(new Font("Consolas", Font.PLAIN, 25));
         log.setBorder(BorderFactory.createLineBorder(new Color(200,200,100), 2));
         add(new JScrollPane(log), BorderLayout.CENTER);
 
@@ -53,7 +54,7 @@ public class BattlePanel extends JPanel {
         JButton btn = new JButton(txt);
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 16));
+        btn.setFont(new Font("Consolas", Font.BOLD, 32));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -66,14 +67,20 @@ public class BattlePanel extends JPanel {
             case 2 -> player.defend(log);
             case 3 -> player.heal(log);
         }
-
+        
+        
         if(enemy.isAlive()) enemy.attack(player, log);
+        
 
         stats.setText(updateStats());
+
+        int reward = rand.nextInt(10 ) + 2000;
 
         if(!player.isAlive()) log.append("\n\n>> GAME OVER");
         else if(!enemy.isAlive()) {
             log.append("\n\n>> VICTORY!");
+            log.append("\n You have obtained " + reward + " coins! ");
+            game.addCoins(reward);
             // timer para balik sa map
             Timer t = new Timer(1500, e -> game.returnToMap());
             t.setRepeats(false);
@@ -82,6 +89,6 @@ public class BattlePanel extends JPanel {
     }
 
     private String updateStats(){
-        return "Hero HP: " + player.getHealth() + " | " + enemy.getName() + " HP: " + enemy.getHealth();
+        return "Hero HP: " + player.getHealth() +  " Potions Left:"+ player.potionAmount+" | " + enemy.getName() + " HP: " + enemy.getHealth();
     }
 }
