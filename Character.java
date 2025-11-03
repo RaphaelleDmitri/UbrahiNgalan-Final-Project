@@ -22,4 +22,6 @@ public abstract class Character {
     public boolean isAlive(){ return health > 0; }
     public int getHealth(){ return health; }
     public String getName(){ return name; }
+
+    //eumee tisting
 }
