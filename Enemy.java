@@ -19,6 +19,10 @@ public class Enemy extends Character {
         }
         
         target.health -= dmg;
-        log.append("\n" + name + " attacks you for " + dmg + " damage!");
+        log.append("\n\n" + name + " attacks you for " + dmg + " damage!");
+    }
+
+    public void heal(JTextArea log){
+        
     }
 }

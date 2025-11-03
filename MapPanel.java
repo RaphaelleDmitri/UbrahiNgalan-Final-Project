@@ -26,7 +26,7 @@ public class MapPanel extends JPanel {
     JButton statsBtn = new JButton("Stats");
     statsBtn.setFont(new Font("Consolas", Font.BOLD, 18));
     statsBtn.setBackground(new Color(60, 60, 60));
-    statsBtn.setForeground(new Color(240, 220, 140));
+    statsBtn.setForeground(new Color(255, 255, 155));
     statsBtn.setFocusPainted(false);
 
         
@@ -54,7 +54,7 @@ public class MapPanel extends JPanel {
         add(info, BorderLayout.NORTH);
 
         // map
-        JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 2, 2));
+        JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 0, 0));
         gridPanel.setBackground(Color.BLACK);
            
         tiles = new JButton[ROWS][COLS];
@@ -64,21 +64,70 @@ public class MapPanel extends JPanel {
                 JButton tile = new JButton();
                 tile.setEnabled(false);
                 tile.setFont(new Font("Consolas", Font.BOLD, 24));
+                tile.setForeground(Color.BLACK);
                 tiles[i][j] = tile;
                 gridPanel.add(tile);
             }
         }
 
+
+        
+        
+
         // trial buildings
+
+
         tiles[0][1].setText("Shop");
+        //tiles[0][1].setForeground(Color.WHITE);
+
+        
         tiles[0][3].setText("Inn");
+        //tiles[0][3].setForeground(Color.WHITE);
+
         int randomXSpawn = rand.nextInt(6) + 5;
         int randomYSpawn = rand.nextInt(6) + 5;
-        tiles[randomXSpawn][randomYSpawn].setText("Castle");
+        tiles[0][0].setText("Castle");
+        tiles[0][4].setText("Spire");
+        tiles[randomXSpawn][randomYSpawn].setText("CastlePlaceHolder"); //castle real location
+        tiles[randomXSpawn][randomYSpawn].setForeground(Color.WHITE);
+
         int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
         int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
         
         
+        
+            int npcAmount = 4;
+        for(int k = 0; k < npcAmount; k++){
+        int x,y;
+
+        while(true) {
+            // spawn around bottom-mid area so it feels distributed adventure exploring
+            x = rand.nextInt(ROWS - 6) + 6; // rows 6-11
+            y = rand.nextInt(COLS);        // cols 0-11
+            String text = tiles[x][y].getText();
+            if(text.isEmpty() || text.equals(".")) break;
+        }
+        tiles[x][y].setText("NPC");
+        tiles[x][y].setForeground(Color.WHITE);
+        }
+
+        
+        
+
+
+            //tile Colorization
+        //    tiles[0][0].setText(".");
+        tiles[0][2].setText(".");
+        //tiles[0][4].setText(".");
+
+        for(int i =0; i<5;i++){ // ROWS
+            for (int j = 0; j<5; j++){ //COLUMNS
+                if(j != 1 && i != 0|| j !=3 && i != 0){
+                    tiles[i][j].setText(".");
+                }
+            }
+        }
+
         add(gridPanel, BorderLayout.CENTER);
 
         //buttons
@@ -101,17 +150,18 @@ public class MapPanel extends JPanel {
         add(controls, BorderLayout.SOUTH);
 
         // Button actions
-        btnNorth.addActionListener(e -> movePlayer("North"));
-        btnSouth.addActionListener(e -> movePlayer("South"));
-        btnEast.addActionListener(e -> movePlayer("East"));
-        btnWest.addActionListener(e -> movePlayer("West"));
+        btnNorth.addActionListener(e -> movePlayer("Up"));
+        btnSouth.addActionListener(e -> movePlayer("Down"));
+        btnEast.addActionListener(e -> movePlayer("Right"));
+        btnWest.addActionListener(e -> movePlayer("Left"));
 
         //add option to  move player with wasd controls
         updatePlayerPosition();
+    }
 
         
-
-        //work on this later (randomLocationCreator)
+     //work on this later (randomLocationCreator)
+         /* 
         if(playerX == secretAreaLocationX && playerY == secretAreaLocationY){
             int randomArea = rand.nextInt(3);
             String secretName = "???";
@@ -124,9 +174,11 @@ public class MapPanel extends JPanel {
             }
             
             tiles[secretAreaLocationX][secretAreaLocationY].setText(secretName);
-        }else{tiles[secretAreaLocationX][secretAreaLocationY].setText("???");}
-    }
-
+        }else {tiles[secretAreaLocationX][secretAreaLocationY].setText("???");}
+    */
+        
+    
+        
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
@@ -139,10 +191,10 @@ public class MapPanel extends JPanel {
         int newY = playerY;
     
         switch(direction){
-            case "North" -> newX--;
-            case "South" -> newX++;
-            case "East"  -> newY++;
-            case "West"  -> newY--;
+            case "Up" -> newX--;
+            case "Down" -> newX++;
+            case "Right"  -> newY++;
+            case "Left"  -> newY--;
         }
     
         // Prevent moving outside the map
@@ -168,15 +220,16 @@ public class MapPanel extends JPanel {
         // Trigger fights or special events
         if(tileName.isEmpty()){ // empty tile → random encounter or item
             int r = rand.nextInt(20); // 0-19
-            if(r == 0 || r == 3 || r == 6 || r == 18) {
+            //int n = rand.nextInt(10); //disable encounters
+            if(r ==  1|| r == 2 || r == 3 || r == 4) {
                 game.startBattle(game.createEnemy(0));
             }
-            else if(r == 15) {
+            else if(r == 5) {
                 game.startBattle(game.createEnemy(2));
             }
-            else if(r >= 7 && r <= 11) {
+            else if(r >= 6 && r <= 7) {
                 game.startBattle(game.createEnemy(3));
-            } else if(r == 1 || r == 2) {
+            } else if(r == 9 || r == 8) {
                 game.addPotion();
                 info.setText("You found a potion left behind by another unfortunate hero.");
             } else {
@@ -185,7 +238,14 @@ public class MapPanel extends JPanel {
         } else { 
             // Non-empty tile → predefined enemy or event
             if(tileName.equals("Castle")){
-                game.startBattle(game.createEnemy(1));            }
+                game.startBossBattle();  } 
+                else if(tileName.equals("NPC")){
+                    info.setText("You approach an NPC... (dialogue system coming soon)");
+                    // no battle yet
+                } else if(tileName.equals("Spire")){
+                    info.setText("The Dancing Witch has spotted your presence.");
+                    game.startBossBattle2();
+                    }
             else {
                 info.setText("You are at: " + tileName);
             }
@@ -198,7 +258,11 @@ public class MapPanel extends JPanel {
             for(int j=0;j<COLS;j++){
                 tiles[i][j].setBackground(Color.BLACK); // grass
                 if(!tiles[i][j].getText().isEmpty()){
+                    if(!tiles[i][j].getText().equals(".")){
                     tiles[i][j].setBackground(new Color(60,120,60)); // buildings
+                    }else{
+                        tiles[i][j].setBackground(new Color(128,128,128));
+                    }
                 }
             }
         }

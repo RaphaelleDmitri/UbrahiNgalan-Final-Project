@@ -8,12 +8,11 @@ public class ShopPanel extends JPanel {
     private Player player;
     private JTextArea log;
     private StatPanel statPanel; // live stats
-
-    private Queue<Weapon> weaponQueue;
     private JButton weaponBtn;
-
-    private Queue<Armor> armorQueue;
     private JButton armorBtn;
+
+    private LinkedList<Weapon> weaponQueue;
+    private LinkedList<Armor> armorQueue;
 
     public ShopPanel(Main game, Player player) {
         this.game = game;
@@ -26,27 +25,21 @@ public class ShopPanel extends JPanel {
         statPanel = new StatPanel(player);
         add(statPanel, BorderLayout.EAST);
 
+        // Initialize queues from player's available items
+        weaponQueue = player.availableWeapons;
+        armorQueue = player.availableArmor;
+
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
         leftPanel.setBackground(new Color(25, 25, 25));
         leftPanel.setPreferredSize(new Dimension(600, 0));
 
-        // Weapon queue
-        weaponQueue = new LinkedList<>();
-        weaponQueue.add(new Weapon("Iron Sword", 8, 50));
-        weaponQueue.add(new Weapon("Steel Sword", 12, 100));
-        weaponQueue.add(new Weapon("Mythril Sword", 20, 200));
-
+        // Weapon button
         weaponBtn = styledButton("");
         updateWeaponButton();
         leftPanel.add(weaponBtn);
 
-        // Armor queue
-        armorQueue = new LinkedList<>();
-        armorQueue.add(new Armor("Leather Armor", 8, 30));
-        armorQueue.add(new Armor("Chainmail Armor", 16, 60));
-        armorQueue.add(new Armor("Steel Armor", 24, 120));
-
+        // Armor button
         armorBtn = styledButton("");
         updateArmorButton();
         leftPanel.add(armorBtn);
@@ -61,7 +54,7 @@ public class ShopPanel extends JPanel {
 
         add(leftPanel, BorderLayout.WEST);
 
-        // Log area in the center (big font)
+        // Log area in the center
         log = new JTextArea();
         log.setEditable(false);
         log.setLineWrap(true);
@@ -83,6 +76,8 @@ public class ShopPanel extends JPanel {
         potionBtn.addActionListener(e -> buyPotion());
         exitBtn.addActionListener(e -> game.returnToMap());
     }
+
+    // ... rest of the methods remain the same ...
 
     private JButton styledButton(String text) {
         JButton btn = new JButton(text);

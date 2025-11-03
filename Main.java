@@ -10,10 +10,11 @@ public class Main extends JFrame {
     private JPanel gamePanel; 
     BattlePanel battlePanel;
     ShopPanel shopPanel;
+    NPCConversation npcPanel;
 
     public Main() {
         //name, hp, attack, defense, initial potions, initial coins
-        player = new Player("Hero", 100, 10, 5, 3, 10);
+        player = new Player("Hero", 100, 10, 5, 3, 100000, this);
 
         setTitle("A Java RPG");
 
@@ -24,10 +25,10 @@ public class Main extends JFrame {
 
         enemies = new ArrayList<>();
         enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
-        enemies.add(new Enemy("Renz, the Corrupted King", 500, 20, 20, 0, 0));
+        enemies.add(new Enemy("Renz, the Corrupted King", 500, 30, 20, 0, 0));
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
         enemies.add(new Enemy("Slime", 20, 2, 6, 0, 0));
-
+        enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 5, 0));
         showMainMenu();
 
         setVisible(true);
@@ -72,6 +73,11 @@ public class Main extends JFrame {
     }
 
     
+    public void startConversation(){
+        
+        setContentPane(npcPanel);
+        revalidate();
+    }
 
     public void addPotion(){
         player.potionAmount = player.potionAmount + 1;
@@ -85,6 +91,24 @@ public class Main extends JFrame {
         revalidate();
     }
 
+    public void startBossBattle() {
+    // create a fresh BossEnemy from template (index 1 assumed to be Renz)
+    int bossIndex = 1; // adjust if needed
+    if (bossIndex < 0 || bossIndex >= enemies.size()) return;
+    Enemy template = enemies.get(bossIndex);
+    BossEnemy renz = new BossEnemy(template.name, template.health, template.attackPower, template.defense, 0, 0);
+    startBattle(renz); // reuse your startBattle signature that accepts Enemy
+}
+
+public void startBossBattle2() {
+    // create a fresh BossEnemy from template (index 1 assumed to be Renz)
+    int bossIndex = 4; // adjust if needed
+    
+    Enemy template = enemies.get(bossIndex);
+    BossEnemyWitch gleih = new BossEnemyWitch(template.name, template.health, template.attackPower, template.defense, 0, 0);
+    startBattle(gleih); // reuse your startBattle signature that accepts Enemy
+}
+    
 
     public static void main(String[] args) {
         new Main();
