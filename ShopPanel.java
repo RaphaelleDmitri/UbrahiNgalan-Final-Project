@@ -33,9 +33,9 @@ public class ShopPanel extends JPanel {
 
         // Weapon queue
         weaponQueue = new LinkedList<>();
-        weaponQueue.add(new Weapon("Iron Sword", 12, 50));
-        weaponQueue.add(new Weapon("Steel Sword", 18, 100));
-        weaponQueue.add(new Weapon("Mythril Sword", 25, 200));
+        weaponQueue.add(new Weapon("Iron Sword", 8, 50));
+        weaponQueue.add(new Weapon("Steel Sword", 12, 100));
+        weaponQueue.add(new Weapon("Mythril Sword", 20, 200));
 
         weaponBtn = styledButton("");
         updateWeaponButton();
@@ -43,9 +43,9 @@ public class ShopPanel extends JPanel {
 
         // Armor queue
         armorQueue = new LinkedList<>();
-        armorQueue.add(new Armor("Leather Armor", 3, 30));
-        armorQueue.add(new Armor("Chainmail Armor", 5, 60));
-        armorQueue.add(new Armor("Steel Armor", 8, 120));
+        armorQueue.add(new Armor("Leather Armor", 8, 30));
+        armorQueue.add(new Armor("Chainmail Armor", 16, 60));
+        armorQueue.add(new Armor("Steel Armor", 24, 120));
 
         armorBtn = styledButton("");
         updateArmorButton();

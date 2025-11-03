@@ -1,9 +1,13 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.*;
 
 public class Main extends JFrame {
     public Player player;
-    Enemy enemy;
-
+    Enemy enemy, enemy1;
+    private List<Enemy> enemies;
     MainMenuPanel mainMenu;
     private JPanel gamePanel; 
     BattlePanel battlePanel;
@@ -11,7 +15,7 @@ public class Main extends JFrame {
 
     public Main() {
         //name, hp, attack, defense, initial potions, initial coins
-        player = new Player("Hero", 100, 15, 5, 3, 10);
+        player = new Player("Hero", 100, 10, 5, 3, 10);
 
         setTitle("A Java RPG");
 
@@ -20,10 +24,33 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setResizable(true);
 
+        enemies = new ArrayList<>();
+        enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
+        enemies.add(new Enemy("Renz, the Corrupted King", 500, 20, 20, 0, 0));
+        enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
+        enemies.add(new Enemy("Slime", 20, 2, 6, 0, 0));
 
         showMainMenu();
 
         setVisible(true);
+
+        
+    }
+
+    public Enemy getEnemy(int index) {
+        if(index >= 0 && index < enemies.size()) return enemies.get(index);
+        return null; // or throw an exception
+    }
+
+    public Enemy createEnemy(int index) {
+        if(index < 0 || index >= enemies.size()) return null;
+    
+        Enemy template = enemies.get(index);
+        return new Enemy(template.name, template.health, template.attackPower, template.defense, 0, 0);
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
     }
 
   
@@ -40,13 +67,14 @@ public class Main extends JFrame {
         revalidate();
     }
 
-    public void startBattle() {
-        enemy = new Enemy("Goblin", 40, 3, 3, 0, 0);
-        //enemy = new Enemy("Renz, the Ramos", 150, 5, 5, 0);
+    public void startBattle(Enemy enemy) {        
         battlePanel = new BattlePanel(this, player, enemy);
         setContentPane(battlePanel);
         revalidate();
     }
+
+    
+
     public void addPotion(){
         player.potionAmount = player.potionAmount + 1;
     }

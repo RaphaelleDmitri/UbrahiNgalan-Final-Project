@@ -52,7 +52,7 @@ public class GamePanel extends JPanel {
     private void move(){
         int r = (int)(Math.random() * 3);
         if(r == 0){
-            game.startBattle();
+            //game.startBattle();
         } else {
             info.setText("You move forward... nothing happened.");
         }

@@ -8,4 +8,8 @@ public class Weapon {
         this.damage = damage;
         this.price = price;
     }
+
+    public String getName(){
+        return name;
+    }
 }

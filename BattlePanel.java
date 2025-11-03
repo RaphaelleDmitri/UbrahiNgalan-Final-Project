@@ -1,6 +1,6 @@
 import java.awt.*;
-import javax.swing.*;
 import java.util.Random;
+import javax.swing.*;
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
@@ -37,19 +37,37 @@ public class BattlePanel extends JPanel {
         JButton attackBtn = styledBtn("Attack");
         JButton defendBtn = styledBtn("Defend");
         JButton healBtn   = styledBtn("Heal");
+        JButton fleeBtn =styledBtn("Flee");
 
         buttons.add(attackBtn);
         buttons.add(defendBtn);
         buttons.add(healBtn);
+        buttons.add(fleeBtn);
         add(buttons, BorderLayout.SOUTH);
 
         attackBtn.addActionListener(e -> doTurn(1));
         defendBtn.addActionListener(e -> doTurn(2));
         healBtn.addActionListener(e -> doTurn(3));
+        fleeBtn.addActionListener(e-> doTurn(4));
 
-        log.setText("A wild " + enemy.getName() + " appears!\n");
+        
+    String[] appearanceTexts = {
+        "%s appears!\n",
+        "%s has appeared!\n",
+        "You encounter %s!\n",
+        "Suddenly, %s jumps in front of you!\n",
+        "%s blocks your path!\n",
+        "From the shadows, %s emerges!\n",
+        "You hear a rustle… it's %s!\n",
+        "Prepare yourself! %s appears!\n",
+        "%s is approaching!\n",
+        "Enemy spotted! It's %s!\n"
+    };
+    
+    int index = rand.nextInt(appearanceTexts.length);
+    log.setText(String.format(appearanceTexts[index], enemy.name));
     }
-
+    
     private JButton styledBtn(String txt){
         JButton btn = new JButton(txt);
         btn.setBackground(new Color(60,60,60));
@@ -61,31 +79,35 @@ public class BattlePanel extends JPanel {
 
     private void doTurn(int action){
         if(!player.isAlive() || !enemy.isAlive()) return;
-
+    
         switch(action){
             case 1 -> player.attack(enemy, log);
             case 2 -> player.defend(log);
             case 3 -> player.heal(log);
+            case 4 -> player.flee(log);
         }
-        
-        
-        if(enemy.isAlive()) enemy.attack(player, log);
-        
-
-        stats.setText(updateStats());
-
-        int reward = rand.nextInt(10 ) + 2000;
-
-        if(!player.isAlive()) log.append("\n\n>> GAME OVER");
-        else if(!enemy.isAlive()) {
-            log.append("\n\n>> VICTORY!");
-            log.append("\n You have obtained " + reward + " coins! ");
-            game.addCoins(reward);
-            // timer para balik sa map
-            Timer t = new Timer(1500, e -> game.returnToMap());
+    
+        if(enemy.isAlive()) {
+            enemy.attack(player, log);
+            stats.setText(updateStats());
+        } else {
+            stats.setText(updateStats());
+            int reward = rand.nextInt(10) + 2000;
+            // Delay showing VICTORY so attack text can show first
+            Timer t = new Timer(200, e -> {
+                log.append("\n\n>> VICTORY!");
+                log.append("\n You have obtained " + reward + " coins! ");
+                game.addCoins(reward);
+                // delay to return to map
+                Timer t2 = new Timer(1500, ev -> game.returnToMap());
+                t2.setRepeats(false);
+                t2.start();
+            });
             t.setRepeats(false);
             t.start();
         }
+    
+        if(!player.isAlive()) log.append("\n\n>> GAME OVER");
     }
 
     private String updateStats(){

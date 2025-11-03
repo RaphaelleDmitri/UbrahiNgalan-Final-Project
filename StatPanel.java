@@ -21,7 +21,7 @@ public class StatPanel extends JPanel {
         healthLabel = createLabel("Health: " + player.getHealth());
         coinsLabel = createLabel("Coins: " + player.coins);
         
-        weaponLabel = createLabel("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None")+ "\n (+" + (player.attackPower - 15) + " Attack)");
+        weaponLabel = createLabel("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None")+ "\n (+" + (player.attackPower - 10) + " Attack)");
         armorLabel = createLabel("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None") + "\n (+" + player.defense + " Defense)");
         damageLabel = createLabel("Attack: " + player.attackPower);
 
@@ -51,7 +51,7 @@ public class StatPanel extends JPanel {
     public void updateStats() {
         healthLabel.setText("Health: " + player.getHealth());
         coinsLabel.setText("Coins: " + player.coins);
-        weaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None" + "\n (+" + (player.attackPower - 15) + " Attack)"));
+        weaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None" + "\n (+" + (player.attackPower - 10) + " Attack)"));
         armorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None") + " (+" + player.defense + " Defense)");
         damageLabel.setText("Attack: " + player.attackPower);
         repaint();

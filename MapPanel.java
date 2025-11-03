@@ -1,6 +1,6 @@
 import java.awt.*;
-import javax.swing.*;
 import java.util.Random;
+import javax.swing.*;
 public class MapPanel extends JPanel {
     private Main game;
     private JButton[][] tiles;
@@ -137,23 +137,24 @@ public class MapPanel extends JPanel {
     private void movePlayer(String direction){
         int newX = playerX;
         int newY = playerY;
-
+    
         switch(direction){
             case "North" -> newX--;
             case "South" -> newX++;
             case "East"  -> newY++;
             case "West"  -> newY--;
         }
-
-        // border checker para d ka gwa sa map
+    
+        // Prevent moving outside the map
         if(newX < 0 || newX >= ROWS || newY < 0 || newY >= COLS) return;
-
+    
         playerX = newX;
         playerY = newY;
         updatePlayerPosition();
-
-        boolean inShop = tiles[playerX][playerY].getText().equals("Shop");
-
+    
+        String tileName = tiles[playerX][playerY].getText();
+        boolean inShop = tileName.equals("Shop");
+    
         if(inShop){
             System.out.println("Entering ShopPanel...");
             SwingUtilities.invokeLater(() -> {
@@ -164,26 +165,33 @@ public class MapPanel extends JPanel {
             return; // exit after opening shop
         }
     
-
-        String tileName = tiles[playerX][playerY].getText();
-        if(tileName.equals("")) {
-            // random encounter sa goblin
-            int r = (int)(Math.random() * 10); // 0 - 9
-            if (inShop){
-                r = 100;
+        // Trigger fights or special events
+        if(tileName.isEmpty()){ // empty tile → random encounter or item
+            int r = rand.nextInt(20); // 0-19
+            if(r == 0 || r == 3 || r == 6 || r == 18) {
+                game.startBattle(game.createEnemy(0));
             }
-            if(r == 0 || r == 3 || r == 6 ){
-                game.startBattle();
-            } else if (r == 1 || r == 2){
+            else if(r == 15) {
+                game.startBattle(game.createEnemy(2));
+            }
+            else if(r >= 7 && r <= 11) {
+                game.startBattle(game.createEnemy(3));
+            } else if(r == 1 || r == 2) {
                 game.addPotion();
                 info.setText("You found a potion left behind by another unfortunate hero.");
             } else {
-            info.setText("You walk on the grass. Nothing happened.");
+                info.setText("You walk on the grass. Nothing happened." + " R VALUE: " + r);
             }
-        } else {
-            info.setText("You are at: " + tileName + playerX + playerY+inShop);
+        } else { 
+            // Non-empty tile → predefined enemy or event
+            if(tileName.equals("Castle")){
+                game.startBattle(game.createEnemy(1));            }
+            else {
+                info.setText("You are at: " + tileName);
+            }
         }
     }
+    
 
     private void updatePlayerPosition(){
         for(int i=0;i<ROWS;i++){
