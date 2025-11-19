@@ -18,28 +18,15 @@ public class GamePanel extends JPanel {
         info.setFont(new Font("Consolas", Font.BOLD, 18));
         add(info, BorderLayout.NORTH);
 
-        JPanel directions = new JPanel();
-        directions.setBackground(new Color(25,25,25));
+    JPanel directions = new JPanel(new BorderLayout());
+    directions.setBackground(new Color(25,25,25));
 
-        JButton btnNorth = new JButton("North");
-        JButton btnSouth = new JButton("South");
-        JButton btnEast  = new JButton("East");
-        JButton btnWest  = new JButton("West");
+    JLabel instr = new JLabel("Use the ARROW KEYS to move", SwingConstants.CENTER);
+    instr.setForeground(new Color(240,220,140));
+    instr.setFont(new Font("Consolas", Font.BOLD, 16));
+    directions.add(instr, BorderLayout.CENTER);
 
-        styleButton(btnNorth); styleButton(btnSouth); 
-        styleButton(btnEast); styleButton(btnWest);
-
-        directions.add(btnNorth);
-        directions.add(btnSouth);
-        directions.add(btnEast);
-        directions.add(btnWest);
-
-        add(directions, BorderLayout.SOUTH);
-
-        btnNorth.addActionListener(ev -> move());
-        btnSouth.addActionListener(ev -> move());
-        btnEast.addActionListener(ev -> move());
-        btnWest.addActionListener(ev -> move());
+    add(directions, BorderLayout.SOUTH);
     }
 
     private void styleButton(JButton btn){

@@ -120,7 +120,12 @@ public class Main extends JFrame {
 
     public void returnToMap() {
         setContentPane(gamePanel);
-        revalidate();
+        // Ensure the map panel regains focus so keybindings work again
+        SwingUtilities.invokeLater(() -> {
+            gamePanel.requestFocusInWindow();
+            revalidate();
+            repaint();
+        });
     }
 
     public void startBossBattle() {

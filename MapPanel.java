@@ -130,36 +130,22 @@ public class MapPanel extends JPanel {
 
         add(gridPanel, BorderLayout.CENTER);
 
-        //buttons
-        JPanel controls = new JPanel();
-        controls.setBackground(Color.DARK_GRAY);
+    // movement instruction: prefer using arrow keys
+    JPanel controls = new JPanel(new BorderLayout());
+    controls.setBackground(Color.DARK_GRAY);
+    JLabel moveInstr = new JLabel("Use the ARROW KEYS to move", SwingConstants.CENTER);
+    moveInstr.setForeground(new Color(240,220,140));
+    moveInstr.setFont(new Font("Consolas", Font.BOLD, 16));
+    controls.add(moveInstr, BorderLayout.CENTER);
 
-        JButton btnNorth = new JButton("North");
-        JButton btnSouth = new JButton("South");
-        JButton btnEast  = new JButton("East");
-        JButton btnWest  = new JButton("West");
+    add(controls, BorderLayout.SOUTH);
 
-        styleButton(btnNorth); styleButton(btnSouth);
-        styleButton(btnEast); styleButton(btnWest);
+    // Enable arrow key movement
+    setupKeyBindings();
+    setFocusable(true);
+    requestFocusInWindow();
 
-        controls.add(btnNorth);
-        controls.add(btnSouth);
-        controls.add(btnEast);
-        controls.add(btnWest);
-
-        add(controls, BorderLayout.SOUTH);
-        // Enable arrow key movement
-        setupKeyBindings();
-        setFocusable(true);
-        requestFocusInWindow();
-
-        SwingUtilities.invokeLater(() -> requestFocusInWindow());
-
-        // Button actions
-        btnNorth.addActionListener(e -> movePlayer("Up"));
-        btnSouth.addActionListener(e -> movePlayer("Down"));
-        btnEast.addActionListener(e -> movePlayer("Right"));
-        btnWest.addActionListener(e -> movePlayer("Left"));
+    SwingUtilities.invokeLater(() -> requestFocusInWindow());
 
         //add option to  move player with wasd controls
         updatePlayerPosition();
