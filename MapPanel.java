@@ -148,6 +148,12 @@ public class MapPanel extends JPanel {
         controls.add(btnWest);
 
         add(controls, BorderLayout.SOUTH);
+        // Enable arrow key movement
+        setupKeyBindings();
+        setFocusable(true);
+        requestFocusInWindow();
+
+        SwingUtilities.invokeLater(() -> requestFocusInWindow());
 
         // Button actions
         btnNorth.addActionListener(e -> movePlayer("Up"));
@@ -241,7 +247,7 @@ public class MapPanel extends JPanel {
                 game.startBossBattle();  } 
                 else if(tileName.equals("NPC")){
                     info.setText("You approach an NPC... (dialogue system coming soon)");
-                    // no battle yet
+                    game.startConversation();
                 } else if(tileName.equals("Spire")){
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
@@ -250,6 +256,40 @@ public class MapPanel extends JPanel {
                 info.setText("You are at: " + tileName);
             }
         }
+    }
+    
+    private void setupKeyBindings() {
+        InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = getActionMap();
+    
+        im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
+        im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
+        im.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
+        im.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
+    
+        am.put("moveUp", new AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                movePlayer("Up");
+            }
+        });
+    
+        am.put("moveDown", new AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                movePlayer("Down");
+            }
+        });
+    
+        am.put("moveLeft", new AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                movePlayer("Left");
+            }
+        });
+    
+        am.put("moveRight", new AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                movePlayer("Right");
+            }
+        });
     }
     
 

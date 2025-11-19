@@ -26,4 +26,8 @@ A dungeon like location
 DO THE MISSING CRITERIA'S
 
 
+prioritize game contexts and development of UI fundamentals with OOP Principles
 
+reword code framework with Claude, or create another program with Claude.
+
+Simplify the work. (Battle Panel by far is the most complex code.)

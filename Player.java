@@ -1,5 +1,5 @@
-import java.util.Random;
 import java.util.LinkedList;
+import java.util.Random;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
@@ -26,7 +26,7 @@ public class Player extends Character {
         availableWeapons.add(new Weapon("Mythril Sword", 15, 200));
         availableWeapons.add(new Weapon("Diamond Sword", 25,400));
         availableWeapons.add(new Weapon("Sword of Demacia", 40,800));
-
+        
 
         availableArmor.add(new Armor("Leather Armor", 8, 30));
         availableArmor.add(new Armor("Chainmail Armor", 12, 60));
@@ -49,7 +49,7 @@ public class Player extends Character {
     }
 
     public void defend(JTextArea log) {
-        int block = (equippedArmor != null ? equippedArmor.defense : 0) + rand.nextInt(15) + 5;
+        int block = (equippedArmor != null ? equippedArmor.defense : 0) + rand.nextInt(5);
         this.defense += block;
         log.append("\n\nYou raise your shield, temporarily increasing your defense by " + block + "!");
     }

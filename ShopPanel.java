@@ -1,7 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
-import java.util.Queue;
+import javax.swing.*;
 
 public class ShopPanel extends JPanel {
     private Main game;

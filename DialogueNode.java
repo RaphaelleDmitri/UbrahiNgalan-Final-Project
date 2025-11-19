@@ -1,19 +1,37 @@
-class DialogueNode {
-    private String npcMessage;                  // what NPC says at this node
-    private String[] playerChoices;             // options player can pick
-    private Map<Integer, String> nextNodes;     // mapping option -> next node id (null = end)
+import java.util.List;
 
-    public DialogueNode(String npcMessage, String[] playerChoices, Map<Integer, String> nextNodes) {
-        this.npcMessage = npcMessage;
+public class DialogueNode {
+    private String id;
+    private String npcText;
+    private List<String> playerChoices;
+    private List<String> nextNodes;
+    private List<String> npcResponses;
+
+    public DialogueNode(String id, String npcText,
+                        List<String> playerChoices,
+                        List<String> nextNodes,
+                        List<String> npcResponses) {
+        this.id = id;
+        this.npcText = npcText;
         this.playerChoices = playerChoices;
         this.nextNodes = nextNodes;
+        this.npcResponses = npcResponses;
     }
 
-    public String getNPCResponse(int idx) { return npcMessage; }
-    public String getPlayerChoice(int idx) {
-        if (idx >= 1 && idx <= playerChoices.length) return playerChoices[idx - 1];
-        return "...";
+    public String getId() { return id; }
+
+    public String getNPCResponse(int optionIndex) {
+        if (optionIndex < 0 || optionIndex >= npcResponses.size()) return npcText;
+        return npcResponses.get(optionIndex);
     }
 
-    public String getNextNode(int idx) { return nextNodes.get(idx); }
+    public String getPlayerChoice(int optionIndex) {
+        if (optionIndex < 0 || optionIndex >= playerChoices.size()) return "";
+        return playerChoices.get(optionIndex);
+    }
+
+    public String getNextNode(int optionIndex) {
+        if (optionIndex < 0 || optionIndex >= nextNodes.size()) return null;
+        return nextNodes.get(optionIndex);
+    }
 }

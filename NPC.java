@@ -1,15 +1,25 @@
-class NPC {
-    private String name;
-    private Map<String, DialogueNode> dialogueNodes;
-    private String startNode;
+import java.util.HashMap;
+import java.util.Map;
 
-    public NPC(String name, String startNode, Map<String, DialogueNode> dialogueNodes) {
+public class NPC {
+    private String name;
+    private String startNode;
+    private Map<String, DialogueNode> dialogueNodes;
+
+    public NPC(String name, String startNode) {
         this.name = name;
         this.startNode = startNode;
-        this.dialogueNodes = dialogueNodes;
+        this.dialogueNodes = new HashMap<>();
     }
 
     public String getName() { return name; }
     public String getStartNode() { return startNode; }
-    public DialogueNode getNode(String nodeId) { return dialogueNodes.get(nodeId); }
+
+    public void addNode(DialogueNode node) {
+        dialogueNodes.put(node.getId(), node);
+    }
+
+    public DialogueNode getNode(String nodeId) {
+        return dialogueNodes.get(nodeId);
+    }
 }

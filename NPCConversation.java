@@ -1,8 +1,8 @@
 import java.awt.*;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -27,6 +27,8 @@ public class NPCConversation extends JPanel {
 
     private JLabel infoLabel;
     private Random rand = new Random();
+    
+    
 
     // Tracks current dialogue node per NPC
     private Map<NPC, String> currentNode = new HashMap<>();
