@@ -130,6 +130,12 @@ public class NPCConversation extends JPanel {
             // End of conversation
             log.append("\n" + current.getName() + ": " + node.getNPCResponse(option));
             log.append("\n\n>> Conversation ended.");
+            // Wait 3 seconds so the player can read the final lines, then return to the map
+            javax.swing.Timer timer = new javax.swing.Timer(3000, ev -> {
+                game.returnToMap();
+            });
+            timer.setRepeats(false);
+            timer.start();
             return;
         }
 
