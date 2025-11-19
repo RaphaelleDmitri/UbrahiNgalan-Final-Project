@@ -252,6 +252,14 @@ public class MapPanel extends JPanel {
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
                     }
+                    else if(tileName.equals("Inn")){
+                        System.out.println("Entering InnPanel...");
+                        SwingUtilities.invokeLater(() -> {
+                            game.setContentPane(new InnPanel(game, game.player));
+                            game.revalidate();
+                            game.repaint();
+                        });
+                    }
             else {
                 info.setText("You are at: " + tileName);
             }

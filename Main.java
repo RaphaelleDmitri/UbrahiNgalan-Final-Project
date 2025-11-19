@@ -29,14 +29,12 @@ public class Main extends JFrame {
         enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
         enemies.add(new Enemy("Slime", 20, 2, 6, 0, 0));
-        
+
         // Boss 1
         enemies.add(new Enemy("Renz, the Corrupted King", 500, 30, 20, 0, 0));
         // Boss 2
         enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 5, 0));
         
-
-
         List<NPC> npcList = new ArrayList<>();
 
         NPC elder = new NPC("Village Elder", "start");
