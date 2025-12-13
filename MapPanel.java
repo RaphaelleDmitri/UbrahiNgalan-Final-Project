@@ -13,6 +13,7 @@ public class MapPanel extends JPanel {
     private final int COLS = 12;
     private JLabel info; 
     Random rand = new Random();
+    private boolean spireSpawned = false; // Boolean to track if Spire has spawned
 
     public MapPanel(Main game){
         this.game = game;
@@ -96,7 +97,7 @@ public class MapPanel extends JPanel {
         int randomXSpawn = rand.nextInt(6) + 5;
         int randomYSpawn = rand.nextInt(6) + 5;
         tiles[0][0].setText("Castle");
-        tiles[0][4].setText("Spire");
+        // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
         tiles[randomXSpawn][randomYSpawn].setText("CastlePlaceHolder"); //castle real location
         tiles[randomXSpawn][randomYSpawn].setForeground(Color.WHITE);
 
@@ -182,6 +183,34 @@ public class MapPanel extends JPanel {
         btn.setForeground(new Color(240,220,140));
         btn.setFont(new Font("Consolas", Font.BOLD, 16));
         btn.setFocusPainted(false);
+    }
+
+    // Method to spawn the Spire after Corrupted King Renz is defeated
+    public void spawnSpire() {
+        System.out.println("DEBUG: spawnSpire() called, spireSpawned = " + spireSpawned); // DEBUG
+        
+        if (!spireSpawned) {
+            int spireX, spireY;
+            
+            // Find a random empty location for the Spire
+            while (true) {
+                spireX = rand.nextInt(ROWS);
+                spireY = rand.nextInt(COLS);
+                String text = tiles[spireX][spireY].getText();
+                
+                // Make sure it's an empty tile and not the player's current position
+                if ((text.isEmpty() || text.equals(".")) && !(spireX == playerX && spireY == playerY)) {
+                    break;
+                }
+            }
+            
+            System.out.println("DEBUG: Spawning Spire at [" + spireX + "][" + spireY + "]"); // DEBUG
+            tiles[spireX][spireY].setText("Spire");
+            tiles[spireX][spireY].setForeground(Color.WHITE);
+            spireSpawned = true;
+            info.setText("A mysterious Spire has appeared on the map!");
+            updatePlayerPosition(); // Refresh the map visually
+        }
     }
 
     private void movePlayer(String direction){
