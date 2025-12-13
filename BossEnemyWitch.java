@@ -1,5 +1,5 @@
-import javax.swing.*;
 import java.util.Random;
+import javax.swing.*;
 
 public class BossEnemyWitch extends Enemy {
     private Random rand = new Random();

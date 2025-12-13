@@ -46,7 +46,7 @@ public class BattlePanel extends JPanel {
         styledPane.setEditable(false);
         styledPane.setBackground(new Color(40,40,40));
         styledPane.setForeground(Color.WHITE);
-        styledPane.setFont(new Font("Consolas", Font.PLAIN, 25)); // Consolas 25 as requested
+        styledPane.setFont(new Font("Consolas", Font.PLAIN, 25));
         styledPane.setBorder(BorderFactory.createLineBorder(new Color(200,200,100), 2));
         doc = styledPane.getStyledDocument();
 
@@ -84,7 +84,6 @@ public class BattlePanel extends JPanel {
         add(buttons, BorderLayout.SOUTH);
 
 
-            //action listeners to be recorded karon sa functions
         attackBtn.addActionListener(e -> doTurn(1));
         defendBtn.addActionListener(e -> doTurn(2));
         healBtn.addActionListener(e -> doTurn(3));
@@ -112,13 +111,12 @@ public class BattlePanel extends JPanel {
         }
     
 
-        //custom text ni renz and gleih
         if (!this.enemies.isEmpty() && this.enemies.get(0) instanceof BossEnemy) {
             log.append("\n\"" + "This world will be mine." + "\"\n");
             log.append("\nRenz eyes you coldly — read his moves in the log.\n");
         }
         if (!this.enemies.isEmpty() && this.enemies.get(0) instanceof BossEnemyWitch) {
-            log.append("\n\"" + "This world will be mine." + "\"\n");
+            log.append("\n\"" + "Care to dance a little?" + "\"\n");
             log.append("\nGleih eyes you coldly — read his moves in the log.\n");
         }
 
@@ -163,18 +161,22 @@ public class BattlePanel extends JPanel {
 
         stats.setText(updateStatsForEnemies());
 
-        int initialEnemyCount = enemies.size();
+        // Enemy turn - only alive enemies attack
         for (int i = 0; i < enemies.size(); i++) {
             if (!player.isAlive()) break;
 
             Enemy e = enemies.get(i);
+            
+            // CRITICAL FIX: Skip dead enemies
+            if (!e.isAlive()) continue;
+            
             if (e instanceof BossEnemyWitch witch) {
                 witch.bossTurn(player, log, lastPlayerAction);
 
                 MinionEnemy minion = witch.getPendingSummon();
                 if (minion != null) {
                     enemies.add(minion);
-                    log.append("\n\nA foul spawn has been summoned and joins the battle!");
+                    appendWithDelay("\n\nA foul spawn has been summoned and joins the battle!", 500);
                     updateTargetBox();
                 }
             } else if (e instanceof BossEnemy boss) {
@@ -189,6 +191,7 @@ public class BattlePanel extends JPanel {
             stats.setText(updateStatsForEnemies());
         }
 
+        // Remove dead enemies from the list
         List<Enemy> dead = new ArrayList<>();
         for (Enemy e : enemies) if (!e.isAlive()) dead.add(e);
         for (Enemy d : dead) {
@@ -393,7 +396,6 @@ public class BattlePanel extends JPanel {
             int selectedIndex = targetBox.getSelectedIndex(); 
             targetBox.removeAllItems();
             for (Enemy e : enemies) {
-                
                 if(e.getHealth()<=0){
                     targetBox.addItem(e.getName() + " (HP: DEAD! ) ");                    
                  } else{    
@@ -408,5 +410,11 @@ public class BattlePanel extends JPanel {
                 }
             }
         });
+    }
+
+    public void appendWithDelay(String text, int delayMs) {
+        Timer t = new Timer(delayMs, e -> log.append(text));
+        t.setRepeats(false);
+        t.start();
     }
 }

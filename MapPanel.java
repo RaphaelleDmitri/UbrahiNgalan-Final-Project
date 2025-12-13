@@ -61,12 +61,13 @@ public class MapPanel extends JPanel {
 
         for(int i=0;i<ROWS;i++){
             for(int j=0;j<COLS;j++){
-                JButton tile = new JButton();
-                tile.setEnabled(false);
-                tile.setFont(new Font("Consolas", Font.BOLD, 24));
-                tile.setForeground(Color.BLACK);
-                tiles[i][j] = tile;
-                gridPanel.add(tile);
+            JButton tile = new JButton();
+            tile.setEnabled(false);
+            tile.setFont(new Font("Consolas", Font.BOLD, 24));
+            tile.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Set border to black
+            tile.setForeground(Color.BLACK);
+            tiles[i][j] = tile;
+            gridPanel.add(tile);
             }
         }
 
@@ -220,7 +221,7 @@ public class MapPanel extends JPanel {
                 game.startBattle(game.createEnemy(2));
             }
             else if(r >= 6 && r <= 7) {
-                game.startBattle(game.createEnemy(3));
+                game.startBattle(game.createEnemy(1));
             } else if(r == 9 || r == 8) {
                 game.addPotion();
                 info.setText("You found a potion left behind by another unfortunate hero.");
@@ -248,46 +249,59 @@ public class MapPanel extends JPanel {
                     }
             else {
                 info.setText("You are at: " + tileName);
+                System.out.print("Currently on: " + tileName);
             }
         }
-    }
-    
-    private void setupKeyBindings() {
-        InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap am = getActionMap();
-    
-        im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
-        im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
-        im.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
-        im.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
-    
-        am.put("moveUp", new AbstractAction() {
-            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
-                movePlayer("Up");
-            }
-        });
-    
-        am.put("moveDown", new AbstractAction() {
-            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
-                movePlayer("Down");
-            }
-        });
-    
-        am.put("moveLeft", new AbstractAction() {
-            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
-                movePlayer("Left");
-            }
-        });
-    
-        am.put("moveRight", new AbstractAction() {
-            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
-                movePlayer("Right");
-            }
-        });
-    }
-    
+        
+        }
+        private long lastMoveTime = 0; // Track the last move time
+        private final int MOVE_DELAY = 200; // Delay in milliseconds
 
-    private void updatePlayerPosition(){
+        
+        
+        private void setupKeyBindings() {
+            InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+            ActionMap am = getActionMap();
+        
+            im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
+            im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
+            im.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
+            im.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
+        
+            am.put("moveUp", new AbstractAction() {
+                @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                    handleMove("Up");
+                }
+            });
+        
+            am.put("moveDown", new AbstractAction() {
+                @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                    handleMove("Down");
+                }
+            });
+        
+            am.put("moveLeft", new AbstractAction() {
+                @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                    handleMove("Left");
+                }
+            });
+        
+            am.put("moveRight", new AbstractAction() {
+                @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                    handleMove("Right");
+                }
+            });
+        }
+
+        private void handleMove(String direction) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastMoveTime >= MOVE_DELAY) {
+                movePlayer(direction);
+                lastMoveTime = currentTime;
+            }
+        }
+
+        private void updatePlayerPosition(){
         for(int i=0;i<ROWS;i++){
             for(int j=0;j<COLS;j++){
                 tiles[i][j].setBackground(Color.BLACK); // grass

@@ -7,7 +7,7 @@ public class Main extends JFrame {
     public Player player;
     private List<Enemy> enemies;
     MainMenuPanel mainMenu;
-    private JPanel gamePanel; 
+    private JPanel gamePanel;    
     BattlePanel battlePanel;
     ShopPanel shopPanel;
     NPCConversation npcPanel;
@@ -25,6 +25,7 @@ public class Main extends JFrame {
         setResizable(true);
 
         //enemy list
+        //linked list nisya nga saket lng ulo kag ara iya
         enemies = new ArrayList<>();
         enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
@@ -120,7 +121,6 @@ public class Main extends JFrame {
 
     public void returnToMap() {
         setContentPane(gamePanel);
-        // Ensure the map panel regains focus so keybindings work again
         SwingUtilities.invokeLater(() -> {
             gamePanel.requestFocusInWindow();
             revalidate();
@@ -129,7 +129,7 @@ public class Main extends JFrame {
     }
 
     public void startBossBattle() {
-        Enemy template = enemies.get(1);
+        Enemy template = enemies.get(3);
         BossEnemy renz = new BossEnemy(template.name, template.health, template.attackPower, template.defense, 0, 0);
         startBattle(renz);
     }

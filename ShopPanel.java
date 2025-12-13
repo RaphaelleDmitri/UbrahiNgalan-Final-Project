@@ -1,5 +1,5 @@
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.Queue;
 import javax.swing.*;
 
 public class ShopPanel extends JPanel {
@@ -9,9 +9,9 @@ public class ShopPanel extends JPanel {
     private StatPanel statPanel; // live stats
     private JButton weaponBtn;
     private JButton armorBtn;
-
-    private LinkedList<Weapon> weaponQueue;
-    private LinkedList<Armor> armorQueue;
+    // Using Queue interface instead of LinkedList
+    private Queue<Weapon> weaponQueue;
+    private Queue<Armor> armorQueue;
 
     public ShopPanel(Main game, Player player) {
         this.game = game;
@@ -75,8 +75,6 @@ public class ShopPanel extends JPanel {
         potionBtn.addActionListener(e -> buyPotion());
         exitBtn.addActionListener(e -> game.returnToMap());
     }
-
-    // ... rest of the methods remain the same ...
 
     private JButton styledButton(String text) {
         JButton btn = new JButton(text);

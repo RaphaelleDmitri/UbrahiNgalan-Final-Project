@@ -83,7 +83,7 @@ public class Player extends Character {
             t.setRepeats(false);
             t.start();
         } else {
-            log.append("You failed to flee!");
+            log.append("\nYou failed to flee!");
         }
     }
 
