@@ -39,6 +39,7 @@ public class Main extends JFrame {
         enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 0, 0));
         // Boss 3
         //Eum, The VoidMother, health 800, attack 70, defense 30
+        enemies.add(new Enemy("Eum, The VoidMother", 700, 40, 20, 0, 0));
         
         List<NPC> npcList = new ArrayList<>();
 
@@ -128,6 +129,7 @@ public class Main extends JFrame {
         renzDefeated = true; // Mark that Renz was defeated
     }
 
+    
     // Return to map and spawn Spire if Renz was defeated
     public void returnToMap() {
         System.out.println("DEBUG: returnToMap() called"); // DEBUG
@@ -138,6 +140,8 @@ public class Main extends JFrame {
         revalidate();
         repaint();
         
+        
+
         // Spawn spire after returning to map if Renz was defeated
         if (renzDefeated && gamePanel != null) {
             System.out.println("DEBUG: Spawning spire now!"); // DEBUG
@@ -172,8 +176,21 @@ public class Main extends JFrame {
         BossEnemyWitch gleih = new BossEnemyWitch(template.name, template.health, template.attackPower, template.defense, 0, 0);
         startBattle(gleih);
     }
+    public void startBossBattle3() {
+        Enemy template = enemies.get(5);
+        BossEnemyFinal eum = new BossEnemyFinal(template.name, template.health, template.attackPower, template.defense, 0, 0);
+        
+        // Start the battle first
+        startBattle(eum);
+        
+        // Call intro using the log from the BattlePanel
+        if (battlePanel != null && battlePanel.getLog() != null) {
+            eum.intro(battlePanel.getLog(), player);
+        }
+    }
 
     public static void main(String[] args) {
         new Main();
     }
+    
 }

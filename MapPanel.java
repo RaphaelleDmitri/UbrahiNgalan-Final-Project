@@ -89,7 +89,7 @@ public class MapPanel extends JPanel {
         // trial buildings
         tiles[0][1].setText("Shop");
         //tiles[0][1].setForeground(Color.WHITE);
-
+        tiles[0][6].setText("TestArea");
         
         tiles[0][3].setText("Inn");
         //tiles[0][3].setForeground(Color.WHITE);
@@ -280,6 +280,9 @@ public class MapPanel extends JPanel {
                             game.revalidate();
                             game.repaint();
                         });
+                    }else if(tileName.equals("TestArea")){
+                        info.setText("You have entered the Castle!");
+                        game.startBossBattle3();
                     }
             else {
                 info.setText("You are at: " + tileName);

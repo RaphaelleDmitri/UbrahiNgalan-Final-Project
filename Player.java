@@ -40,12 +40,17 @@ public class Player extends Character {
         availableWeapons.add(new Weapon("Mythril Sword", 15, 200));
         availableWeapons.add(new Weapon("Diamond Sword", 25, 400));
         availableWeapons.add(new Weapon("Sword of Demacia", 40, 800));
+        availableWeapons.add(new Weapon("God Slayer", 100, 20));
+        availableWeapons.add(new Weapon("Developer Destroyer", 200, 20));
+
 
         availableArmor.add(new Armor("Leather Armor", 8, 30));
         availableArmor.add(new Armor("Chainmail Armor", 12, 60));
         availableArmor.add(new Armor("Steel Armor", 16, 120));
         availableArmor.add(new Armor("Diamond Armor", 24, 200));
         availableArmor.add(new Armor("Armor of Retribution", 30, 300));
+        availableArmor.add(new Armor("Armor of the GodKing", 50, 500));
+        availableArmor.add(new Armor("Developer Deflector", 100, 20));
     }
 
     // ================= COMBAT =================

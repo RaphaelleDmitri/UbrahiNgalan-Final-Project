@@ -2,49 +2,58 @@ import java.util.Random;
 import javax.swing.*;
 
 public class BossEnemyFinal extends Enemy {
+
     private Random rand = new Random();
 
     private int patternIndex = 0;
-    private boolean rageActive = false;
     private boolean phase2 = false;
+    private boolean rageCharged = false;
+
+    private boolean introDone = false;
     private boolean luraSummoned = false;
 
-    private final int[] pattern = new int[]{0, 1, 2, 3};
+    private final int[] pattern = {0, 1, 2, 3};
 
-    private Ally lura; // The previous hero
+    private Ally lura;
 
-    public BossEnemyFinal(String name, int health, int attackPower, int defense, int potionAmount, int coins) {
+    public BossEnemyFinal(String name, int health, int attackPower, int defense,
+                          int potionAmount, int coins) {
         super(name, health, attackPower, defense, potionAmount, coins);
         this.maxHealth = health;
     }
 
-    // Show the introductory story text
+    /* =========================
+       INTRO (RUNS ONCE)
+       ========================= */
     public void intro(JTextArea log, Player player) {
-        log.append("\n>> Shadows spread across the battlefield… Umbra, Lord of Shadows, emerges!");
-        log.append("\n>> Exhausted from the previous fight, Y/N feels weaker and more vulnerable!");
-        // Apply exhaustion debuffs
-        player.attackPower = (int) (player.attackPower * 0.7); // 30% weaker
-        player.defense = (int) (player.defense * 0.8); // 20% weaker
+        if (introDone) return;
+        introDone = true;
+
+        log.append("\n>> Shadows spread across the battlefield…");
+        log.append("\n>> Eum, The VoidMother, emerges!");
+        log.append("\n>> Exhausted from the previous fight, you feel weaker!");
+
+        player.attackPower = (int) (player.attackPower * 0.85);
+        player.defense = (int) (player.defense * 0.95);
     }
 
-    // Called each boss turn
+    /* =========================
+       BOSS TURN
+       ========================= */
     public void bossTurn(Player player, JTextArea log, int lastPlayerAction) {
+
+        
+        if (checkLuraSave(player, log)) return;
+
         // Phase 2 trigger
-        if (!phase2 && this.health <= maxHealth / 2) {
+        if (!phase2 && health <= maxHealth / 2) {
             phase2 = true;
-            rageActive = true;
-            log.append("\n>> Umbra grows stronger, the shadows rage with him!");
+            log.append("\n>> Eum absorbs the darkness to strenghen her prowess!");
+            log.append("\n>> PHASE 2 BEGINS!");
         }
 
-        // Summon Lura only once when Y/N is about to lose
-        if (!luraSummoned && player.health <= player.maxHealth * 0.2) {
-            lura = new Ally("Lura, the Previous Hero", 150, 25, 10); // Example ally stats
-            luraSummoned = true;
-            log.append("\n>> Just as defeat seems certain, a faint light appears… Lura joins the fight!");
-        }
-
-        // Execute pattern attack
         int move = pattern[patternIndex];
+
         switch (move) {
             case 0 -> shadowStrike(player, log);
             case 1 -> flameWave(player, log);
@@ -52,73 +61,107 @@ public class BossEnemyFinal extends Enemy {
             case 3 -> misfire(player, log);
         }
 
-        // Rage follow-up attack
-        if (rageActive && move != 2) {
+        // Rage follow-up
+        if (rageCharged && move != 2) {
             devastatingBlow(player, log);
-            rageActive = false;
+            rageCharged = false;
         }
 
-        // Phase 2 conditional extra attack
-        if (phase2) {
-            if (rand.nextInt(100) < 50) shadowStrike(player, log);
-            if (rand.nextInt(100) < 30) devastatingBlow(player, log);
+        // 🚑 Lura save (AFTER damage)
+        if (checkLuraSave(player, log)) return;
+
+        // Phase 2 bonus attacks
+        if (phase2 && rand.nextInt(100) < 40) {
+            shadowStrike(player, log);
         }
 
+        // Pattern advance
         patternIndex = (patternIndex + 1) % pattern.length;
 
-        // Lura auto-attacks if summoned
+        // Lura auto-attack
         if (luraSummoned && lura.health > 0) {
             int dmg = lura.attackPower + rand.nextInt(5);
-            player.health -= 0; // Lura doesn't attack player; he attacks Umbra
             log.append("\n>> Lura strikes Umbra for " + dmg + " damage!");
             this.health -= dmg;
+        }      
+    }
 
-            if (this.health <= 0) {
-                log.append("\n>> Umbra has been defeated!");
-                // Lura dies after fulfilling mission
-                lura.health = 0;
-                log.append("\n>> Lura succumbs to his wounds after ending Umbra's terror.");
-            }
+    /* =========================
+       LURA LAST-STAND SAVE
+       ========================= */
+    private boolean checkLuraSave(Player player, JTextArea log) {
+        if (!luraSummoned && player.health > 0 && player.health <= player.maxHealth * 0.3) {
+            luraSummoned = true;
+            lura = new Ally("Lura, the Previous Hero", 150, 25, 10);
+
+            log.append("\n>> A blinding light shatters the darkness!");
+            log.append("\n>> LURA, THE PREVIOUS HERO, STANDS BESIDE YOU!");
+            log.append("\n>> Your wounds are healed by his light!");
+
+            player.health = player.maxHealth / 2;
+            player.defense = (int) (player.defense * 1.3);
+            rageCharged = false;
+            patternIndex = 0;
+
+            return true; // boss loses this turn
         }
+        return false;
     }
 
-    // --- Attack Methods ---
-    private void shadowStrike(Character target, JTextArea log) {
-        int dmg = attackPower + rand.nextInt(10);
-        dmg = Math.max(0, dmg - target.defense / 4);
-        target.health -= dmg;
-        log.append("\n\n" + name + " strikes with shadowy claws for " + dmg + " damage!");
+    /* =========================
+       DAMAGE HANDLER (SAFE)
+       ========================= */
+    private void dealDamage(Player target, int dmg, JTextArea log) {
+        dmg = Math.max(0, dmg);
+
+        int newHP = target.health - dmg;
+
+        if (!luraSummoned && newHP <= 0) {
+            target.health = 1; // prevent instant death
+            return;
+        }
+
+        target.health = newHP;
+        log.append(" (" + dmg + " dmg)");
     }
 
-    private void flameWave(Character target, JTextArea log) {
-        int dmg = 2 + rand.nextInt(6);
-        dmg = Math.max(0, dmg - target.defense / 4);
-        target.health -= dmg;
-        log.append("\n\n" + name + " sends a wave of dark flames dealing " + dmg + " damage!");
+    /* =========================
+       ATTACKS
+       ========================= */
+    private void shadowStrike(Player target, JTextArea log) {
+        int dmg = attackPower + rand.nextInt(10) - target.defense / 4;
+        log.append("\n\n" + name + " slashes with shadowy claws!");
+        dealDamage(target, dmg, log);
+    }
+
+    private void flameWave(Player target, JTextArea log) {
+        int dmg = 5 + rand.nextInt(8) - target.defense / 4;
+        log.append("\n\n" + name + " unleashes a wave of void flames!");
+        dealDamage(target, dmg, log);
     }
 
     private void powerCharge(JTextArea log) {
-        rageActive = true;
-        log.append("\n\n" + name + " channels immense energy (preparing a devastating blow)!");
+        rageCharged = true;
+        log.append("\n\n" + name + " gathers catastrophic energy!");
     }
 
-    private void misfire(Character target, JTextArea log) {
-        int dmg = 1 + rand.nextInt(4);
-        dmg = Math.max(0, dmg - target.defense / 4);
-        target.health -= dmg;
-        log.append("\n\n" + name + " fumbles a spell — barely scratching you for " + dmg + " damage!");
+    private void misfire(Player target, JTextArea log) {
+        int dmg = 2 + rand.nextInt(4);
+        log.append("\n\n" + name + " miscasts a spell!");
+        dealDamage(target, dmg, log);
     }
 
-    private void devastatingBlow(Character target, JTextArea log) {
+    private void devastatingBlow(Player target, JTextArea log) {
         int dmg = attackPower + 20 + rand.nextInt(15) - target.defense / 5;
-        dmg = Math.max(0, dmg);
-        target.health -= dmg;
-        log.append("\n\n" + name + " unleashes a DEVASTATING BLOW for " + dmg + " damage!");
+        log.append("\n\n" + name + " unleashes a DEVASTATING BLOW!");
+        dealDamage(target, dmg, log);
     }
 
-    public boolean isPhase2() { return phase2; }
+    public Ally getAlly() {
+        return lura;
+    }
+
+    public boolean isPhase2() {
+        return phase2;
+    }
 }
-
-// Simple ally class for Lura
-
-
