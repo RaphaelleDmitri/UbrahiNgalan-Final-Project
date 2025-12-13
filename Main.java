@@ -7,12 +7,13 @@ public class Main extends JFrame {
     public Player player;
     private List<Enemy> enemies;
     MainMenuPanel mainMenu;
-    private JPanel gamePanel;    
+    private MapPanel gamePanel;  // Changed from JPanel to MapPanel
     BattlePanel battlePanel;
     ShopPanel shopPanel;
     NPCConversation npcPanel;
 
     private List<NPC> npcList;  // MUST be initialized
+    private boolean renzDefeated = false; // Track if Renz was defeated
 
     public Main() {
 
@@ -121,13 +122,43 @@ public class Main extends JFrame {
         player.coins += reward;
     }
 
+    // Method called when Corrupted King Renz is defeated
+    public void onRenzDefeated() {
+        System.out.println("DEBUG: onRenzDefeated() called!"); // DEBUG
+        renzDefeated = true; // Mark that Renz was defeated
+    }
+
+    // Return to map and spawn Spire if Renz was defeated
     public void returnToMap() {
+        System.out.println("DEBUG: returnToMap() called"); // DEBUG
+        System.out.println("DEBUG: renzDefeated = " + renzDefeated); // DEBUG
+        System.out.println("DEBUG: gamePanel = " + gamePanel); // DEBUG
+        
         setContentPane(gamePanel);
+        revalidate();
+        repaint();
+        
+        // Spawn spire after returning to map if Renz was defeated
+        if (renzDefeated && gamePanel != null) {
+            System.out.println("DEBUG: Spawning spire now!"); // DEBUG
+            SwingUtilities.invokeLater(() -> {
+                gamePanel.spawnSpire();
+                renzDefeated = false; // Reset flag
+            });
+        }
+        
+        // CRITICAL: Request focus multiple times to ensure it works
         SwingUtilities.invokeLater(() -> {
+            gamePanel.setFocusable(true);
             gamePanel.requestFocusInWindow();
-            revalidate();
-            repaint();
         });
+        
+        // Double-check focus after a short delay
+        Timer focusTimer = new Timer(100, e -> {
+            gamePanel.requestFocusInWindow();
+        });
+        focusTimer.setRepeats(false);
+        focusTimer.start();
     }
 
     public void startBossBattle() {

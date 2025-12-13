@@ -203,13 +203,20 @@ public class BattlePanel extends JPanel {
         
             boolean wasBoss = false;
             boolean gleihDefeated = false;
+            boolean renzDefeated = false; // NEW: Track if Renz was defeated
         
             for (Enemy e : dead) {
+                System.out.println("DEBUG BattlePanel: Checking dead enemy: " + e.getName()); // DEBUG
                 if (e instanceof BossEnemyWitch) {
                     gleihDefeated = true;
                     break; 
                 } else if (e instanceof BossEnemy) {
                     wasBoss = true;
+                    // NEW: Check if it's specifically Renz
+                    if (e.getName().contains("Renz") || e.getName().contains("Corrupted King")) {
+                        System.out.println("DEBUG BattlePanel: RENZ DETECTED!"); // DEBUG
+                        renzDefeated = true;
+                    }
                 }
             }
         
@@ -221,6 +228,14 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> The Corrupted King collapses... The final blow!");
                 log.append("\n\n>> VICTORY!");
                 log.append("\nYou found something... a legendary weapon?");
+                
+                // NEW: Spawn the Spire when Renz is defeated
+                if (renzDefeated) {
+                    System.out.println("DEBUG BattlePanel: Calling game.onRenzDefeated()"); // DEBUG
+                    game.onRenzDefeated();
+                } else {
+                    System.out.println("DEBUG BattlePanel: renzDefeated is FALSE"); // DEBUG
+                }
             } else {
                 log.append("\n\n>> VICTORY!");
             }
