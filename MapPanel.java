@@ -14,6 +14,7 @@ public class MapPanel extends JPanel {
     private JLabel info; 
     Random rand = new Random();
     private boolean spireSpawned = false; // Boolean to track if Spire has spawned
+    private boolean renzDefeated = false; // Boolean to track if Renz has been defeated
 
     public MapPanel(Main game){
         this.game = game;
@@ -208,6 +209,18 @@ public class MapPanel extends JPanel {
             tiles[spireX][spireY].setText("Spire");
             tiles[spireX][spireY].setForeground(Color.WHITE);
             spireSpawned = true;
+            renzDefeated = true; // Mark that Renz has been defeated
+            
+            // Remove the Castle tile so Renz can't be fought again
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+                    if (tiles[i][j].getText().equals("Castle") || tiles[i][j].getText().equals("CastlePlaceHolder")) {
+                        tiles[i][j].setText("Ruins"); // Change to "Ruins" or empty
+                        tiles[i][j].setForeground(Color.GRAY);
+                    }
+                }
+            }
+            
             info.setText("A mysterious Spire has appeared on the map!");
             updatePlayerPosition(); // Refresh the map visually
         }
@@ -265,8 +278,20 @@ public class MapPanel extends JPanel {
         } else { 
             // Non-empty tile → predefined enemy or event
             if(tileName.equals("Castle")){
-                game.startBossBattle();  } 
-                else if(tileName.equals("NPC")){
+                if (!renzDefeated) {
+                    game.startBossBattle();
+                } else {
+                    info.setText("The castle lies in ruins. The Corrupted King is no more.");
+                }
+            } else if(tileName.equals("Ruins")){
+                info.setText("The castle lies in ruins. The Corrupted King is no more.");
+            } else if(tileName.equals("CastlePlaceHolder")){
+                if (!renzDefeated) {
+                    game.startBossBattle();
+                } else {
+                    info.setText("The castle lies in ruins. The Corrupted King is no more.");
+                }
+            } else if(tileName.equals("NPC")){
                     info.setText("You approach an NPC... (dialogue system coming soon)");
                     game.startConversation();
                 } else if(tileName.equals("Spire")){
