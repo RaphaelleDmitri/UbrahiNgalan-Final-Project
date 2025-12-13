@@ -110,16 +110,22 @@ public class ShopPanel extends JPanel {
     private void buyWeapon() {
         if (!weaponQueue.isEmpty()) {
             Weapon nextWeapon = weaponQueue.peek();
+    
             if (player.coins >= nextWeapon.price) {
                 player.coins -= nextWeapon.price;
-                player.attackPower += nextWeapon.damage;
-                player.equippedWeapon = nextWeapon; // update equipped weapon
-                log.append("\nYou bought " + nextWeapon.name + "! (+" + nextWeapon.damage + " Attack)\nCoins: " + player.coins);
+    
+                // ADD TO INVENTORY (NOT EQUIP)
+                player.weapons.add(nextWeapon);
+    
+                log.append("\nYou bought " + nextWeapon.name +
+                    "! Added to inventory.\nCoins: " + player.coins);
+    
                 weaponQueue.poll();
                 updateWeaponButton();
-                statPanel.updateStats(); // update live stats
+                statPanel.updateStats();
             } else {
-                log.append("\nNot enough coins to buy " + nextWeapon.name + "! Coins: " + player.coins);
+                log.append("\nNot enough coins to buy " + nextWeapon.name +
+                    "! Coins: " + player.coins);
             }
         }
     }
@@ -127,19 +133,26 @@ public class ShopPanel extends JPanel {
     private void buyArmor() {
         if (!armorQueue.isEmpty()) {
             Armor nextArmor = armorQueue.peek();
+    
             if (player.coins >= nextArmor.price) {
                 player.coins -= nextArmor.price;
-                player.defense += nextArmor.defense;
-                player.equippedArmor = nextArmor; // update equipped armor
-                log.append("\nYou bought " + nextArmor.name + "! (+" + nextArmor.defense + " Defense)\nCoins: " + player.coins);
+    
+                // ADD TO INVENTORY (NOT EQUIP)
+                player.armors.add(nextArmor);
+    
+                log.append("\nYou bought " + nextArmor.name +
+                    "! Added to inventory.\nCoins: " + player.coins);
+    
                 armorQueue.poll();
                 updateArmorButton();
-                statPanel.updateStats(); // update live stats
+                statPanel.updateStats();
             } else {
-                log.append("\nNot enough coins to buy " + nextArmor.name + "! Coins: " + player.coins);
+                log.append("\nNot enough coins to buy " + nextArmor.name +
+                    "! Coins: " + player.coins);
             }
         }
     }
+    
 
     private void buyPotion() {
         if (player.coins >= 10) {

@@ -1,17 +1,19 @@
 import java.awt.*;
 import java.util.Random;
 import javax.swing.*;
+
 public class MapPanel extends JPanel {
+    
+    private JPanel sidePanel = null;
     private Main game;
     private JButton[][] tiles;
     private int playerX = 2; // starting position || CAN BE CHANGED
     private int playerY = 2;
-    
     private final int ROWS = 12;
     private final int COLS = 12;
-
     private JLabel info; 
     Random rand = new Random();
+
     public MapPanel(Main game){
         this.game = game;
         setLayout(new BorderLayout());
@@ -37,16 +39,28 @@ public class MapPanel extends JPanel {
     leftPanel.add(statsBtnPanel, BorderLayout.NORTH);
     add(leftPanel, BorderLayout.WEST);
 
+        //Inventory Button
+    JButton inventoryBtn = new JButton("Inventory");
+    inventoryBtn.setFont(new Font("Consolas", Font.BOLD, 18));
+    inventoryBtn.setBackground(new Color(60, 60, 60));
+    inventoryBtn.setForeground(new Color(255, 255, 155));
+    inventoryBtn.setFocusPainted(false);
+
+    JPanel inventoryBtnPanel = new JPanel();
+    inventoryBtnPanel.setBackground(Color.DARK_GRAY);
+    inventoryBtnPanel.add(inventoryBtn);
+    leftPanel.add(inventoryBtnPanel, BorderLayout.SOUTH);
+
+    inventoryBtn.addActionListener(e -> {
+        toggleSidePanel(new InventoryPanel(game.player));
+    });
     
     statsBtn.addActionListener(e -> {
-    
-    StatPanel statPanel = new StatPanel(game.player);
-        add(statPanel, BorderLayout.EAST);
-        revalidate();
-        repaint();
+        toggleSidePanel(new StatPanel(game.player));
     });
+    
 
-        
+        // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
         info.setFont(new Font("Consolas", Font.BOLD, 16));
@@ -71,13 +85,7 @@ public class MapPanel extends JPanel {
             }
         }
 
-
-        
-        
-
         // trial buildings
-
-
         tiles[0][1].setText("Shop");
         //tiles[0][1].setForeground(Color.WHITE);
 
@@ -95,9 +103,9 @@ public class MapPanel extends JPanel {
         int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
         int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
         
-        
-        
-            int npcAmount = 4;
+
+        //npc ammount
+            int npcAmount = 2;
         for(int k = 0; k < npcAmount; k++){
         int x,y;
 
@@ -112,10 +120,7 @@ public class MapPanel extends JPanel {
         tiles[x][y].setForeground(Color.WHITE);
         }
 
-        
-        
-
-
+            //prioritize later
             //tile Colorization
         //    tiles[0][0].setText(".");
         tiles[0][2].setText(".");
@@ -153,7 +158,7 @@ public class MapPanel extends JPanel {
     }
 
         
-     //work on this later (randomLocationCreator)
+     //work on this later (randomLocationNamer)
          /* 
         if(playerX == secretAreaLocationX && playerY == secretAreaLocationY){
             int randomArea = rand.nextInt(3);
@@ -249,13 +254,13 @@ public class MapPanel extends JPanel {
                     }
             else {
                 info.setText("You are at: " + tileName);
-                System.out.print("Currently on: " + tileName);
+                System.out.println("Currently on: " + tileName);
             }
         }
         
         }
         private long lastMoveTime = 0; // Track the last move time
-        private final int MOVE_DELAY = 200; // Delay in milliseconds
+        private final int MOVE_DELAY = 100; // Delay in milliseconds
 
         
         
@@ -316,7 +321,26 @@ public class MapPanel extends JPanel {
         }
         // where player
         tiles[playerX][playerY].setBackground(Color.WHITE);
+         }
 
+         private void toggleSidePanel(JPanel newPanel) {
+            if (sidePanel != null) {
+                remove(sidePanel);
         
-    }
+                // If clicking the same panel, just close it
+                if (sidePanel.getClass().equals(newPanel.getClass())) {
+                    sidePanel = null;
+                    revalidate();
+                    repaint();
+                    return;
+                }
+            }
+        
+            sidePanel = newPanel;
+            add(sidePanel, BorderLayout.EAST);
+            revalidate();
+            repaint();
+        }
+         
+        
 }

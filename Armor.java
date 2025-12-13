@@ -8,4 +8,10 @@ public class Armor {
         this.defense = defense;
         this.price = price;
     }
+
+    @Override
+public String toString() {
+    return name + " (+" + defense + " DEF)";
+}
+
 }

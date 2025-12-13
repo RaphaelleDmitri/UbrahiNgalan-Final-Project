@@ -17,7 +17,7 @@ final stats not done yet
 
 TODO:
 
-A custom fight with the Castle King
+A custom fight with the Castle King 
 More scenario (not fights but conversations)
 A flee mechanic (40% chance)
 more structures

@@ -31,10 +31,13 @@ public class Main extends JFrame {
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
         enemies.add(new Enemy("Slime", 20, 2, 6, 0, 0));
 
+
         // Boss 1
         enemies.add(new Enemy("Renz, the Corrupted King", 500, 30, 20, 0, 0));
         // Boss 2
-        enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 5, 0));
+        enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 0, 0));
+        // Boss 3
+        //Eum, The VoidMother, health 800, attack 70, defense 30
         
         List<NPC> npcList = new ArrayList<>();
 
@@ -69,7 +72,6 @@ public class Main extends JFrame {
         npcList.add(elder);
         npcPanel = new NPCConversation(this, player, npcList);
         // -----------------------------------------------------
-
         showMainMenu();
         setVisible(true);
     }
