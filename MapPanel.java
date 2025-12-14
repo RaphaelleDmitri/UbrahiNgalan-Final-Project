@@ -28,7 +28,7 @@ public class MapPanel extends JPanel {
 
         // Stats button
     JButton statsBtn = new JButton("Stats");
-    statsBtn.setFont(new Font("Consolas", Font.BOLD, 18));
+    statsBtn.setFont(GameFonts.press(18f));
     statsBtn.setBackground(new Color(60, 60, 60));
     statsBtn.setForeground(new Color(255, 255, 155));
     statsBtn.setFocusPainted(false);
@@ -43,7 +43,7 @@ public class MapPanel extends JPanel {
 
         //Inventory Button
     JButton inventoryBtn = new JButton("Inventory");
-    inventoryBtn.setFont(new Font("Consolas", Font.BOLD, 18));
+    inventoryBtn.setFont(GameFonts.press(18f));
     inventoryBtn.setBackground(new Color(60, 60, 60));
     inventoryBtn.setForeground(new Color(255, 255, 155));
     inventoryBtn.setFocusPainted(false);
@@ -65,12 +65,12 @@ public class MapPanel extends JPanel {
         // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
-        info.setFont(new Font("Consolas", Font.BOLD, 16));
+        info.setFont(GameFonts.press(16f));
         info.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
         add(info, BorderLayout.NORTH);
 
         // map
-        JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 0, 0));
+        JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 1, 1));
         gridPanel.setBackground(Color.BLACK);
            
         tiles = new JButton[ROWS][COLS];
@@ -79,7 +79,7 @@ public class MapPanel extends JPanel {
             for(int j=0;j<COLS;j++){
             JButton tile = new JButton();
             tile.setEnabled(false);
-            tile.setFont(new Font("Consolas", Font.BOLD, 24));
+            tile.setFont(GameFonts.press(16f));
             tile.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Set border to black
             tile.setForeground(Color.BLACK);
             tiles[i][j] = tile;
@@ -143,7 +143,7 @@ public class MapPanel extends JPanel {
     controls.setBackground(Color.DARK_GRAY);
     JLabel moveInstr = new JLabel("Use the ARROW KEYS to move", SwingConstants.CENTER);
     moveInstr.setForeground(new Color(240,220,140));
-    moveInstr.setFont(new Font("Consolas", Font.BOLD, 16));
+    moveInstr.setFont(GameFonts.jettsBold(16f));
     controls.add(moveInstr, BorderLayout.CENTER);
 
     add(controls, BorderLayout.SOUTH);
@@ -182,7 +182,7 @@ public class MapPanel extends JPanel {
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 16));
+        btn.setFont(GameFonts.jettsBold(16f));
         btn.setFocusPainted(false);
     }
 
