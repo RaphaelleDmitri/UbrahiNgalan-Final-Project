@@ -7,7 +7,7 @@ public class InventoryPanel extends JPanel {
     private Player player;
 
     private JLabel healthLabel, coinsLabel, attackLabel, defenseLabel;
-    private JLabel equippedWeaponLabel, equippedArmorLabel;
+    private JLabel equippedWeaponLabel, equippedArmorLabel, potionLabel;
 
     private JList<Weapon> weaponList;
     private JList<Armor> armorList;
@@ -24,7 +24,7 @@ public class InventoryPanel extends JPanel {
         setPreferredSize(new Dimension(600, 500));
 
         // ===== TOP STATS =====
-        JPanel statsPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel statsPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         statsPanel.setBackground(new Color(25, 25, 25));
 
         healthLabel = createLabel("Health: " + player.getHealth());
@@ -33,6 +33,7 @@ public class InventoryPanel extends JPanel {
         defenseLabel = createLabel("Defense: " + player.defense);
         equippedWeaponLabel = createLabel("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
         equippedArmorLabel = createLabel("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
+        potionLabel = createLabel("Potions: " + player.potionAmount);
 
         statsPanel.add(healthLabel);
         statsPanel.add(coinsLabel);
@@ -40,6 +41,7 @@ public class InventoryPanel extends JPanel {
         statsPanel.add(defenseLabel);
         statsPanel.add(equippedWeaponLabel);
         statsPanel.add(equippedArmorLabel);
+        statsPanel.add(potionLabel);
 
         add(statsPanel, BorderLayout.NORTH);
 
@@ -86,7 +88,7 @@ public class InventoryPanel extends JPanel {
         sortArmorDefenseBtn.addActionListener(e -> sortArmorsByDefense());
         sortArmorNameBtn.addActionListener(e -> sortArmorsByName());
 
-        JPanel sortPanel = new JPanel();
+        JPanel sortPanel = new JPanel(new GridLayout(2, 2, 5, 5));
         sortPanel.setBackground(new Color(25, 25, 25));
         sortPanel.add(sortByDamageBtn);
         sortPanel.add(sortByNameBtn);
@@ -202,6 +204,7 @@ public class InventoryPanel extends JPanel {
         defenseLabel.setText("Defense: " + player.defense);
         equippedWeaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
         equippedArmorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
+        potionLabel.setText("Potions: " + player.potionAmount);
         repaint();
     }
 
