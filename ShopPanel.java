@@ -60,7 +60,7 @@ public class ShopPanel extends JPanel {
         log.setWrapStyleWord(true);
         log.setBackground(new Color(40, 40, 40));
         log.setForeground(Color.WHITE);
-        log.setFont(new Font("Consolas", Font.BOLD, 28));
+        log.setFont(GameFonts.jettsBold(28f));
         log.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
 
         JScrollPane scroll = new JScrollPane(log);
@@ -80,7 +80,7 @@ public class ShopPanel extends JPanel {
         JButton btn = new JButton(text);
         btn.setBackground(new Color(60, 60, 60));
         btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 26));
+        btn.setFont(GameFonts.jettsBold(26f));
         btn.setFocusPainted(false);
         return btn;
     }
