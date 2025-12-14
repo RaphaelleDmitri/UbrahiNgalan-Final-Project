@@ -62,8 +62,8 @@ public class InventoryPanel extends JPanel {
 
         JPanel inventoryPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         inventoryPanel.setBackground(new Color(25, 25, 25));
-        inventoryPanel.add(createListPanel("Weapons", weaponList));
-        inventoryPanel.add(createListPanel("Armors", armorList));
+        inventoryPanel.add(createListPanel("WEAPONS", weaponList));
+        inventoryPanel.add(createListPanel("ARMORS", armorList));
 
         add(inventoryPanel, BorderLayout.CENTER);
 
@@ -204,30 +204,26 @@ public class InventoryPanel extends JPanel {
     // Set the font once
     Font labelFont = GameFonts.press(16f);
     
-    // Set padding for each label
-    int padding = 5; 
-        healthLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        coinsLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        attackLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        defenseLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        equippedWeaponLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        equippedArmorLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        potionLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-
+        
         healthLabel.setFont(labelFont);
         healthLabel.setText("Health: " + player.getHealth());
+        healthLabel.setBorder(new EmptyBorder(20,20,5,0));
         coinsLabel.setFont(labelFont);
         coinsLabel.setText("Coins: " + player.coins);
+        coinsLabel.setBorder(new EmptyBorder(20,0,5,0));
         attackLabel.setFont(labelFont);
         attackLabel.setText("Attack: " + player.attackPower);
+        attackLabel.setBorder(new EmptyBorder(0,20,0,0));
         defenseLabel.setFont(labelFont);
         defenseLabel.setText("Defense: " + player.defense);
         equippedWeaponLabel.setFont(labelFont);
         equippedWeaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
+        equippedWeaponLabel.setBorder(new EmptyBorder(0,20,0,0));
         equippedArmorLabel.setFont(labelFont);
         equippedArmorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
         potionLabel.setFont(labelFont);
         potionLabel.setText("Potions: " + player.potionAmount);
+        potionLabel.setBorder(new EmptyBorder(0,20,5,0));
     
         repaint();
 }
@@ -236,7 +232,8 @@ public class InventoryPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(25, 25, 25));
         JLabel label = createLabel(title);
-        label.setFont(GameFonts.pressBold(20f));
+        label.setFont(GameFonts.pressBold(26f));
+        label.setBorder(new EmptyBorder(0,0,10,0));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.NORTH);
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
@@ -263,7 +260,10 @@ public class InventoryPanel extends JPanel {
     private void styleList(JList<?> list) {
         list.setBackground(new Color(35, 35, 35));
         list.setForeground(new Color(240, 220, 140));
-        list.setFont(GameFonts.press(16f));
+        list.setFont(GameFonts.press(18f));
         list.setSelectionBackground(new Color(100, 80, 30));
+        list.setFixedCellHeight(35);
+        list.setBorder(new EmptyBorder(5,20,0,0));
+
     }
 }
