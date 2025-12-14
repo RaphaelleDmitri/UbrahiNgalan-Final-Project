@@ -223,7 +223,11 @@ public class BattlePanel extends JPanel {
             if (gleihDefeated) {
                 log.append("\n\n>> DING DONG, The Dancing Witch is Dead!");
                 log.append("\n\n>> VICTORY!");
-                log.append("\nYou found something... a legendary armor?");
+                log.append("\nYou found something... a legendary weapon and armor!");
+                // Give both legendary items to the player as Gleih's reward (soulbound)
+                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
+                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
+                System.out.println("DEBUG BattlePanel: Gleih rewards granted to player");
             } else if (wasBoss) {
                 log.append("\n\n>> The Corrupted King collapses... The final blow!");
                 log.append("\n\n>> VICTORY!");
