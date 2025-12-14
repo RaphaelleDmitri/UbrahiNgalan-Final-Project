@@ -23,6 +23,8 @@ public class BattlePanel extends JPanel {
     Random rand = new Random();
 
     private int lastPlayerAction = 0;
+    private JPanel buttons; // moved to field so we can toggle buttons on game over
+    private JButton restartBtn; // shown when player dies
 
     public BattlePanel(Main game, Player player, Enemy enemy) {
         this(game, player, List.of(enemy));
@@ -69,7 +71,7 @@ public class BattlePanel extends JPanel {
         rightPanel.add(targetBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
-        JPanel buttons = new JPanel();
+        buttons = new JPanel();
         buttons.setBackground(new Color(25,25,25));
 
         JButton attackBtn = styledBtn("Attack");
@@ -77,10 +79,14 @@ public class BattlePanel extends JPanel {
         JButton healBtn   = styledBtn("Heal");
         JButton fleeBtn = styledBtn("Flee");
 
+        restartBtn = styledBtn("Restart");
+        restartBtn.setVisible(false);
+
         buttons.add(attackBtn);
         buttons.add(defendBtn);
         buttons.add(healBtn);
         buttons.add(fleeBtn);
+        buttons.add(restartBtn);
         add(buttons, BorderLayout.SOUTH);
 
 
@@ -88,6 +94,11 @@ public class BattlePanel extends JPanel {
         defendBtn.addActionListener(e -> doTurn(2));
         healBtn.addActionListener(e -> doTurn(3));
         fleeBtn.addActionListener(e -> doTurn(4));
+
+        restartBtn.addActionListener(e -> {
+            // Reset game to main menu
+            game.resetGame();
+        });
 
        
         
@@ -258,6 +269,21 @@ public class BattlePanel extends JPanel {
 
         if(!player.isAlive()) {
             log.append("\n\n>> GAME OVER");
+            // Show restart button and disable other actions
+            SwingUtilities.invokeLater(() -> {
+                for (Component c : buttons.getComponents()) {
+                    if (c instanceof JButton b) {
+                        if (b != restartBtn) b.setVisible(false);
+                    }
+                }
+                // Optionally hide target selector as well
+                if (targetBox != null) targetBox.setVisible(false);
+
+                restartBtn.setVisible(true);
+                restartBtn.setEnabled(true);
+                buttons.revalidate();
+                buttons.repaint();
+            });
         }
     }
 

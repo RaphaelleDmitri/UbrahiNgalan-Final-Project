@@ -27,6 +27,8 @@ public class NPCConversation extends JPanel {
 
     private JLabel infoLabel;
     private Random rand = new Random();
+    private JPanel buttons;
+    private JButton[] optionButtons = new JButton[3];
     
     
 
@@ -75,22 +77,30 @@ public class NPCConversation extends JPanel {
         rightPanel.add(npcBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
-        // Dialogue buttons
-        JPanel buttons = new JPanel();
+        // Dialogue buttons (will show actual choice text)
+        buttons = new JPanel();
         buttons.setBackground(new Color(25, 25, 25));
 
-        JButton option1 = styledBtn("Option 1");
-        JButton option2 = styledBtn("Option 2");
-        JButton option3 = styledBtn("Option 3");
-
-        buttons.add(option1);
-        buttons.add(option2);
-        buttons.add(option3);
+        for (int i = 0; i < 3; i++) {
+            optionButtons[i] = styledBtn("Option " + (i+1));
+            final int idx = i + 1;
+            optionButtons[i].addActionListener(e -> handleDialogue(idx));
+            buttons.add(optionButtons[i]);
+        }
         add(buttons, BorderLayout.SOUTH);
 
-        option1.addActionListener(e -> handleDialogue(1));
-        option2.addActionListener(e -> handleDialogue(2));
-        option3.addActionListener(e -> handleDialogue(3));
+        // NPC selector change listener
+        npcBox.addActionListener(e -> {
+            int sel = npcBox.getSelectedIndex();
+            if (sel >= 0 && sel < npcs.size()) {
+                NPC selNpc = npcs.get(sel);
+                // Reset to start node for this NPC
+                currentNode.put(selNpc, selNpc.getStartNode());
+                // Clear log and show fresh dialogue
+                log.setText(selNpc.getName() + " speaks:\n");
+                displayCurrentDialogue(selNpc);
+            }
+        });
 
         // Start conversation with first NPC
         if (!npcs.isEmpty()) {
@@ -121,14 +131,17 @@ public class NPCConversation extends JPanel {
         DialogueNode node = current.getNode(nodeId);
         if (node == null) return;
 
-        String playerChoice = node.getPlayerChoice(option);
+        // Convert 1-based button index to 0-based array index
+        int arrayIdx = option - 1;
+
+        String playerChoice = node.getPlayerChoice(arrayIdx);
         log.append("\nYou: " + playerChoice);
 
         // Determine next node based on option
-        String nextNode = node.getNextNode(option);
+        String nextNode = node.getNextNode(arrayIdx);
         if (nextNode == null) {
             // End of conversation
-            log.append("\n" + current.getName() + ": " + node.getNPCResponse(option));
+            log.append("\n" + current.getName() + ": " + node.getNPCResponse(arrayIdx));
             log.append("\n\n>> Conversation ended.");
             // Wait 3 seconds so the player can read the final lines, then return to the map
             javax.swing.Timer timer = new javax.swing.Timer(3000, ev -> {
@@ -148,7 +161,21 @@ public class NPCConversation extends JPanel {
         DialogueNode node = npc.getNode(nodeId);
         if (node == null) return;
 
-        log.append("\n" + npc.getName() + ": " + node.getNPCResponse(0)); // 0 = default message
+        // Show NPC's current line (the initial message for this node)
+        log.append("\n" + npc.getName() + ": " + node.getNPCText());
+
+        // Update option buttons to show actual player choices
+        for (int i = 0; i < optionButtons.length; i++) {
+            String choice = node.getPlayerChoice(i);
+            if (choice == null || choice.isEmpty()) {
+                optionButtons[i].setVisible(false);
+            } else {
+                optionButtons[i].setText(choice);
+                optionButtons[i].setVisible(true);
+            }
+        }
+        buttons.revalidate();
+        buttons.repaint();
     }
 
     private String updateNPCInfo() {
