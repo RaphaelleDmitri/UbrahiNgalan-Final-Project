@@ -1,12 +1,14 @@
 import java.awt.*;
 import java.util.Random;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class MapPanel extends JPanel {
     
     private JPanel sidePanel = null;
     private Main game;
     private JButton[][] tiles;
+    private JPanel gridPanel;
     private int playerX = 2; // starting position || CAN BE CHANGED
     private int playerY = 2;
     private final int ROWS = 12;
@@ -66,11 +68,11 @@ public class MapPanel extends JPanel {
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
         info.setFont(GameFonts.press(16f));
-        info.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        info.setBorder(BorderFactory.createEmptyBorder(7,0,7,0));
         add(info, BorderLayout.NORTH);
 
         // map
-        JPanel gridPanel = new JPanel(new GridLayout(ROWS, COLS, 1, 1));
+        gridPanel = new JPanel(new GridLayout(ROWS, COLS, 1, 1));
         gridPanel.setBackground(Color.BLACK);
            
         tiles = new JButton[ROWS][COLS];
@@ -138,13 +140,30 @@ public class MapPanel extends JPanel {
 
         add(gridPanel, BorderLayout.CENTER);
 
-    // movement instruction: prefer using arrow keys
+    // movement instruction and return button
     JPanel controls = new JPanel(new BorderLayout());
     controls.setBackground(Color.DARK_GRAY);
+    
+    // Movement instruction label
     JLabel moveInstr = new JLabel("Use the ARROW KEYS to move", SwingConstants.CENTER);
     moveInstr.setForeground(new Color(240,220,140));
+    moveInstr.setBorder(new EmptyBorder(5, 10, 5, 10)); 
     moveInstr.setFont(GameFonts.jettsBold(16f));
     controls.add(moveInstr, BorderLayout.CENTER);
+    
+    // Return to Main Menu button
+    JButton returnHomeBtn = new JButton("Main Menu");
+    returnHomeBtn.setFont(GameFonts.press(16f));
+    returnHomeBtn.setBackground(new Color(60, 60, 60));
+    returnHomeBtn.setForeground(new Color(255, 255, 155));
+    returnHomeBtn.setFocusPainted(false);
+    returnHomeBtn.setBorder(new EmptyBorder(5, 15, 5, 15));
+    returnHomeBtn.addActionListener(e -> {
+        game.setContentPane(new MainMenuPanel(game));
+        game.revalidate();
+    });
+    
+    controls.add(returnHomeBtn, BorderLayout.EAST);
 
     add(controls, BorderLayout.SOUTH);
 
@@ -378,22 +397,49 @@ public class MapPanel extends JPanel {
          }
 
          private void toggleSidePanel(JPanel newPanel) {
+            boolean closingSamePanel = sidePanel != null && sidePanel.getClass().equals(newPanel.getClass());
+
             if (sidePanel != null) {
                 remove(sidePanel);
-        
-                // If clicking the same panel, just close it
-                if (sidePanel.getClass().equals(newPanel.getClass())) {
-                    sidePanel = null;
-                    revalidate();
-                    repaint();
-                    return;
-                }
+                sidePanel = null;
             }
-        
-            sidePanel = newPanel;
-            add(sidePanel, BorderLayout.EAST);
+
+            if (closingSamePanel) {
+                // Restore map if we were closing the current panel
+                ensureGridAttached();
+                gridPanel.setVisible(true);
+                revalidate();
+                repaint();
+                return;
+            }
+
+            // Inventory takes the whole gameplay area (except the left button column)
+            if (newPanel instanceof InventoryPanel) {
+                ensureGridDetached();
+                sidePanel = newPanel;
+                add(sidePanel, BorderLayout.CENTER);
+            } else {
+                // Other panels stay as a side drawer while keeping the map visible
+                ensureGridAttached();
+                gridPanel.setVisible(true);
+                sidePanel = newPanel;
+                add(sidePanel, BorderLayout.EAST);
+            }
+
             revalidate();
             repaint();
+        }
+
+        private void ensureGridAttached() {
+            if (gridPanel.getParent() == null) {
+                add(gridPanel, BorderLayout.CENTER);
+            }
+        }
+
+        private void ensureGridDetached() {
+            if (gridPanel.getParent() != null) {
+                remove(gridPanel);
+            }
         }
          
         

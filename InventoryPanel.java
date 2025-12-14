@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class InventoryPanel extends JPanel {
 
+    private Main game;
     private Player player;
 
     private JLabel healthLabel, coinsLabel, attackLabel, defenseLabel;
@@ -20,8 +22,8 @@ public class InventoryPanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
-        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
-        setPreferredSize(new Dimension(600, 500));
+        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 2));
+        setPreferredSize(new Dimension(1000, 400));
 
         // ===== TOP STATS =====
         JPanel statsPanel = new JPanel(new GridLayout(4, 2, 10, 10));
@@ -94,6 +96,7 @@ public class InventoryPanel extends JPanel {
         sortPanel.add(sortByNameBtn);
         sortPanel.add(sortArmorDefenseBtn);
         sortPanel.add(sortArmorNameBtn);
+
 
         // ===== BOTTOM PANEL =====
         JPanel bottomPanel = new JPanel(new GridLayout(2, 1, 10, 10));
@@ -198,21 +201,42 @@ public class InventoryPanel extends JPanel {
 
     // ===== Update Stats =====
     public void updateStats() {
-        healthLabel.setText("Health: " + player.getHealth());
-        coinsLabel.setText("Coins: " + player.coins);
-        attackLabel.setText("Attack: " + player.attackPower);
-        defenseLabel.setText("Defense: " + player.defense);
-        equippedWeaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
-        equippedArmorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
-        potionLabel.setText("Potions: " + player.potionAmount);
-        repaint();
-    }
+    // Set the font once
+    Font labelFont = GameFonts.press(16f);
+    
+    // Set padding for each label
+    int padding = 5; 
+        healthLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        coinsLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        attackLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        defenseLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        equippedWeaponLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        equippedArmorLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        potionLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
 
+        healthLabel.setFont(labelFont);
+        healthLabel.setText("Health: " + player.getHealth());
+        coinsLabel.setFont(labelFont);
+        coinsLabel.setText("Coins: " + player.coins);
+        attackLabel.setFont(labelFont);
+        attackLabel.setText("Attack: " + player.attackPower);
+        defenseLabel.setFont(labelFont);
+        defenseLabel.setText("Defense: " + player.defense);
+        equippedWeaponLabel.setFont(labelFont);
+        equippedWeaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
+        equippedArmorLabel.setFont(labelFont);
+        equippedArmorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
+        potionLabel.setFont(labelFont);
+        potionLabel.setText("Potions: " + player.potionAmount);
+    
+        repaint();
+}
     // ===== Helper Methods =====
     private JPanel createListPanel(String title, JList<?> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(25, 25, 25));
         JLabel label = createLabel(title);
+        label.setFont(GameFonts.pressBold(20f));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.NORTH);
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
@@ -230,7 +254,8 @@ public class InventoryPanel extends JPanel {
         JButton button = new JButton(text);
         button.setBackground(new Color(60, 60, 60));
         button.setForeground(new Color(240, 220, 140));
-        button.setFont(GameFonts.pressBold(18f));
+        button.setBorder(new EmptyBorder(10, 20, 10, 20));        
+        button.setFont(GameFonts.pressBold(20f));
         button.setFocusPainted(false);
         return button;
     }
@@ -238,7 +263,7 @@ public class InventoryPanel extends JPanel {
     private void styleList(JList<?> list) {
         list.setBackground(new Color(35, 35, 35));
         list.setForeground(new Color(240, 220, 140));
-        list.setFont(GameFonts.jetts(16f));
+        list.setFont(GameFonts.press(16f));
         list.setSelectionBackground(new Color(100, 80, 30));
     }
 }
