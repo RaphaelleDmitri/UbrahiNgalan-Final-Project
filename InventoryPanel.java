@@ -68,20 +68,14 @@ public class InventoryPanel extends JPanel {
         // ===== EQUIP BUTTONS =====
         JButton equipWeaponBtn = createButton("Equip Weapon");
         JButton equipArmorBtn = createButton("Equip Armor");
-        JButton sellWeaponBtn = createButton("Sell Weapon");
-        JButton sellArmorBtn = createButton("Sell Armor");
 
         equipWeaponBtn.addActionListener(e -> equipWeapon());
         equipArmorBtn.addActionListener(e -> equipArmor());
-        sellWeaponBtn.addActionListener(e -> sellWeapon());
-        sellArmorBtn.addActionListener(e -> sellArmor());
 
         JPanel equipPanel = new JPanel();
         equipPanel.setBackground(new Color(25, 25, 25));
         equipPanel.add(equipWeaponBtn);
         equipPanel.add(equipArmorBtn);
-        equipPanel.add(sellWeaponBtn);
-        equipPanel.add(sellArmorBtn);
 
         // ===== SORT BUTTONS =====
         JButton sortByDamageBtn = createButton("Sort Weapons by Damage");
@@ -128,59 +122,6 @@ public class InventoryPanel extends JPanel {
         updateStats();
     }
 
-    private void sellWeapon() {
-        Weapon selected = weaponList.getSelectedValue();
-        if (selected == null) {
-            JOptionPane.showMessageDialog(this, "Select a weapon to sell.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (!selected.tradable) {
-            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int ok = JOptionPane.showConfirmDialog(this, 
-            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
-            "Confirm Sale", 
-            JOptionPane.YES_NO_OPTION);
-
-        if (ok == JOptionPane.YES_OPTION) {
-            int earned = player.sellWeapon(selected);
-            if (earned > 0) {
-                refreshWeaponList();
-                updateStats();
-                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
-
-    private void sellArmor() {
-        Armor selected = armorList.getSelectedValue();
-        if (selected == null) {
-            JOptionPane.showMessageDialog(this, "Select armor to sell.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (!selected.tradable) {
-            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int ok = JOptionPane.showConfirmDialog(this, 
-            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
-            "Confirm Sale", 
-            JOptionPane.YES_NO_OPTION);
-
-        if (ok == JOptionPane.YES_OPTION) {
-            int earned = player.sellArmor(selected);
-            if (earned > 0) {
-                refreshArmorList();
-                updateStats();
-                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
     // ===== Weapon Sorting (Bubble Sort) =====
     private void sortWeaponsByName() {
         ArrayList<Weapon> list = player.weapons;
@@ -281,7 +222,7 @@ public class InventoryPanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(new Color(230, 205, 70));
-        label.setFont(new Font("Consolas", Font.BOLD, 18));
+        label.setFont(GameFonts.jettsBold(18f));
         return label;
     }
 
@@ -289,7 +230,7 @@ public class InventoryPanel extends JPanel {
         JButton button = new JButton(text);
         button.setBackground(new Color(60, 60, 60));
         button.setForeground(new Color(240, 220, 140));
-        button.setFont(new Font("Consolas", Font.BOLD, 18));
+        button.setFont(GameFonts.pressBold(18f));
         button.setFocusPainted(false);
         return button;
     }
@@ -297,7 +238,7 @@ public class InventoryPanel extends JPanel {
     private void styleList(JList<?> list) {
         list.setBackground(new Color(35, 35, 35));
         list.setForeground(new Color(240, 220, 140));
-        list.setFont(new Font("Consolas", Font.PLAIN, 16));
+        list.setFont(GameFonts.jetts(16f));
         list.setSelectionBackground(new Color(100, 80, 30));
     }
 }

@@ -45,7 +45,7 @@ public class NPCConversation extends JPanel {
 
         infoLabel = new JLabel(updateNPCInfo(), SwingConstants.CENTER);
         infoLabel.setForeground(new Color(230, 205, 70));
-        infoLabel.setFont(new Font("Consolas", Font.BOLD, 20));
+        infoLabel.setFont(GameFonts.jettsBold(20f));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(infoLabel, BorderLayout.NORTH);
 
@@ -54,7 +54,7 @@ public class NPCConversation extends JPanel {
         styledPane.setEditable(false);
         styledPane.setBackground(new Color(40, 40, 40));
         styledPane.setForeground(Color.WHITE);
-        styledPane.setFont(new Font("Consolas", Font.PLAIN, 25));
+        styledPane.setFont(GameFonts.jetts(25f));
         styledPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 2));
         doc = styledPane.getStyledDocument();
         createStyles(doc);
@@ -69,7 +69,7 @@ public class NPCConversation extends JPanel {
         rightPanel.setBackground(new Color(25, 25, 25));
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         npcBox = new JComboBox<>();
-        npcBox.setFont(new Font("Consolas", Font.BOLD, 20));
+        npcBox.setFont(GameFonts.jettsBold(20f));
         npcBox.setBackground(new Color(60, 60, 60));
         npcBox.setForeground(new Color(240, 220, 140));
         updateNPCBox();
@@ -115,7 +115,7 @@ public class NPCConversation extends JPanel {
         JButton btn = new JButton(txt);
         btn.setBackground(new Color(60, 60, 60));
         btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 32));
+        btn.setFont(GameFonts.jettsBold(32f));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -189,7 +189,7 @@ public class NPCConversation extends JPanel {
 
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
-        StyleConstants.setFontFamily(def, "Consolas");
+        StyleConstants.setFontFamily(def, GameFonts.jetts(25f).getFamily());
         StyleConstants.setFontSize(def, 25);
         StyleConstants.setForeground(def, Color.WHITE);
 
