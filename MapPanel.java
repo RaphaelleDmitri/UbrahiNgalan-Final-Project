@@ -2,9 +2,13 @@ import java.awt.*;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class MapPanel extends JPanel {
     
+    private Image backgroundImage;
     private JPanel sidePanel = null;
     private Main game;
     private JButton[][] tiles;
@@ -20,13 +24,19 @@ public class MapPanel extends JPanel {
 
     public MapPanel(Main game){
         this.game = game;
+    
+        try {
+            backgroundImage = ImageIO.read(new File("map.png"));
+        } catch (IOException e) {
+            System.out.println("Map background image not found, using color instead");
+        }
+        
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        // Add at the top of MapPanel constructor, after setBackground
     JPanel leftPanel = new JPanel();
     leftPanel.setLayout(new BorderLayout());
-    leftPanel.setBackground(Color.DARK_GRAY);
+    leftPanel.setOpaque(false);
 
         // Stats button
     JButton statsBtn = new JButton("Stats");
@@ -37,7 +47,7 @@ public class MapPanel extends JPanel {
 
         
     JPanel statsBtnPanel = new JPanel();
-    statsBtnPanel.setBackground(Color.DARK_GRAY);
+    statsBtnPanel.setOpaque(false);
     statsBtnPanel.add(statsBtn);
 
     leftPanel.add(statsBtnPanel, BorderLayout.NORTH);
@@ -51,7 +61,7 @@ public class MapPanel extends JPanel {
     inventoryBtn.setFocusPainted(false);
 
     JPanel inventoryBtnPanel = new JPanel();
-    inventoryBtnPanel.setBackground(Color.DARK_GRAY);
+    inventoryBtnPanel.setOpaque(false);
     inventoryBtnPanel.add(inventoryBtn);
     leftPanel.add(inventoryBtnPanel, BorderLayout.SOUTH);
 
@@ -67,13 +77,13 @@ public class MapPanel extends JPanel {
         // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
-        info.setFont(GameFonts.press(16f));
+        info.setFont(GameFonts.press(18f));
         info.setBorder(BorderFactory.createEmptyBorder(7,0,7,0));
         add(info, BorderLayout.NORTH);
 
         // map
         gridPanel = new JPanel(new GridLayout(ROWS, COLS, 1, 1));
-        gridPanel.setBackground(Color.BLACK);
+        gridPanel.setOpaque(false);
            
         tiles = new JButton[ROWS][COLS];
 
@@ -82,27 +92,34 @@ public class MapPanel extends JPanel {
             JButton tile = new JButton();
             tile.setEnabled(false);
             tile.setFont(GameFonts.press(16f));
-            tile.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Set border to black
-            tile.setForeground(Color.BLACK);
+            tile.setBorder(BorderFactory.createLineBorder(new Color(100, 100, 100, 80), 1)); // Semi-transparent border
+            tile.setForeground(Color.WHITE);
+            tile.setOpaque(false);
+            tile.setContentAreaFilled(false);
             tiles[i][j] = tile;
             gridPanel.add(tile);
             }
         }
 
         // trial buildings
-        tiles[0][1].setText("Shop");
-        //tiles[0][1].setForeground(Color.WHITE);
+        tiles[0][1].setText("SHOP");
+        tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
+        tiles[0][1].setFont(GameFonts.pressBold(18f));
 
         
-        tiles[0][3].setText("Inn");
-        //tiles[0][3].setForeground(Color.WHITE);
+        tiles[0][3].setText("INN");
+        tiles[0][3].setForeground(new Color(255, 223, 0)); // Bright gold
+        tiles[0][3].setFont(GameFonts.pressBold(18f));
 
         int randomXSpawn = rand.nextInt(6) + 5;
         int randomYSpawn = rand.nextInt(6) + 5;
-        tiles[0][0].setText("Castle");
+        tiles[0][0].setText("CASTLE");
+        tiles[0][0].setForeground(new Color(186, 85, 211)); // Purple for mystery
+        tiles[0][0].setFont(GameFonts.pressBold(16f));
         // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
-        tiles[randomXSpawn][randomYSpawn].setText("CastlePlaceHolder"); //castle real location
-        tiles[randomXSpawn][randomYSpawn].setForeground(Color.WHITE);
+        tiles[randomXSpawn][randomYSpawn].setText("CASTLE"); //castle real location
+        tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
+        tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
 
         int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
         int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
@@ -121,7 +138,8 @@ public class MapPanel extends JPanel {
             if(text.isEmpty() || text.equals(".")) break;
         }
         tiles[x][y].setText("NPC");
-        tiles[x][y].setForeground(Color.WHITE);
+        tiles[x][y].setForeground(new Color(144, 238, 144)); // Light green
+        tiles[x][y].setFont(GameFonts.pressBold(18f));
         }
 
             //prioritize later
@@ -225,17 +243,19 @@ public class MapPanel extends JPanel {
             }
             
             System.out.println("DEBUG: Spawning Spire at [" + spireX + "][" + spireY + "]"); // DEBUG
-            tiles[spireX][spireY].setText("Spire");
-            tiles[spireX][spireY].setForeground(Color.WHITE);
+            tiles[spireX][spireY].setText("SPIRE");
+            tiles[spireX][spireY].setForeground(new Color(255, 0, 255)); // Bright magenta
+            tiles[spireX][spireY].setFont(GameFonts.pressBold(18f));
             spireSpawned = true;
             renzDefeated = true; // Mark that Renz has been defeated
             
             // Remove the Castle tile so Renz can't be fought again
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLS; j++) {
-                    if (tiles[i][j].getText().equals("Castle") || tiles[i][j].getText().equals("CastlePlaceHolder")) {
-                        tiles[i][j].setText("Ruins"); // Change to "Ruins" or empty
-                        tiles[i][j].setForeground(Color.GRAY);
+                    if (tiles[i][j].getText().equals("CASTLE")) {
+                        tiles[i][j].setText("RUINS"); // Change to "Ruins" or empty
+                        tiles[i][j].setForeground(new Color(128, 128, 128)); // Gray
+                        tiles[i][j].setFont(GameFonts.pressBold(16f));
                     }
                 }
             }
@@ -264,7 +284,7 @@ public class MapPanel extends JPanel {
         updatePlayerPosition();
     
         String tileName = tiles[playerX][playerY].getText();
-        boolean inShop = tileName.equals("Shop");
+        boolean inShop = tileName.equals("SHOP");
     
         if(inShop){
             System.out.println("Entering ShopPanel...");
@@ -296,7 +316,7 @@ public class MapPanel extends JPanel {
             }
         } else { 
             // Non-empty tile → predefined enemy or event
-            if(tileName.equals("Castle")){
+            if(tileName.equals("CASTLE")){
                 if (!renzDefeated) {
                     game.startBossBattle();
                 } else {
@@ -304,12 +324,6 @@ public class MapPanel extends JPanel {
                 }
             } else if(tileName.equals("Ruins")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
-            } else if(tileName.equals("CastlePlaceHolder")){
-                if (!renzDefeated) {
-                    game.startBossBattle();
-                } else {
-                    info.setText("The castle lies in ruins. The Corrupted King is no more.");
-                }
             } else if(tileName.equals("NPC")){
                     info.setText("You approach an NPC... (dialogue system coming soon)");
                     game.startConversation();
@@ -317,7 +331,7 @@ public class MapPanel extends JPanel {
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
                     }
-                    else if(tileName.equals("Inn")){
+                    else if(tileName.equals("INN")){
                         System.out.println("Entering InnPanel...");
                         SwingUtilities.invokeLater(() -> {
                             game.setContentPane(new InnPanel(game, game.player));
@@ -382,18 +396,24 @@ public class MapPanel extends JPanel {
         private void updatePlayerPosition(){
         for(int i=0;i<ROWS;i++){
             for(int j=0;j<COLS;j++){
-                tiles[i][j].setBackground(Color.BLACK); // grass
+                // Make all tiles transparent by default
+                tiles[i][j].setOpaque(false);
+                tiles[i][j].setContentAreaFilled(false);
+                
                 if(!tiles[i][j].getText().isEmpty()){
                     if(!tiles[i][j].getText().equals(".")){
-                    tiles[i][j].setBackground(new Color(60,120,60)); // buildings
-                    }else{
-                        tiles[i][j].setBackground(new Color(128,128,128));
+                        // Buildings are visible
+                        tiles[i][j].setBackground(new Color(60,120,60));
+                        tiles[i][j].setOpaque(true);
+                        tiles[i][j].setContentAreaFilled(true);
                     }
                 }
             }
         }
-        // where player
+        // Player position is visible
         tiles[playerX][playerY].setBackground(Color.WHITE);
+        tiles[playerX][playerY].setOpaque(true);
+        tiles[playerX][playerY].setContentAreaFilled(true);
          }
 
          private void toggleSidePanel(JPanel newPanel) {
@@ -439,6 +459,14 @@ public class MapPanel extends JPanel {
         private void ensureGridDetached() {
             if (gridPanel.getParent() != null) {
                 remove(gridPanel);
+            }
+        }
+        
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
         }
          
