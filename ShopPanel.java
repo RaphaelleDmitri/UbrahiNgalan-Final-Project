@@ -88,10 +88,6 @@ public class ShopPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
 
         log.setText("Welcome to the shop!\n\n Coins: " + player.coins + "\n\n");
-<<<<<<< HEAD
-=======
-
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
 
         // Button actions
         weaponBtn.addActionListener(e -> buyWeapon());
@@ -133,32 +129,17 @@ private void buyWeapon() {
     if (!weaponQueue.isEmpty()) {
         Weapon nextWeapon = weaponQueue.peek();
 
-<<<<<<< HEAD
         if (player.coins >= nextWeapon.price) {
             player.coins -= nextWeapon.price;
 
             player.weapons.add(nextWeapon);
 
             log.append(
-=======
-    private void buyWeapon() {
-        if (!weaponQueue.isEmpty()) {
-            Weapon nextWeapon = weaponQueue.peek();
-    
-            if (player.coins >= nextWeapon.price) {
-                player.coins -= nextWeapon.price;
-    
-                // ADD TO INVENTORY (NOT EQUIP)
-                player.weapons.add(nextWeapon);
-    
-                 log.append(
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
                 "\nYou bought " + nextWeapon.name + "!\n" +
                 "Added to inventory.\n" +
                 "Coins: " + player.coins + "\n\n"
             );
 
-<<<<<<< HEAD
             weaponQueue.poll();
             updateWeaponButton();
             statPanel.updateStats();
@@ -167,23 +148,12 @@ private void buyWeapon() {
                 "\nNot enough coins to buy " + nextWeapon.name + "!\n" +
                 "Coins: " + player.coins + "\n\n"
             );
-=======
-    
-                weaponQueue.poll();
-                updateWeaponButton();
-                
-            } else {
-                log.append("\nNot enough coins to buy " + nextWeapon.name +
-                    "! Coins: " + player.coins);
-            }
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
 }
 
 
     private void buyArmor() {
-<<<<<<< HEAD
     if (!armorQueue.isEmpty()) {
         Armor nextArmor = armorQueue.peek();
 
@@ -206,29 +176,6 @@ private void buyWeapon() {
                 "\nNot enough coins to buy " + nextArmor.name + "!\n" +
                 "Coins: " + player.coins + "\n\n"
             );
-=======
-        if (!armorQueue.isEmpty()) {
-            Armor nextArmor = armorQueue.peek();
-    
-            if (player.coins >= nextArmor.price) {
-                player.coins -= nextArmor.price;
-    
-                // ADD TO INVENTORY (NOT EQUIP)
-                player.armors.add(nextArmor);
-    
-               log.append(
-                    "\nYou bought " + nextArmor.name + "!\n" +
-                    "Added to inventory.\n" +
-                    "Coins: " + player.coins + "\n\n"
-            );
-                armorQueue.poll();
-                updateArmorButton();
-                
-            } else {
-                log.append("\nNot enough coins to buy " + nextArmor.name +
-                    "! Coins: " + player.coins);
-            }
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
 }
@@ -238,7 +185,6 @@ private void buyWeapon() {
         if (player.coins >= 10) {
             player.coins -= 10;
             player.potionAmount++;
-<<<<<<< HEAD
 
             log.append(
                 "\nYou bought a Health Potion!\n" +
@@ -252,17 +198,6 @@ private void buyWeapon() {
                 "\nNot enough coins to buy a potion!\n" +
                 "Coins: " + player.coins + "\n\n"
             );
-=======
-            log.append("\nYou bought a Health Potion!\n" +
-            "(+20 HP)\n" +
-            "Coins: " + player.coins + "\n\n"
-          );
-
-        } else {
-            log.append("\nNot enough coins to buy a potion!\n" +
-            "Coins: " + player.coins + "\n\n"
-          );
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
     
