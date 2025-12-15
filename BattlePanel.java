@@ -22,7 +22,7 @@ public class BattlePanel extends JPanel {
     private JPanel buttons; // moved to field so we can toggle buttons on game over
     private JButton restartBtn; // shown when player dies
     private boolean hasFled = false;
-    private BufferedImage backgroundImage; // Background image for goblin/orc/slime
+    private BufferedImage backgroundImage; // Background image for battle
     private boolean useImageBackground = false; // Flag to determine if image background should be used
 
     public BattlePanel(Main game, Player player, Enemy enemy) {
@@ -34,102 +34,54 @@ public class BattlePanel extends JPanel {
         this.enemies = new ArrayList<>(enemies);
         setLayout(new BorderLayout());
         
-        // Check if any enemy is a final boss, king boss, witch, or goblin/orc/slime and load appropriate background
-        String backgroundImagePath = null;
-        for (Enemy e : enemies) {
-            String name = e.getName().toLowerCase();
-            if (e instanceof BossEnemyFinal || name.contains("void")) {
-                backgroundImagePath = "void.png";
-                useImageBackground = true;
-                break;
-            } else if (e instanceof BossEnemy || name.contains("king") || name.contains("renz")) {
-                backgroundImagePath = "king.png";
-                useImageBackground = true;
-                break;
-            } else if (e instanceof BossEnemyWitch || name.contains("witch") || name.contains("gleih")) {
-                backgroundImagePath = "witch.png";
-                useImageBackground = true;
-                break;
-            } else if (name.contains("goblin") || name.contains("orc") || name.contains("slime")) {
-                backgroundImagePath = "orcslimegoblin.png";
-                useImageBackground = true;
-                break;
+        // Choose and load a background image based on the enemy
+        String backgroundImagePath = chooseBackgroundForEnemies(enemies);
+        if (backgroundImagePath != null) {
+            try {
+                backgroundImage = ImageIO.read(new File(backgroundImagePath));
+                useImageBackground = backgroundImage != null;
+            } catch (IOException e) {
+                System.err.println("Failed to load background image: " + e.getMessage());
+                useImageBackground = false;
             }
         }
 
-        // Load background image if applicable
-        if (useImageBackground && backgroundImagePath != null) {
-            try {
-                backgroundImage = ImageIO.read(new File(backgroundImagePath));
-            } catch (IOException e) {
-                System.err.println("Failed to load background image: " + e.getMessage());
-                useImageBackground = false; // Fall back to solid color
-            }
-        }
-        
-        if (!useImageBackground) {
-            setBackground(new Color(25,25,25));
-        } else {
-            setOpaque(true); // we paint image ourselves
-        }
+        // Keep everything transparent so only the image shows through
+        setOpaque(false);
         stats = new JLabel(updateStatsForEnemies(), SwingConstants.CENTER);
         stats.setForeground(new Color(230,205,70));
         stats.setFont(GameFonts.press(20f));
         stats.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-        if (useImageBackground) {
-            stats.setOpaque(false);
-        }
+        stats.setOpaque(false);
         add(stats, BorderLayout.NORTH);
         styledPane = new JTextPane();
         styledPane.setEditable(false);
-        if (useImageBackground) {
-            styledPane.setOpaque(false);
-            styledPane.setBackground(new Color(0, 0, 0, 0));
-        } else {
-            styledPane.setBackground(new Color(40,40,40));
-        }
+        styledPane.setOpaque(false);
+        styledPane.setBackground(new Color(0, 0, 0, 0));
         styledPane.setForeground(Color.WHITE);
         styledPane.setFont(GameFonts.press(25f));
-        if (useImageBackground) {
-            styledPane.setBorder(null);
-        } else {
-            styledPane.setBorder(BorderFactory.createLineBorder(new Color(200,200,100), 2));
-        }
+        styledPane.setBorder(null);
         doc = styledPane.getStyledDocument();
         createStyles(doc);
         JScrollPane scroll = new JScrollPane(styledPane);
-        if (useImageBackground) {
-            scroll.setOpaque(false);
-            scroll.getViewport().setOpaque(false);
-        }
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
         add(scroll, BorderLayout.CENTER);
         log = new ForwardingTextArea();
         JPanel rightPanel = new JPanel(new BorderLayout());
-        if (useImageBackground) {
-            rightPanel.setOpaque(false);
-        } else {
-            rightPanel.setBackground(new Color(25,25,25));
-        }
+        rightPanel.setOpaque(false);
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
         targetBox = new JComboBox<>();
         targetBox.setFont(GameFonts.press(20f));
-        if (useImageBackground) {
-            targetBox.setOpaque(false);
-            targetBox.setBackground(new Color(0, 0, 0, 0));
-        } else {
-            targetBox.setBackground(new Color(60,60,60));
-        }
+        targetBox.setOpaque(false);
+        targetBox.setBackground(new Color(0, 0, 0, 0));
         targetBox.setForeground(Color.WHITE);
         updateTargetBox();
         rightPanel.add(new JLabel("Target:"), BorderLayout.NORTH);
         rightPanel.add(targetBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
         buttons = new JPanel();
-        if (useImageBackground) {
-            buttons.setOpaque(false);
-        } else {
-            buttons.setBackground(new Color(25,25,25));
-        }
+        buttons.setOpaque(false);
         buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton attackBtn = styledBtn("Attack");
         JButton defendBtn = styledBtn("Defend");
@@ -186,24 +138,34 @@ public class BattlePanel extends JPanel {
         JButton btn = new JButton(txt);
         // Give breathing room between text and border
         var innerPadding = BorderFactory.createEmptyBorder(8, 20, 8, 20);
-        if (useImageBackground) {
-            btn.setOpaque(false);
-            btn.setContentAreaFilled(false);
-            btn.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(240,220,140), 2),
-                innerPadding));
-            btn.setFocusPainted(false);
-        } else {
-            btn.setBackground(new Color(60,60,60));
-            btn.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200,200,100), 2),
-                innerPadding));
-            btn.setFocusPainted(false);
-        }
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(240,220,140), 2),
+            innerPadding));
+        btn.setFocusPainted(false);
         btn.setForeground(new Color(240,220,140));
         btn.setFont(GameFonts.press(20f));
         btn.setMargin(new Insets(6, 18, 6, 18));
         return btn;
+    }
+
+    // Decide which battle backdrop to show based on the enemies present
+    private String chooseBackgroundForEnemies(List<Enemy> enemies) {
+        for (Enemy e : enemies) {
+            String name = e.getName().toLowerCase();
+            if (e instanceof BossEnemyFinal || name.contains("void")) {
+                return "void.png";
+            }
+            if (e instanceof BossEnemy || name.contains("king") || name.contains("renz")) {
+                return "king.png";
+            }
+            if (e instanceof BossEnemyWitch || name.contains("witch") || name.contains("gleih")) {
+                return "witch.png";
+            }
+        }
+        // Generic fallback image for other enemy types
+        return "orcslimegoblin.png";
     }
     
     private void doTurn(int action) {
@@ -405,7 +367,7 @@ public class BattlePanel extends JPanel {
     
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
-        StyleConstants.setFontFamily(def, GameFonts.jetts(30f).getFamily());
+        StyleConstants.setFontFamily(def, GameFonts.press(30f).getFamily());
         StyleConstants.setFontSize(def, 24);
         StyleConstants.setForeground(def, Color.WHITE);
         Style playerStyle = d.addStyle("player", def);

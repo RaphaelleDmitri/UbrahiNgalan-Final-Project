@@ -149,10 +149,6 @@ public class Main extends JFrame {
         if (gamePanel != null) {
             gamePanel.changeCastleToRuins();
         }
-        // Spawn the Spire
-        if (gamePanel != null) {
-            gamePanel.spawnSpire();
-        }
         // Rebuild NPC list so story NPCs (like Old Knight) become available
         initNPCs();
         // Place Old Knight on the map (only one NPC at a time)
@@ -199,8 +195,11 @@ public class Main extends JFrame {
     public void onNPCConversationEnded(String npcName, String lastNodeId) {
         System.out.println("DEBUG: Conversation ended with " + npcName + " node=" + lastNodeId);
         if (npcName.equals("Old Knight Garron")) {
-            // After Knight finishes guiding the player, do NOT respawn the Priestess.
-            // (Elder location from earlier in the story should remain unchanged.)
+            // After Knight finishes guiding the player, spawn the Spire.
+            if (gamePanel != null) {
+                gamePanel.spawnSpire();
+            }
+            // Do NOT respawn the Priestess here; she is only from the earlier story step.
         } else if (npcName.equals("Priestess of Tine")) {
             // After Priestess talks, spawn the Village Elder
             if (gamePanel != null) gamePanel.spawnElder();

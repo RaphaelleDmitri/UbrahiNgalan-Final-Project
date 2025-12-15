@@ -1,9 +1,13 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -29,6 +33,8 @@ public class NPCConversation extends JPanel {
     private Random rand = new Random();
     private JPanel buttons;
     private JButton[] optionButtons = new JButton[3];
+    private BufferedImage backgroundImage;
+    private boolean useImageBackground = false;
     
     
 
@@ -41,36 +47,41 @@ public class NPCConversation extends JPanel {
         this.npcs = new ArrayList<>(npcs);
 
         setLayout(new BorderLayout());
-        setBackground(new Color(25, 25, 25));
+        setOpaque(false);
 
         infoLabel = new JLabel(updateNPCInfo(), SwingConstants.CENTER);
         infoLabel.setForeground(new Color(230, 205, 70));
-        infoLabel.setFont(GameFonts.jettsBold(20f));
+        infoLabel.setFont(GameFonts.pressBold(20f));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        infoLabel.setOpaque(false);
         add(infoLabel, BorderLayout.NORTH);
 
         // Styled log setup
         styledPane = new JTextPane();
         styledPane.setEditable(false);
-        styledPane.setBackground(new Color(40, 40, 40));
+        styledPane.setOpaque(false);
+        styledPane.setBackground(new Color(0, 0, 0, 0));
         styledPane.setForeground(Color.WHITE);
-        styledPane.setFont(GameFonts.jetts(25f));
-        styledPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 2));
+        styledPane.setFont(GameFonts.press(25f));
+        styledPane.setBorder(null);
         doc = styledPane.getStyledDocument();
         createStyles(doc);
 
         JScrollPane scroll = new JScrollPane(styledPane);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
         add(scroll, BorderLayout.CENTER);
 
         log = new ForwardingTextArea();
 
         // NPC selector
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(new Color(25, 25, 25));
+        rightPanel.setOpaque(false);
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         npcBox = new JComboBox<>();
-        npcBox.setFont(GameFonts.jettsBold(20f));
-        npcBox.setBackground(new Color(60, 60, 60));
+        npcBox.setFont(GameFonts.pressBold(20f));
+        npcBox.setOpaque(false);
+        npcBox.setBackground(new Color(0, 0, 0, 0));
         npcBox.setForeground(new Color(240, 220, 140));
         updateNPCBox();
         // If a specific NPC was requested, select them
@@ -89,7 +100,7 @@ public class NPCConversation extends JPanel {
 
         // Dialogue buttons (will show actual choice text)
         buttons = new JPanel();
-        buttons.setBackground(new Color(25, 25, 25));
+        buttons.setOpaque(false);
 
         for (int i = 0; i < 3; i++) {
             optionButtons[i] = styledBtn("Option " + (i+1));
@@ -110,6 +121,7 @@ public class NPCConversation extends JPanel {
                 log.setText(selNpc.getName() + " speaks:\n");
                 displayCurrentDialogue(selNpc);
                 infoLabel.setText("Talking to: " + selNpc.getName());
+                loadBackgroundForNPC(selNpc);
             }
         });
 
@@ -127,16 +139,51 @@ public class NPCConversation extends JPanel {
             SwingUtilities.invokeLater(() -> npcBox.setSelectedIndex(sel));
             displayCurrentDialogue(first);
             infoLabel.setText("Talking to: " + first.getName());
+            loadBackgroundForNPC(first);
         }
     }
 
     private JButton styledBtn(String txt) {
         JButton btn = new JButton(txt);
-        btn.setBackground(new Color(60, 60, 60));
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(240, 220, 140), 2),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)));
         btn.setForeground(new Color(240, 220, 140));
         btn.setFont(GameFonts.jettsBold(32f));
         btn.setFocusPainted(false);
         return btn;
+    }
+
+    // Load a themed background per NPC so the panel drops solid colors
+    private void loadBackgroundForNPC(NPC npc) {
+        backgroundImage = null;
+        useImageBackground = false;
+        if (npc == null || npc.getName() == null) {
+            repaint();
+            return;
+        }
+
+        String lowerName = npc.getName().toLowerCase();
+        String imagePath = null;
+        if (lowerName.contains("elder")) {
+            imagePath = "elder.png";
+        } else if (lowerName.contains("knight")) {
+            imagePath = "oldknight.png";
+        } else if (lowerName.contains("priestess")) {
+            imagePath = "priestess.png";
+        }
+
+        if (imagePath != null) {
+            try {
+                backgroundImage = ImageIO.read(new File(imagePath));
+                useImageBackground = backgroundImage != null;
+            } catch (IOException ex) {
+                System.err.println("Failed to load NPC background: " + ex.getMessage());
+            }
+        }
+        repaint();
     }
 
     private void handleDialogue(int option) {
@@ -266,5 +313,13 @@ public class NPCConversation extends JPanel {
                 else npcBox.setSelectedIndex(0);
             }
         });
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (useImageBackground && backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }
