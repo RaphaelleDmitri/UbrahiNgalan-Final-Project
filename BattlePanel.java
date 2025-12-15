@@ -279,7 +279,7 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> VICTORY!");
                 log.append("\n>> Darkness rises from Gleih's fallen form...");
                 disablePlayerControls();
-                Timer t = new Timer(5000, e -> {
+                Timer t = new Timer(2500, e -> {
                     game.startBossBattle3();
                 });
                 t.setRepeats(false);
