@@ -333,7 +333,7 @@ public class MapPanel extends JPanel {
             } else if(tileName.equals("NPC")){
                     info.setText("You approach an NPC... (dialogue system coming soon)");
                     game.startConversation();
-                } else if(tileName.equals("Spire")){
+                } else if(tileName.equals("SPIRE")){
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
                     }
