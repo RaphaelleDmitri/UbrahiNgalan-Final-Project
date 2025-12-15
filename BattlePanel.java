@@ -5,7 +5,6 @@ import java.util.Random;
 import javax.swing.*;
 import javax.swing.text.*;
 
-
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
@@ -250,26 +249,29 @@ public class BattlePanel extends JPanel {
             if (gleihDefeated) {
                 log.append("\n\n>> DING DONG, The Dancing Witch is Dead!");
                 log.append("\n\n>> VICTORY!");
-                log.append("\nYou found something... a legendary weapon and armor!");
-                // Give both legendary items to the player as Gleih's reward (soulbound)
-                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
-                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
-                System.out.println("DEBUG BattlePanel: Gleih rewards granted to player");
-                log.append("\nYou found something... a legendary armor?");
+                log.append("\n>> Darkness rises from Gleih's fallen form...");
+                Timer t = new Timer(5000, e -> {
+                    log.append("\n\n>> Prepare for the final battle against Eum, The VoidMother!");
+                });
+                t.setRepeats(false);
+                t.start();
                 game.startBossBattle3();
                 return;
                 
             } else if (wasBoss) {
                 log.append("\n\n>> The Corrupted King collapses... The final blow!");
                 log.append("\n\n>> VICTORY!");
-                log.append("\nYou found something... a legendary weapon?");
+                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
+                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
+                log.append("\nYou scavenged The Blade of Oblivion and The Aegis of Eternity from the Fallen King!, both are added to inventory.");
                 
                 // NEW: Spawn the Spire when Renz is defeated
                 if (renzDefeated) {
                     System.out.println("DEBUG BattlePanel: Calling game.onRenzDefeated()"); // DEBUG
+                    
                     game.onRenzDefeated();
                 } else {
-                    System.out.println("DEBUG BattlePanel: renzDefeated is FALSE"); // DEBUG
+                    System.out.println("DEBUG BattlePanel: renzDefeated is FALSE <RECHECK PO>"); // DEBUG
                 }
             } else if (eumDefeated) {
                 log.append("\n\n>> Eum lets out a final, deafening scream...");
