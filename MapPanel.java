@@ -361,10 +361,10 @@ public class MapPanel extends JPanel {
             return; // exit after opening shop
         }
     
-        // Trigger fights or special events
-        if(tileName.isEmpty()){ // empty tile → random encounter or item
+        
+        if(tileName.isEmpty()){ 
             int r = rand.nextInt(20); // 0-19
-            //int n = rand.nextInt(10); //disable encounters
+            
             if(r ==  1|| r == 2 || r == 3 || r == 4) {
                 game.startBattle(game.createEnemy(0));
             }
@@ -385,7 +385,7 @@ public class MapPanel extends JPanel {
                 if (!renzDefeated) {
                     game.startBossBattle();
                 } 
-            } else if(tileName.equals("Ruins")){
+            } else if(tileName.equals("RUINS")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
             } else if(tileName.equals("Village Elder")){
                     info.setText("You approach the Village Elder.");
