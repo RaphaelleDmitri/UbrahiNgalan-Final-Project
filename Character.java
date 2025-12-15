@@ -9,6 +9,7 @@ public abstract class Character {
     protected int baseDefense; // Track base defense for reset
     protected int potionAmount;
     protected int coins;
+    protected int tempBlock = 0; // Temporary block value for defense
 
     public Character(String name, int health, int attackPower, int defense, int potionAmount, int coins) {
         this.name = name;
