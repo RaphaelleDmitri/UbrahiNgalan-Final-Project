@@ -34,40 +34,6 @@ public class MapPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-    JPanel leftPanel = new JPanel();
-    leftPanel.setLayout(new BorderLayout());
-    leftPanel.setOpaque(false);
-
-        // Stats button
-    JButton statsBtn = new JButton("Stats");
-    statsBtn.setFont(GameFonts.press(18f));
-    statsBtn.setBackground(new Color(60, 60, 60));
-    statsBtn.setForeground(new Color(255, 255, 155));
-    statsBtn.setFocusPainted(false);
-
-        
-    JPanel statsBtnPanel = new JPanel();
-    statsBtnPanel.setOpaque(false);
-    statsBtnPanel.add(statsBtn);
-
-    leftPanel.add(statsBtnPanel, BorderLayout.NORTH);
-    add(leftPanel, BorderLayout.WEST);
-
-        //Inventory Button
-    JButton inventoryBtn = new JButton("Inventory");
-    inventoryBtn.setFont(GameFonts.press(18f));
-    inventoryBtn.setBackground(new Color(60, 60, 60));
-    inventoryBtn.setForeground(new Color(255, 255, 155));
-    inventoryBtn.setFocusPainted(false);
-
-    JPanel inventoryBtnPanel = new JPanel();
-    inventoryBtnPanel.setOpaque(false);
-    inventoryBtnPanel.add(inventoryBtn);
-    leftPanel.add(inventoryBtnPanel, BorderLayout.SOUTH);
-
-    inventoryBtn.addActionListener(e -> {
-        toggleSidePanel(new InventoryPanel(game.player));
-    });
             // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
@@ -161,18 +127,32 @@ public class MapPanel extends JPanel {
     
     // Return to Main Menu button
     JButton returnHomeBtn = new JButton("Main Menu");
-    returnHomeBtn.setFont(GameFonts.press(16f));
+    returnHomeBtn.setFont(GameFonts.press(24f));
     returnHomeBtn.setBackground(new Color(60, 60, 60));
     returnHomeBtn.setForeground(new Color(255, 255, 155));
     returnHomeBtn.setFocusPainted(false);
-    returnHomeBtn.setBorder(new EmptyBorder(5, 15, 5, 15));
     returnHomeBtn.addActionListener(e -> {
         game.setContentPane(new MainMenuPanel(game));
         game.revalidate();
     });
-    
-    controls.add(returnHomeBtn, BorderLayout.EAST);
 
+    // Inventory button with border
+    //Inventory Button
+    JButton inventoryBtn = new JButton("Inventory");
+    inventoryBtn.setFont(GameFonts.press(24f));
+    inventoryBtn.setBackground(new Color(60, 60, 60));
+    inventoryBtn.setForeground(new Color(255, 255, 155));
+    inventoryBtn.setFocusPainted(false);
+    JPanel inventoryBtnPanel = new JPanel();
+    inventoryBtnPanel.setOpaque(false);
+    inventoryBtnPanel.add(inventoryBtn);
+
+    inventoryBtn.addActionListener(e -> {
+        toggleSidePanel(new InventoryPanel(game.player));
+    });
+
+    controls.add(returnHomeBtn, BorderLayout.EAST);
+    controls.add(inventoryBtnPanel, BorderLayout.WEST);
     add(controls, BorderLayout.SOUTH);
 
     // Enable arrow key movement
