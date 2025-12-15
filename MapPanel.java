@@ -22,6 +22,8 @@ public class MapPanel extends JPanel {
     private boolean spireSpawned = false; // Boolean to track if Spire has spawned
     private boolean renzDefeated = false; // Boolean to track if Renz has been defeated
     private boolean castleSpawned = false; // Boolean to track if Castle has spawned
+    // Track whether the Village Elder has been permanently placed so we don't clear him later
+    private boolean elderPlaced = false;
 
     public MapPanel(Main game){
         this.game = game;
@@ -282,6 +284,11 @@ public class MapPanel extends JPanel {
 
     // Spawn the Village Elder randomly in the safe zone (top 5x5 area, excluding top-left corner); called after Priestess conversation
     public void spawnElder() {
+        // If the Elder has already been placed once, don't spawn another copy
+        if (elderPlaced) {
+            return;
+        }
+
         // Remove existing story NPCs
         clearStoryNPCs();
 
@@ -300,6 +307,8 @@ public class MapPanel extends JPanel {
                 }
             }
         }
+        // Once the Elder has been spawned, mark him as permanent so later story NPC clears don't remove him
+        elderPlaced = true;
         updatePlayerPosition();
     }
 
@@ -316,12 +325,16 @@ public class MapPanel extends JPanel {
         }
     }
 
-    // Clear any story NPC labels from the map (ELDER, KNIGHT, PRIESTESS)
+    // Clear any story NPC labels from the map (KNIGHT, PRIESTESS, generic NPC).
+    // If the Village Elder has already been placed, keep him on the map.
     private void clearStoryNPCs() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 String t = tiles[i][j].getText();
-                if (t.equals("Village Elder") || t.equals("Old Knight Garron") || t.equals("Priestess of Tine") || t.equals("NPC")) {
+                if ((!elderPlaced && t.equals("Village Elder")) ||
+                    t.equals("Old Knight Garron") ||
+                    t.equals("Priestess of Tine") ||
+                    t.equals("NPC")) {
                     tiles[i][j].setText(".");
                     tiles[i][j].setForeground(Color.WHITE);
                     tiles[i][j].setFont(GameFonts.press(16f));
@@ -361,10 +374,10 @@ public class MapPanel extends JPanel {
             return; // exit after opening shop
         }
     
-        
-        if(tileName.isEmpty()){ 
+        // Trigger fights or special events
+        if(tileName.isEmpty()){ // empty tile → random encounter or item
             int r = rand.nextInt(20); // 0-19
-            
+            //int n = rand.nextInt(10); //disable encounters
             if(r ==  1|| r == 2 || r == 3 || r == 4) {
                 game.startBattle(game.createEnemy(0));
             }
@@ -385,7 +398,7 @@ public class MapPanel extends JPanel {
                 if (!renzDefeated) {
                     game.startBossBattle();
                 } 
-            } else if(tileName.equals("RUINS")){
+            } else if(tileName.equals("Ruins")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
             } else if(tileName.equals("Village Elder")){
                     info.setText("You approach the Village Elder.");

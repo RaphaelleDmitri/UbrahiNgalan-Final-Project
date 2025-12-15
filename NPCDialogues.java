@@ -250,10 +250,13 @@ public class NPCDialogues {
                           "Tine hopes so too.")
         ));
 
-        // Always add the Elder at the start
-        // But add Priestess first if available
+        // Always add the Elder at the start.
+        // Add Priestess first if available, and add the Old Knight once Renz is defeated
         if (priestessAvailable) {
             npcList.add(priestess);
+        }
+        if (renzDefeated) {
+            npcList.add(knight);
         }
         npcList.add(elder);
 
