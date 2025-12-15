@@ -1,15 +1,16 @@
 import java.awt.*;
+import java.util.Queue;
+import javax.swing.*;
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.Queue;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class ShopPanel extends JPanel {
     private Image backgroundImage;
     private Main game;
     private Player player;
     private JTextArea log;
+    private InventoryPanel statPanel; // live stats
     private JButton weaponBtn;
     private JButton armorBtn;
     // Using Queue interface instead of LinkedList
@@ -31,7 +32,9 @@ public class ShopPanel extends JPanel {
         setBackground(new Color(25, 25, 25));
         // Keep default opacity; background image + optional tint will be painted manually
 
-        
+        // Stat panel on the right (use InventoryPanel which provides updateStats)
+        statPanel = new InventoryPanel(player);
+        add(statPanel, BorderLayout.EAST);
 
         // Initialize queues from player's available items
         weaponQueue = player.availableWeapons;
@@ -85,7 +88,10 @@ public class ShopPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
 
         log.setText("Welcome to the shop!\n\n Coins: " + player.coins + "\n\n");
+<<<<<<< HEAD
+=======
 
+>>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
 
         // Button actions
         weaponBtn.addActionListener(e -> buyWeapon());
@@ -123,7 +129,18 @@ public class ShopPanel extends JPanel {
             armorBtn.setEnabled(false);
         }
     }
+private void buyWeapon() {
+    if (!weaponQueue.isEmpty()) {
+        Weapon nextWeapon = weaponQueue.peek();
 
+<<<<<<< HEAD
+        if (player.coins >= nextWeapon.price) {
+            player.coins -= nextWeapon.price;
+
+            player.weapons.add(nextWeapon);
+
+            log.append(
+=======
     private void buyWeapon() {
         if (!weaponQueue.isEmpty()) {
             Weapon nextWeapon = weaponQueue.peek();
@@ -135,11 +152,22 @@ public class ShopPanel extends JPanel {
                 player.weapons.add(nextWeapon);
     
                  log.append(
+>>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
                 "\nYou bought " + nextWeapon.name + "!\n" +
                 "Added to inventory.\n" +
                 "Coins: " + player.coins + "\n\n"
             );
 
+<<<<<<< HEAD
+            weaponQueue.poll();
+            updateWeaponButton();
+            statPanel.updateStats();
+        } else {
+            log.append(
+                "\nNot enough coins to buy " + nextWeapon.name + "!\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+=======
     
                 weaponQueue.poll();
                 updateWeaponButton();
@@ -148,10 +176,37 @@ public class ShopPanel extends JPanel {
                 log.append("\nNot enough coins to buy " + nextWeapon.name +
                     "! Coins: " + player.coins);
             }
+>>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
+}
+
 
     private void buyArmor() {
+<<<<<<< HEAD
+    if (!armorQueue.isEmpty()) {
+        Armor nextArmor = armorQueue.peek();
+
+        if (player.coins >= nextArmor.price) {
+            player.coins -= nextArmor.price;
+
+            player.armors.add(nextArmor);
+
+            log.append(
+                "\nYou bought " + nextArmor.name + "!\n" +
+                "Added to inventory.\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+
+            armorQueue.poll();
+            updateArmorButton();
+            statPanel.updateStats();
+        } else {
+            log.append(
+                "\nNot enough coins to buy " + nextArmor.name + "!\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+=======
         if (!armorQueue.isEmpty()) {
             Armor nextArmor = armorQueue.peek();
     
@@ -173,14 +228,31 @@ public class ShopPanel extends JPanel {
                 log.append("\nNot enough coins to buy " + nextArmor.name +
                     "! Coins: " + player.coins);
             }
+>>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
+}
     
 
     private void buyPotion() {
         if (player.coins >= 10) {
             player.coins -= 10;
             player.potionAmount++;
+<<<<<<< HEAD
+
+            log.append(
+                "\nYou bought a Health Potion!\n" +
+                "(+20 HP)\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+
+            statPanel.updateStats(); 
+        } else {
+            log.append(
+                "\nNot enough coins to buy a potion!\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+=======
             log.append("\nYou bought a Health Potion!\n" +
             "(+20 HP)\n" +
             "Coins: " + player.coins + "\n\n"
@@ -190,6 +262,7 @@ public class ShopPanel extends JPanel {
             log.append("\nNot enough coins to buy a potion!\n" +
             "Coins: " + player.coins + "\n\n"
           );
+>>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
         }
     }
     

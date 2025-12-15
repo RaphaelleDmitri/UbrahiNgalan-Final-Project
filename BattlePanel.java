@@ -8,7 +8,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
-
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
@@ -565,15 +564,4 @@ public class BattlePanel extends JPanel {
             }
         });
     }
-    
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (useImageBackground && backgroundImage != null) {
-            // Draw the background image scaled to fit the panel
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        }
-    }
 }
-
-
