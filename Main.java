@@ -140,7 +140,7 @@ public class Main extends JFrame {
     private void initNPCs() {
         // Pass current boss-defeat and progression states so NPCs spawn according to story
         // Make Priestess available at game start so the player talks to her first
-        npcList = NPCDialogues.createNPCs(renzDefeated, true, gleihDefeated, eumDefeated);
+        npcList = NPCDialogues.createNPCs(renzDefeated, priestessAvailable, gleihDefeated, eumDefeated, false);
     }
 
     // Method called when Corrupted King Renz is defeated
