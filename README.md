@@ -4,7 +4,8 @@
 
 **Brahi’s Wander-Spell** is a simple RPG with a linear storyline and fast-paced gameplay designed to keep players engaged and wanting more.
 
-You play as a hero summoned by a goddess named **Tine** from another world, tasked with saving a doomed land. Three tyrants rule in corruption and chaos:
+**Lura**, was the hero destined to save this world but after his defeat against the **VoidMother**, the world is now in great danger.
+You play as a hero summoned by the goddess named **Tine** from another world, tasked with saving this doomed land. Three tyrants rule in corruption and chaos:
 
 * **Renz, the Corrupted King**
 * **Gleih, the Dancing Witch**
@@ -15,6 +16,7 @@ Defeat monsters to earn gold, purchase weapons and armor to grow stronger, or ta
 Do whatever it takes.
 Face the tyrants.
 Save the world from their wrath.
+and maybe you will get back home.
 
 ---
 
@@ -36,6 +38,7 @@ Rather than focusing on large open worlds, the game emphasizes **tight pacing, c
 ## Features
 
 * RPG-style combat
+* Interactive Inventory
 * Thrilling boss fights with unique sequences
 * Progressing weapons and armor
 * Engaging storyline with concise world-building
