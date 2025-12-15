@@ -21,3 +21,4 @@ public class MinionEnemy extends Enemy {
         log.append("\n\n" + name + " strikes you viciously for " + dmg + " damage!");
     }
 }
+    

@@ -1,13 +1,15 @@
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class InventoryPanel extends JPanel {
 
+    private Main game;
     private Player player;
 
     private JLabel healthLabel, coinsLabel, attackLabel, defenseLabel;
-    private JLabel equippedWeaponLabel, equippedArmorLabel;
+    private JLabel equippedWeaponLabel, equippedArmorLabel, potionLabel;
 
     private JList<Weapon> weaponList;
     private JList<Armor> armorList;
@@ -20,11 +22,11 @@ public class InventoryPanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
-        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
-        setPreferredSize(new Dimension(600, 500));
+        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 2));
+        setPreferredSize(new Dimension(1000, 400));
 
         // ===== TOP STATS =====
-        JPanel statsPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel statsPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         statsPanel.setBackground(new Color(25, 25, 25));
 
         healthLabel = createLabel("Health: " + player.getHealth());
@@ -33,6 +35,7 @@ public class InventoryPanel extends JPanel {
         defenseLabel = createLabel("Defense: " + player.defense);
         equippedWeaponLabel = createLabel("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
         equippedArmorLabel = createLabel("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
+        potionLabel = createLabel("Potions: " + player.potionAmount);
 
         statsPanel.add(healthLabel);
         statsPanel.add(coinsLabel);
@@ -40,6 +43,7 @@ public class InventoryPanel extends JPanel {
         statsPanel.add(defenseLabel);
         statsPanel.add(equippedWeaponLabel);
         statsPanel.add(equippedArmorLabel);
+        statsPanel.add(potionLabel);
 
         add(statsPanel, BorderLayout.NORTH);
 
@@ -58,22 +62,28 @@ public class InventoryPanel extends JPanel {
 
         JPanel inventoryPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         inventoryPanel.setBackground(new Color(25, 25, 25));
-        inventoryPanel.add(createListPanel("Weapons", weaponList));
-        inventoryPanel.add(createListPanel("Armors", armorList));
+        inventoryPanel.add(createListPanel("WEAPONS", weaponList));
+        inventoryPanel.add(createListPanel("ARMORS", armorList));
 
         add(inventoryPanel, BorderLayout.CENTER);
 
         // ===== EQUIP BUTTONS =====
         JButton equipWeaponBtn = createButton("Equip Weapon");
         JButton equipArmorBtn = createButton("Equip Armor");
+        JButton sellWeaponBtn = createButton("Sell Weapon");
+        JButton sellArmorBtn = createButton("Sell Armor");
 
         equipWeaponBtn.addActionListener(e -> equipWeapon());
         equipArmorBtn.addActionListener(e -> equipArmor());
+        sellWeaponBtn.addActionListener(e -> sellWeapon());
+        sellArmorBtn.addActionListener(e -> sellArmor());
 
         JPanel equipPanel = new JPanel();
         equipPanel.setBackground(new Color(25, 25, 25));
         equipPanel.add(equipWeaponBtn);
         equipPanel.add(equipArmorBtn);
+        equipPanel.add(sellWeaponBtn);
+        equipPanel.add(sellArmorBtn);
 
         // ===== SORT BUTTONS =====
         JButton sortByDamageBtn = createButton("Sort Weapons by Damage");
@@ -86,12 +96,13 @@ public class InventoryPanel extends JPanel {
         sortArmorDefenseBtn.addActionListener(e -> sortArmorsByDefense());
         sortArmorNameBtn.addActionListener(e -> sortArmorsByName());
 
-        JPanel sortPanel = new JPanel();
+        JPanel sortPanel = new JPanel(new GridLayout(2, 2, 5, 5));
         sortPanel.setBackground(new Color(25, 25, 25));
         sortPanel.add(sortByDamageBtn);
         sortPanel.add(sortByNameBtn);
         sortPanel.add(sortArmorDefenseBtn);
         sortPanel.add(sortArmorNameBtn);
+
 
         // ===== BOTTOM PANEL =====
         JPanel bottomPanel = new JPanel(new GridLayout(2, 1, 10, 10));
@@ -102,6 +113,60 @@ public class InventoryPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
 
         updateStats();
+    }
+
+    private void sellWeapon() {
+        Weapon selected = weaponList.getSelectedValue();
+        if (selected == null) {
+            JOptionPane.showMessageDialog(this, "Select a weapon to sell.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!selected.tradable) {
+            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int ok = JOptionPane.showConfirmDialog(this, 
+            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
+            "Confirm Sale", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (ok == JOptionPane.YES_OPTION) {
+            int earned = player.sellWeapon(selected);
+            if (earned > 0) {
+                refreshWeaponList();
+                updateStats();
+                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    private void sellArmor() {
+        Armor selected = armorList.getSelectedValue();
+        if (selected == null) {
+            JOptionPane.showMessageDialog(this, "Select armor to sell.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!selected.tradable) {
+            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int ok = JOptionPane.showConfirmDialog(this, 
+            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
+            "Confirm Sale", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (ok == JOptionPane.YES_OPTION) {
+            int earned = player.sellArmor(selected);
+            if (earned > 0) {
+                refreshArmorList();
+                updateStats();
+                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 
     // ================= METHODS =================
@@ -196,20 +261,39 @@ public class InventoryPanel extends JPanel {
 
     // ===== Update Stats =====
     public void updateStats() {
+    // Set the font once
+    Font labelFont = GameFonts.press(16f);
+    
+        
+        healthLabel.setFont(labelFont);
         healthLabel.setText("Health: " + player.getHealth());
+        healthLabel.setBorder(new EmptyBorder(20,20,5,0));
+        coinsLabel.setFont(labelFont);
         coinsLabel.setText("Coins: " + player.coins);
+        coinsLabel.setBorder(new EmptyBorder(20,0,5,0));
+        attackLabel.setFont(labelFont);
         attackLabel.setText("Attack: " + player.attackPower);
+        attackLabel.setBorder(new EmptyBorder(0,20,0,0));
+        defenseLabel.setFont(labelFont);
         defenseLabel.setText("Defense: " + player.defense);
+        equippedWeaponLabel.setFont(labelFont);
         equippedWeaponLabel.setText("Weapon: " + (player.equippedWeapon != null ? player.equippedWeapon.name : "None"));
+        equippedWeaponLabel.setBorder(new EmptyBorder(0,20,0,0));
+        equippedArmorLabel.setFont(labelFont);
         equippedArmorLabel.setText("Armor: " + (player.equippedArmor != null ? player.equippedArmor.name : "None"));
+        potionLabel.setFont(labelFont);
+        potionLabel.setText("Potions: " + player.potionAmount);
+        potionLabel.setBorder(new EmptyBorder(0,20,5,0));
+    
         repaint();
-    }
-
+}
     // ===== Helper Methods =====
     private JPanel createListPanel(String title, JList<?> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(25, 25, 25));
         JLabel label = createLabel(title);
+        label.setFont(GameFonts.pressBold(26f));
+        label.setBorder(new EmptyBorder(0,0,10,0));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.NORTH);
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
@@ -219,7 +303,7 @@ public class InventoryPanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(new Color(230, 205, 70));
-        label.setFont(new Font("Consolas", Font.BOLD, 18));
+        label.setFont(GameFonts.jettsBold(18f));
         return label;
     }
 
@@ -227,7 +311,8 @@ public class InventoryPanel extends JPanel {
         JButton button = new JButton(text);
         button.setBackground(new Color(60, 60, 60));
         button.setForeground(new Color(240, 220, 140));
-        button.setFont(new Font("Consolas", Font.BOLD, 18));
+        button.setBorder(new EmptyBorder(10, 20, 10, 20));        
+        button.setFont(GameFonts.pressBold(20f));
         button.setFocusPainted(false);
         return button;
     }
@@ -235,7 +320,10 @@ public class InventoryPanel extends JPanel {
     private void styleList(JList<?> list) {
         list.setBackground(new Color(35, 35, 35));
         list.setForeground(new Color(240, 220, 140));
-        list.setFont(new Font("Consolas", Font.PLAIN, 16));
+        list.setFont(GameFonts.press(18f));
         list.setSelectionBackground(new Color(100, 80, 30));
+        list.setFixedCellHeight(35);
+        list.setBorder(new EmptyBorder(5,20,0,0));
+
     }
 }

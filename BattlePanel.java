@@ -23,6 +23,8 @@ public class BattlePanel extends JPanel {
     Random rand = new Random();
 
     private int lastPlayerAction = 0;
+    private JPanel buttons; // moved to field so we can toggle buttons on game over
+    private JButton restartBtn; // shown when player dies
 
     public BattlePanel(Main game, Player player, Enemy enemy) {
         this(game, player, List.of(enemy));
@@ -38,7 +40,7 @@ public class BattlePanel extends JPanel {
 
         stats = new JLabel(updateStatsForEnemies(), SwingConstants.CENTER);
         stats.setForeground(new Color(230,205,70));
-        stats.setFont(new Font("Consolas", Font.BOLD, 20));
+        stats.setFont(GameFonts.press(20f));
         stats.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         add(stats, BorderLayout.NORTH);
 
@@ -46,7 +48,7 @@ public class BattlePanel extends JPanel {
         styledPane.setEditable(false);
         styledPane.setBackground(new Color(40,40,40));
         styledPane.setForeground(Color.WHITE);
-        styledPane.setFont(new Font("Consolas", Font.PLAIN, 25));
+        styledPane.setFont(GameFonts.press(25f));
         styledPane.setBorder(BorderFactory.createLineBorder(new Color(200,200,100), 2));
         doc = styledPane.getStyledDocument();
 
@@ -61,7 +63,7 @@ public class BattlePanel extends JPanel {
         rightPanel.setBackground(new Color(25,25,25));
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
         targetBox = new JComboBox<>();
-        targetBox.setFont(new Font("Consolas", Font.BOLD, 20));
+        targetBox.setFont(GameFonts.press(20f));
         targetBox.setBackground(new Color(60,60,60));
         targetBox.setForeground(new Color(240,220,140));
         updateTargetBox();
@@ -69,18 +71,22 @@ public class BattlePanel extends JPanel {
         rightPanel.add(targetBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
-        JPanel buttons = new JPanel();
+        buttons = new JPanel();
         buttons.setBackground(new Color(25,25,25));
-
+        buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton attackBtn = styledBtn("Attack");
         JButton defendBtn = styledBtn("Defend");
         JButton healBtn   = styledBtn("Heal");
         JButton fleeBtn = styledBtn("Flee");
 
+        restartBtn = styledBtn("Restart");
+        restartBtn.setVisible(false);
+
         buttons.add(attackBtn);
         buttons.add(defendBtn);
         buttons.add(healBtn);
         buttons.add(fleeBtn);
+        buttons.add(restartBtn);
         add(buttons, BorderLayout.SOUTH);
 
 
@@ -88,6 +94,11 @@ public class BattlePanel extends JPanel {
         defendBtn.addActionListener(e -> doTurn(2));
         healBtn.addActionListener(e -> doTurn(3));
         fleeBtn.addActionListener(e -> doTurn(4));
+
+        restartBtn.addActionListener(e -> {
+            // Reset game to main menu
+            game.resetGame();
+        });
 
        
         
@@ -125,7 +136,8 @@ public class BattlePanel extends JPanel {
         JButton btn = new JButton(txt);
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 32));
+        btn.setFont(GameFonts.press(20f));
+        btn.setMargin(new Insets(10, 28, 10, 28));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -231,6 +243,11 @@ public class BattlePanel extends JPanel {
             if (gleihDefeated) {
                 log.append("\n\n>> DING DONG, The Dancing Witch is Dead!");
                 log.append("\n\n>> VICTORY!");
+                log.append("\nYou found something... a legendary weapon and armor!");
+                // Give both legendary items to the player as Gleih's reward (soulbound)
+                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
+                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
+                System.out.println("DEBUG BattlePanel: Gleih rewards granted to player");
                 log.append("\nYou found something... a legendary armor?");
                 game.startBossBattle3();
                 return;
@@ -288,6 +305,21 @@ public class BattlePanel extends JPanel {
 
         if(!player.isAlive()) {
             log.append("\n\n>> GAME OVER");
+            // Show restart button and disable other actions
+            SwingUtilities.invokeLater(() -> {
+                for (Component c : buttons.getComponents()) {
+                    if (c instanceof JButton b) {
+                        if (b != restartBtn) b.setVisible(false);
+                    }
+                }
+                // Optionally hide target selector as well
+                if (targetBox != null) targetBox.setVisible(false);
+
+                restartBtn.setVisible(true);
+                restartBtn.setEnabled(true);
+                buttons.revalidate();
+                buttons.repaint();
+            });
         }
     }
 
@@ -306,8 +338,8 @@ public class BattlePanel extends JPanel {
     
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
-        StyleConstants.setFontFamily(def, "Consolas");
-        StyleConstants.setFontSize(def, 25);
+        StyleConstants.setFontFamily(def, GameFonts.jetts(30f).getFamily());
+        StyleConstants.setFontSize(def, 24);
         StyleConstants.setForeground(def, Color.WHITE);
 
         Style playerStyle = d.addStyle("player", def);

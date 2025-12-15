@@ -20,6 +20,8 @@ public class DialogueNode {
 
     public String getId() { return id; }
 
+    public String getNPCText() { return npcText; }
+
     public String getNPCResponse(int optionIndex) {
         if (optionIndex < 0 || optionIndex >= npcResponses.size()) return npcText;
         return npcResponses.get(optionIndex);

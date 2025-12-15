@@ -1,8 +1,12 @@
 import java.awt.*;
 import java.util.Queue;
 import javax.swing.*;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class ShopPanel extends JPanel {
+    private Image backgroundImage;
     private Main game;
     private Player player;
     private JTextArea log;
@@ -17,8 +21,16 @@ public class ShopPanel extends JPanel {
         this.game = game;
         this.player = player;
 
+        // Load background image
+        try {
+            backgroundImage = ImageIO.read(new File("shop.png"));
+        } catch (IOException e) {
+            System.out.println("Shop background image not found, using color instead");
+        }
+
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
+        // Keep default opacity; background image + optional tint will be painted manually
 
         // Stat panel on the right
         statPanel = new StatPanel(player);
@@ -30,25 +42,30 @@ public class ShopPanel extends JPanel {
 
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
-        leftPanel.setBackground(new Color(25, 25, 25));
-        leftPanel.setPreferredSize(new Dimension(600, 0));
+        leftPanel.setOpaque(false);
+        leftPanel.setPreferredSize(new Dimension(600, 30));
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
         // Weapon button
         weaponBtn = styledButton("");
         updateWeaponButton();
+        weaponBtn.setFont(GameFonts.press(16f));
         leftPanel.add(weaponBtn);
 
         // Armor button
         armorBtn = styledButton("");
         updateArmorButton();
+        armorBtn.setFont(GameFonts.press(14f));
         leftPanel.add(armorBtn);
 
         // Potion button
         JButton potionBtn = styledButton("Health Potion (+20 HP) - 10 Gold");
+        potionBtn.setFont(GameFonts.press(17f));
         leftPanel.add(potionBtn);
 
         // Exit button
-        JButton exitBtn = styledButton("Exit Shop");
+        JButton exitBtn = styledButton("EXIT SHOP");
+        exitBtn.setFont(GameFonts.press(28f));
         leftPanel.add(exitBtn);
 
         add(leftPanel, BorderLayout.WEST);
@@ -58,12 +75,15 @@ public class ShopPanel extends JPanel {
         log.setEditable(false);
         log.setLineWrap(true);
         log.setWrapStyleWord(true);
-        log.setBackground(new Color(40, 40, 40));
+        log.setOpaque(false);
         log.setForeground(Color.WHITE);
-        log.setFont(new Font("Consolas", Font.BOLD, 28));
-        log.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
+        log.setFont(GameFonts.press(18f));
+        log.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         JScrollPane scroll = new JScrollPane(log);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.setBorder(null); // Remove border
         scroll.setPreferredSize(new Dimension(700, 0));
         add(scroll, BorderLayout.CENTER);
 
@@ -80,7 +100,6 @@ public class ShopPanel extends JPanel {
         JButton btn = new JButton(text);
         btn.setBackground(new Color(60, 60, 60));
         btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(new Font("Consolas", Font.BOLD, 26));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -163,5 +182,38 @@ public class ShopPanel extends JPanel {
         } else {
             log.append("\nNot enough coins to buy a potion! Coins: " + player.coins);
         }
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+        // Optional translucent tint over the background image
+        if (bgAlpha > 0f) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setComposite(AlphaComposite.SrcOver.derive(bgAlpha));
+            g2.setColor(bgTintColor);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+        }
+    }
+
+    // === Background tint controls ===
+    private float bgAlpha = 0.0f; // 0.0 (no tint) to 1.0 (fully opaque)
+    private Color bgTintColor = new Color(0, 0, 0); // default: black tint
+
+    /**
+     * Set a semi-transparent tint over the shop background.
+     * @param color base tint color (RGB used)
+     * @param alpha 0.0f (no tint) .. 1.0f (fully opaque)
+     */
+    public void setBackgroundTint(Color color, float alpha) {
+        if (color != null) {
+            this.bgTintColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+        }
+        this.bgAlpha = Math.max(0f, Math.min(1f, alpha));
+        repaint();
     }
 }

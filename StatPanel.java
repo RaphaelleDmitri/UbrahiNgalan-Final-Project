@@ -35,7 +35,7 @@ public class StatPanel extends JPanel {
         JButton closeBtn = new JButton("Close Stats");
         closeBtn.setBackground(new Color(60, 60, 60));
         closeBtn.setForeground(new Color(240, 220, 140));
-        closeBtn.setFont(new Font("Consolas", Font.BOLD, 20));
+        closeBtn.setFont(GameFonts.jettsBold(20f));
         closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> this.setVisible(false));
         add(closeBtn);
@@ -44,7 +44,7 @@ public class StatPanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(new Color(230, 205, 70));
-        label.setFont(new Font("Consolas", Font.BOLD, 22));
+        label.setFont(GameFonts.jettsBold(22f));
         return label;
     }
 

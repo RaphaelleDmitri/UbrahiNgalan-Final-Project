@@ -44,6 +44,7 @@ public class Player extends Character {
         availableWeapons.add(new Weapon("Developer Destroyer", 200, 20));
 
 
+<<<<<<< HEAD
         availableArmor.add(new Armor("Leather Armor", 8, 30));
         availableArmor.add(new Armor("Chainmail Armor", 12, 60));
         availableArmor.add(new Armor("Steel Armor", 16, 120));
@@ -51,6 +52,13 @@ public class Player extends Character {
         availableArmor.add(new Armor("Armor of Retribution", 30, 300));
         availableArmor.add(new Armor("Armor of the GodKing", 50, 500));
         availableArmor.add(new Armor("Developer Deflector", 100, 20));
+=======
+        availableArmor.add(new Armor("Leather Armor", 8, 30, true));
+        availableArmor.add(new Armor("Chainmail Armor", 12, 60, true));
+        availableArmor.add(new Armor("Steel Armor", 16, 120, true));
+        availableArmor.add(new Armor("Diamond Armor", 24, 200, true));
+        availableArmor.add(new Armor("Armor of Retribution", 30, 300, true));
+>>>>>>> 9bc5240cc9ffc4abfb9e46c510c6bdaf8f22fe66
     }
 
     // ================= COMBAT =================
@@ -136,5 +144,45 @@ public class Player extends Character {
 
         defense = baseDefense +
                 (equippedArmor != null ? equippedArmor.defense : 0);
+    }
+
+    public int sellWeapon(Weapon weapon) {
+        if (!weapon.tradable) {
+            return 0; // Cannot sell non-tradable (legendary) items
+        }
+        if (!weapons.contains(weapon)) {
+            return 0; // Player doesn't own this weapon
+        }
+
+        int sellPrice = (int) Math.round(weapon.price * 0.7);
+        weapons.remove(weapon);
+        coins += sellPrice;
+        
+        // Replenish the weapon in the shop
+        availableWeapons.add(weapon);
+
+        return sellPrice;
+    }
+
+    /**
+     * Sells armor if tradable, adds 70% of price to coins, and replenishes it in the shop.
+     * Returns the amount earned, or 0 if the armor cannot be sold.
+     */
+    public int sellArmor(Armor armor) {
+        if (!armor.tradable) {
+            return 0; // Cannot sell non-tradable (legendary) items
+        }
+        if (!armors.contains(armor)) {
+            return 0; // Player doesn't own this armor
+        }
+
+        int sellPrice = (int) Math.round(armor.price * 0.7);
+        armors.remove(armor);
+        coins += sellPrice;
+        
+        // Replenish the armor in the shop
+        availableArmor.add(armor);
+
+        return sellPrice;
     }
 }
