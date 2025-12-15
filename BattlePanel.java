@@ -5,7 +5,6 @@ import java.util.Random;
 import javax.swing.*;
 import javax.swing.text.*;
 
-
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
@@ -250,32 +249,32 @@ public class BattlePanel extends JPanel {
             if (gleihDefeated) {
                 log.append("\n\n>> DING DONG, The Dancing Witch is Dead!");
                 log.append("\n\n>> VICTORY!");
-                log.append("\nYou found something... a legendary weapon and armor!");
-                // Give both legendary items to the player as Gleih's reward (soulbound)
-                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
-                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
-                System.out.println("DEBUG BattlePanel: Gleih rewards granted to player");
-                log.append("\nYou found something... a legendary armor?");
-                game.startBossBattle3();
+                log.append("\n>> Darkness rises from Gleih's fallen form...");
+                disablePlayerControls();
+                Timer t = new Timer(5000, e -> {
+                    game.startBossBattle3();
+                });
+                t.setRepeats(false);
+                t.start();
                 return;
                 
             } else if (wasBoss) {
                 log.append("\n\n>> The Corrupted King collapses... The final blow!");
                 log.append("\n\n>> VICTORY!");
-                log.append("\nYou found something... a legendary weapon?");
-                
-                // NEW: Spawn the Spire when Renz is defeated
+                player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
+                player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
+                log.append("\nYou scavenged The Blade of Oblivion and The Aegis of Eternity from the Fallen King!, both are added to inventory.");
+                disablePlayerControls();
                 if (renzDefeated) {
-                    System.out.println("DEBUG BattlePanel: Calling game.onRenzDefeated()"); // DEBUG
                     game.onRenzDefeated();
                 } else {
-                    System.out.println("DEBUG BattlePanel: renzDefeated is FALSE"); // DEBUG
+                    System.out.println("DEBUG BattlePanel: renzDefeated is FALSE <RECHECK PO>"); // DEBUG
                 }
             } else if (eumDefeated) {
                 log.append("\n\n>> Eum lets out a final, deafening scream...");
                 log.append("\n\n>> The battlefield grows silent.");
                 log.append("\n>> Your journey has reached its end.");
-    
+                disablePlayerControls();
                 JButton endButton = new JButton("End Game");
                 endButton.setFont(new Font("Serif", Font.BOLD, 18));
     
@@ -300,7 +299,8 @@ public class BattlePanel extends JPanel {
         
             log.append("\n You have obtained " + reward + " coins! ");
             game.addCoins(reward);
-        
+            disablePlayerControls();
+
             Timer t2 = new Timer(5000, ev -> game.returnToMap());
             t2.setRepeats(false);
             t2.start();
@@ -509,6 +509,7 @@ public class BattlePanel extends JPanel {
         return log;
     }
     private void endFinalBossBattle() {
+        disablePlayerControls();
         log.append("\n\n>> Eum lets out a final, deafening scream...");
         log.append("\n>> The shadows collapse in on themselves.");
         log.append("\n\n>> Eum, The VoidMother, HAS FINALLY FALLEN.");
@@ -544,5 +545,16 @@ public class BattlePanel extends JPanel {
         });
         delayTimer.setRepeats(false);
         delayTimer.start();
+    }
+
+    private void disablePlayerControls() {
+        SwingUtilities.invokeLater(() -> {
+            if (targetBox != null) targetBox.setEnabled(false);
+            if (buttons != null) {
+                for (Component c : buttons.getComponents()) {
+                    c.setEnabled(false);
+                }
+            }
+        });
     }
 }

@@ -142,6 +142,10 @@ public class Main extends JFrame {
         System.out.println("DEBUG: renzDefeated = " + renzDefeated); // DEBUG
         System.out.println("DEBUG: gamePanel = " + gamePanel); // DEBUG
         
+        // Ensure we have a valid game panel instance before setting it
+        if (gamePanel == null) {
+            gamePanel = new MapPanel(this);
+        }
         setContentPane(gamePanel);
         revalidate();
         repaint();
