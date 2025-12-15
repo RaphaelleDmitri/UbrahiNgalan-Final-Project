@@ -1,16 +1,15 @@
 import java.awt.*;
-import java.util.Queue;
-import javax.swing.*;
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.Queue;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class ShopPanel extends JPanel {
     private Image backgroundImage;
     private Main game;
     private Player player;
     private JTextArea log;
-    private StatPanel statPanel; // live stats
     private JButton weaponBtn;
     private JButton armorBtn;
     // Using Queue interface instead of LinkedList
@@ -32,9 +31,7 @@ public class ShopPanel extends JPanel {
         setBackground(new Color(25, 25, 25));
         // Keep default opacity; background image + optional tint will be painted manually
 
-        // Stat panel on the right
-        statPanel = new StatPanel(player);
-        add(statPanel, BorderLayout.EAST);
+        
 
         // Initialize queues from player's available items
         weaponQueue = player.availableWeapons;
@@ -141,7 +138,7 @@ public class ShopPanel extends JPanel {
     
                 weaponQueue.poll();
                 updateWeaponButton();
-                statPanel.updateStats();
+                
             } else {
                 log.append("\nNot enough coins to buy " + nextWeapon.name +
                     "! Coins: " + player.coins);
@@ -164,7 +161,7 @@ public class ShopPanel extends JPanel {
     
                 armorQueue.poll();
                 updateArmorButton();
-                statPanel.updateStats();
+                
             } else {
                 log.append("\nNot enough coins to buy " + nextArmor.name +
                     "! Coins: " + player.coins);
@@ -178,7 +175,6 @@ public class ShopPanel extends JPanel {
             player.coins -= 10;
             player.potionAmount++;
             log.append("\nYou bought a Health Potion! (+20 HP) Coins: " + player.coins);
-            statPanel.updateStats(); // update live stats
         } else {
             log.append("\nNot enough coins to buy a potion! Coins: " + player.coins);
         }
