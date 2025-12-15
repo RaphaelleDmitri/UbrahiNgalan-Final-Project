@@ -66,19 +66,27 @@ public class MapPanel extends JPanel {
         //tiles[0][1].setForeground(Color.WHITE);
         tiles[0][6].setText("TestArea");
 
-        tiles[0][1].setText("Shop");
-        //tiles[0][1].setForeground(Color.WHITE);
-        tiles[0][6].setText("TestArea");
-
         tiles[0][1].setText("SHOP");
         tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
         tiles[0][1].setFont(GameFonts.pressBold(18f));
 
 
-        
+        tiles[0][1].setText("SHOP");
+        tiles[0][1].setForeground(Color.BLUE); // Change text color to blue
+        tiles[0][1].setBackground(Color.DARK_GRAY); // Change background color to dark gray
+        tiles[0][1].setOpaque(true);
+        tiles[0][1].setContentAreaFilled(true);
+        tiles[0][1].setFont(GameFonts.pressBold(20f)); // Change font size
+
         tiles[0][3].setText("INN");
-        tiles[0][3].setForeground(new Color(255, 223, 0)); // Bright gold
-        tiles[0][3].setFont(GameFonts.pressBold(18f));
+        tiles[0][3].setForeground(Color.GREEN); // Change text color to green
+        tiles[0][3].setBackground(Color.LIGHT_GRAY); // Change background color to light gray
+        tiles[0][3].setOpaque(true);
+        tiles[0][3].setContentAreaFilled(true);
+        tiles[0][3].setFont(GameFonts.pressBold(22f));
+
+        
+        
 
         // Place the Priestess of Tine in the safe zone (player's initial destination)
         tiles[0][0].setText("Priestess of Tine");
@@ -90,9 +98,7 @@ public class MapPanel extends JPanel {
         // Only the Village Elder NPC should appear in the safe zone at start.
         // The elder is placed at tiles[0][0] above; do not spawn other NPCs here.
 
-            //prioritize later
-            //tile Colorization
-        //    tiles[0][0].setText(".");
+    
         tiles[0][2].setText(".");
         //tiles[0][4].setText(".");
 
@@ -157,27 +163,7 @@ public class MapPanel extends JPanel {
         //add option to  move player with wasd controls
         updatePlayerPosition();
     }
-
-        
-     //work on this later (randomLocationNamer)
-         /* 
-        if(playerX == secretAreaLocationX && playerY == secretAreaLocationY){
-            int randomArea = rand.nextInt(3);
-            String secretName = "???";
-            switch(randomArea){
-                case 1: secretName = "Church";
-                break;
-                case 2: secretName = "Cemetery";
-                break;
-                case 3: secretName = "Medic";
-            }
-            
-            tiles[secretAreaLocationX][secretAreaLocationY].setText(secretName);
-        }else {tiles[secretAreaLocationX][secretAreaLocationY].setText("???");}
-    */
-        
-    
-        
+       
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
@@ -477,28 +463,47 @@ public class MapPanel extends JPanel {
             }
         }
 
-        private void updatePlayerPosition(){
-        for(int i=0;i<ROWS;i++){
-            for(int j=0;j<COLS;j++){
-                // Make all tiles transparent by default
-                tiles[i][j].setOpaque(false);
-                tiles[i][j].setContentAreaFilled(false);
-                
-                if(!tiles[i][j].getText().isEmpty()){
-                    if(!tiles[i][j].getText().equals(".")){
-                        // Buildings are visible
-                        tiles[i][j].setBackground(new Color(60,120,60));
-                        tiles[i][j].setOpaque(true);
-                        tiles[i][j].setContentAreaFilled(true);
+        private void updatePlayerPosition() {
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+        
+                    JButton tile = tiles[i][j];
+                    String text = tile.getText();
+        
+                    // Reset visuals
+                    tile.setOpaque(false);
+                    tile.setContentAreaFilled(false);
+        
+                    if (text == null || text.isEmpty() || text.equals(".")) {
+                        continue;
                     }
+        
+                    // 🏪 SHOP
+                    if (text.equals("SHOP")) {
+                        tile.setBackground(new Color(101, 67, 33));                  // brown
+                        tile.setForeground(Color.BLACK);
+                    }
+                    // 🏨 INN
+                    else if (text.equals("INN")) {
+                        tile.setBackground(new Color(101, 67, 33));                  // brown
+                        tile.setForeground(Color.BLACK);
+                    }
+                    // 🏰 CASTLE / RUINS / SPIRE
+                    else {
+                        tile.setBackground(new Color(60, 120, 60)); // default building green
+                    }
+        
+                    tile.setOpaque(true);
+                    tile.setContentAreaFilled(true);
                 }
             }
+        
+            // 👤 Player tile always overrides
+            JButton playerTile = tiles[playerX][playerY];
+            playerTile.setBackground(Color.WHITE);
+            playerTile.setOpaque(true);
+            playerTile.setContentAreaFilled(true);
         }
-        // Player position is visible
-        tiles[playerX][playerY].setBackground(Color.WHITE);
-        tiles[playerX][playerY].setOpaque(true);
-        tiles[playerX][playerY].setContentAreaFilled(true);
-         }
 
          private void toggleSidePanel(JPanel newPanel) {
             boolean closingSamePanel = sidePanel != null && sidePanel.getClass().equals(newPanel.getClass());
