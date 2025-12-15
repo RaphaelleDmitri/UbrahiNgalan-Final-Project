@@ -367,7 +367,7 @@ public class BattlePanel extends JPanel {
     
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
-        StyleConstants.setFontFamily(def, GameFonts.jetts(30f).getFamily());
+        StyleConstants.setFontFamily(def, GameFonts.press(30f).getFamily());
         StyleConstants.setFontSize(def, 24);
         StyleConstants.setForeground(def, Color.WHITE);
         Style playerStyle = d.addStyle("player", def);
