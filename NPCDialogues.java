@@ -250,18 +250,12 @@ public class NPCDialogues {
                           "Tine hopes so too.")
         ));
 
-        // Only add the Elder after Priestess has been spoken to
-        if (elderAvailable) {
-            npcList.add(elder);
-        }
-        // Only add the Knight after Renz has been defeated, per story
-        if (renzDefeated) {
-            npcList.add(knight);
-        }
-        // Only add the Priestess when she's been marked available
+        // Always add the Elder at the start
+        // But add Priestess first if available
         if (priestessAvailable) {
             npcList.add(priestess);
         }
+        npcList.add(elder);
 
         return npcList;
     }

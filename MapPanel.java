@@ -193,6 +193,19 @@ public class MapPanel extends JPanel {
         btn.setFocusPainted(false);
     }
 
+    // Method to change the Castle to Ruins after defeating Renz
+    public void changeCastleToRuins() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (tiles[i][j].getText().equals("CASTLE")) {
+                    tiles[i][j].setText("RUINS");
+                    tiles[i][j].setForeground(new Color(128, 128, 128)); // Gray
+                    tiles[i][j].setFont(GameFonts.pressBold(16f));
+                }
+            }
+        }
+    }
+
     // Method to spawn the Spire after Corrupted King Renz is defeated
     public void spawnSpire() {
         System.out.println("DEBUG: spawnSpire() called, spireSpawned = " + spireSpawned); // DEBUG
@@ -217,17 +230,6 @@ public class MapPanel extends JPanel {
             tiles[spireX][spireY].setForeground(new Color(255, 0, 255)); // Bright magenta
             tiles[spireX][spireY].setFont(GameFonts.pressBold(18f));
             spireSpawned = true;
-
-            // Remove the Castle tile so Renz can't be fought again
-            for (int i = 0; i < ROWS; i++) {
-                for (int j = 0; j < COLS; j++) {
-                    if (tiles[i][j].getText().equals("CASTLE")) {
-                        tiles[i][j].setText("RUINS"); // Change to "Ruins" or empty
-                        tiles[i][j].setForeground(new Color(128, 128, 128)); // Gray
-                        tiles[i][j].setFont(GameFonts.pressBold(16f));
-                    }
-                }
-            }
             
             info.setText("A mysterious Spire has appeared on the map!");
             // Remove any existing story NPC tiles so only the Spire remains
@@ -297,6 +299,29 @@ public class MapPanel extends JPanel {
         }
         if (!placed) updatePlayerPosition();
         else updatePlayerPosition();
+    }
+
+    // Spawn the Village Elder randomly in the safe zone (top 5x5 area, excluding top-left corner); called after Priestess conversation
+    public void spawnElder() {
+        // Remove existing story NPCs
+        clearStoryNPCs();
+
+        boolean placed = false;
+        // Safe zone: i=0 to 4, j=0 to 4, but not [0][0]
+        while (!placed) {
+            int i = rand.nextInt(5); // 0-4
+            int j = rand.nextInt(5); // 0-4
+            if (!(i == 0 && j == 0)) { // Exclude top-left
+                String t = tiles[i][j].getText();
+                if (t.equals(".") || t.isEmpty()) {
+                    tiles[i][j].setText("Village Elder");
+                    tiles[i][j].setForeground(new Color(144, 238, 144)); // Light green for NPC
+                    tiles[i][j].setFont(GameFonts.pressBold(18f));
+                    placed = true;
+                }
+            }
+        }
+        updatePlayerPosition();
     }
 
     // Clear any story NPC labels from the map (ELDER, KNIGHT, PRIESTESS)

@@ -11,9 +11,9 @@ public class Main extends JFrame {
     ShopPanel shopPanel;
     NPCConversation npcPanel;
 
-    private List<NPC> npcList;  
-    private boolean renzDefeated = false; 
-    private boolean priestessAvailable = false; 
+    private List<NPC> npcList;  // MUST be initialized
+    private boolean renzDefeated = false; // Track if Renz was defeated
+    private boolean priestessAvailable = true; // Priestess welcomes the player first
     private boolean gleihDefeated = false;
     private boolean eumDefeated = false;
 
@@ -145,6 +145,14 @@ public class Main extends JFrame {
     public void onRenzDefeated() {
         System.out.println("DEBUG: onRenzDefeated() called!"); // DEBUG
         renzDefeated = true; // Mark that Renz was defeated
+        // Change the Castle to Ruins
+        if (gamePanel != null) {
+            gamePanel.changeCastleToRuins();
+        }
+        // Spawn the Spire
+        if (gamePanel != null) {
+            gamePanel.spawnSpire();
+        }
         // Rebuild NPC list so story NPCs (like Old Knight) become available
         initNPCs();
         // Place Old Knight on the map (only one NPC at a time)
@@ -192,8 +200,8 @@ public class Main extends JFrame {
             initNPCs();
             if (gamePanel != null) gamePanel.spawnPriestess();
         } else if (npcName.equals("Priestess of Tine")) {
-            // After Priestess talks, spawn the Spire so the Witch can be challenged
-            if (gamePanel != null) gamePanel.spawnSpire();
+            // After Priestess talks, spawn the Village Elder
+            if (gamePanel != null) gamePanel.spawnElder();
         }
     }
 
