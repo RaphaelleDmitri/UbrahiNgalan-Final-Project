@@ -9,6 +9,7 @@ public class InnPanel extends JPanel {
     private JTextArea log;
     private JButton weaponBtn;
     private JButton armorBtn;
+    private JLabel coinsLabel;
 
     private LinkedList<Weapon> weaponQueue;
     private LinkedList<Armor> armorQueue;
@@ -19,6 +20,17 @@ public class InnPanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
+
+        // Top panel for coins display
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        topPanel.setBackground(new Color(25, 25, 25));
+        
+        coinsLabel = new JLabel("Gold: " + player.coins);
+        coinsLabel.setForeground(new Color(255, 215, 0));
+        coinsLabel.setFont(GameFonts.press(28f));
+        topPanel.add(coinsLabel);
+        
+        add(topPanel, BorderLayout.NORTH);
 
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(6, 1, 20, 20));
@@ -71,6 +83,7 @@ public class InnPanel extends JPanel {
             
             if (player.coins >= 50) {               
                 player.coins -= 50;
+                updateCoinsDisplay();
                 int BankerRoll = (int)(Math.random() * 9)+1;
                 int roll = (int)(Math.random() * 9)+1;
                 
@@ -83,6 +96,7 @@ public class InnPanel extends JPanel {
                 if(diff1 < diff2) {
                     player.coins += 100;
                     log.append("\nYou are closer to 9! You win 50 gold!");
+                    updateCoinsDisplay();
                 } else if(diff1 > diff2) {
                     log.append("\nThe banker is closer to 9, you lost this round.");
                 } else {
@@ -123,6 +137,7 @@ public class InnPanel extends JPanel {
             }
         
             player.coins -= 100;
+            updateCoinsDisplay();
             log.append("\n\nYou bet 100 gold.");
         
             int chosenNumber = -1;
@@ -136,6 +151,7 @@ public class InnPanel extends JPanel {
                 } catch (Exception ex) {
                     log.append("\nInvalid number — bet cancelled.");
                     player.coins += 100;
+                    updateCoinsDisplay();
                     return;
                 }
                 log.append("\nYou chose NUMBER: " + chosenNumber);
@@ -179,6 +195,7 @@ public class InnPanel extends JPanel {
             if (won) {
                 player.coins += payout;
                 log.append("\nYOU WON! You receive " + payout + " gold!");
+                updateCoinsDisplay();
             } else {
                 log.append("\nYou lost the round.");
             }
@@ -205,8 +222,7 @@ public class InnPanel extends JPanel {
                 "3. Click the ↓ button where you want to insert it\n" +
                 "4. Continue until all cards are sorted!\n\n" +
                 "TIP: Insert each card in the correct position\n" +
-                "to minimize moves and maximize rewards!\n\n" +
-                "This uses the Insertion Sort algorithm.";
+                "to minimize moves and maximize rewards!";
             
             int choice = JOptionPane.showConfirmDialog(
                 this,
@@ -217,7 +233,7 @@ public class InnPanel extends JPanel {
             );
             
             if (choice == JOptionPane.OK_OPTION) {
-                new CardSortingGame(this, player, log);
+                new CardSortingGame(this, player, log, this);
             } else {
                 log.append("\n\nCard Sorting cancelled.");
             }
@@ -232,6 +248,10 @@ public class InnPanel extends JPanel {
         btn.setForeground(new Color(240, 220, 140));
         btn.setFocusPainted(false);
         return btn;
+    }
+    
+    public void updateCoinsDisplay() {
+        coinsLabel.setText("Gold: " + player.coins);
     }
 }
 
@@ -248,13 +268,16 @@ class CardSortingGame extends JDialog {
     private JLabel movesLabel;
     private Player player;
     private JTextArea mainLog;
+    private InnPanel innPanel;
     
-    public CardSortingGame(JPanel parent, Player player, JTextArea mainLog) {
+    public CardSortingGame(JPanel parent, Player player, JTextArea mainLog, InnPanel innPanel) {
         super((Frame) SwingUtilities.getWindowAncestor(parent), "Card Sorting Challenge", true);
         this.player = player;
         this.mainLog = mainLog;
-        
+        this.innPanel = innPanel;
+
         player.coins -= 75;
+        innPanel.updateCoinsDisplay();
         mainLog.append("\nYou paid 75 gold to play.\n");
         
         // Generate random cards
@@ -286,7 +309,7 @@ class CardSortingGame extends JDialog {
         JPanel topPanel = new JPanel(new GridLayout(4, 1, 5, 5));
         topPanel.setBackground(new Color(25, 25, 25));
         
-        JLabel titleLabel = new JLabel("INSERTION SORT CHALLENGE", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Order of Cards", SwingConstants.CENTER);
         titleLabel.setForeground(new Color(240, 220, 140));
         titleLabel.setFont(GameFonts.press(24f));
         
@@ -435,6 +458,7 @@ class CardSortingGame extends JDialog {
             
             int totalReward = baseReward + efficiencyBonus;
             player.coins += totalReward;
+            innPanel.updateCoinsDisplay();
             
             mainLog.append("\n\nResult: " + rating);
             mainLog.append("\nSorted cards: " + sortedCards);
