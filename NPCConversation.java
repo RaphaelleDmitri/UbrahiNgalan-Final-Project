@@ -109,6 +109,7 @@ public class NPCConversation extends JPanel {
                 // Clear log and show fresh dialogue
                 log.setText(selNpc.getName() + " speaks:\n");
                 displayCurrentDialogue(selNpc);
+                infoLabel.setText("Talking to: " + selNpc.getName());
             }
         });
 
@@ -125,6 +126,7 @@ public class NPCConversation extends JPanel {
             final int sel = startIdx;
             SwingUtilities.invokeLater(() -> npcBox.setSelectedIndex(sel));
             displayCurrentDialogue(first);
+            infoLabel.setText("Talking to: " + first.getName());
         }
     }
 
