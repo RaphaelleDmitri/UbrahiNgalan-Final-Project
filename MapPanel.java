@@ -128,7 +128,7 @@ public class MapPanel extends JPanel {
     
     // Return to Main Menu button
     JButton returnHomeBtn = new JButton("Main Menu");
-    returnHomeBtn.setFont(GameFonts.press(24f));
+    returnHomeBtn.setFont(GameFonts.press(18f));
     returnHomeBtn.setBackground(new Color(60, 60, 60));
     returnHomeBtn.setForeground(new Color(255, 255, 155));
     returnHomeBtn.setFocusPainted(false);
@@ -140,7 +140,7 @@ public class MapPanel extends JPanel {
     // Inventory button with border
     //Inventory Button
     JButton inventoryBtn = new JButton("Inventory");
-    inventoryBtn.setFont(GameFonts.press(24f));
+    inventoryBtn.setFont(GameFonts.press(18f));
     inventoryBtn.setBackground(new Color(60, 60, 60));
     inventoryBtn.setForeground(new Color(255, 255, 155));
     inventoryBtn.setFocusPainted(false);
@@ -152,7 +152,12 @@ public class MapPanel extends JPanel {
         toggleSidePanel(new InventoryPanel(game.player));
     });
 
-    controls.add(returnHomeBtn, BorderLayout.EAST);
+    // Wrap Main Menu in a panel to mirror Inventory spacing and pull from edge
+    JPanel returnBtnPanel = new JPanel();
+    returnBtnPanel.setOpaque(false);
+    returnBtnPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+    returnBtnPanel.add(returnHomeBtn);
+    controls.add(returnBtnPanel, BorderLayout.EAST);
     controls.add(inventoryBtnPanel, BorderLayout.WEST);
     add(controls, BorderLayout.SOUTH);
 

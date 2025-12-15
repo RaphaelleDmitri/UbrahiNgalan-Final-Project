@@ -11,13 +11,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
 
-/**
- * NPCConversation with branching dialogue template
- *
- * - Each NPC has dialogue nodes with multiple options.
- * - Selecting an option moves to the next dialogue node (or ends conversation).
- * - Template-friendly: just change NPCs, nodes, options, and consequences.
- */
 public class NPCConversation extends JPanel {
     private Main game;
     private Player player;
@@ -63,13 +56,14 @@ public class NPCConversation extends JPanel {
         styledPane.setBackground(new Color(0, 0, 0, 0));
         styledPane.setForeground(Color.WHITE);
         styledPane.setFont(GameFonts.press(25f));
-        styledPane.setBorder(null);
+        styledPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
         doc = styledPane.getStyledDocument();
         createStyles(doc);
 
-        JScrollPane scroll = new JScrollPane(styledPane);
-        scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(false);
+        JScrollPane scroll = new JScrollPane(styledPane); 
+        scroll.setOpaque(false); 
+        scroll.getViewport().setOpaque(false); 
+        scroll.setBorder(BorderFactory.createEmptyBorder()); 
         add(scroll, BorderLayout.CENTER);
 
         log = new ForwardingTextArea();
@@ -82,7 +76,7 @@ public class NPCConversation extends JPanel {
         npcBox.setFont(GameFonts.pressBold(20f));
         npcBox.setOpaque(false);
         npcBox.setBackground(new Color(0, 0, 0, 0));
-        npcBox.setForeground(new Color(240, 220, 140));
+        npcBox.setForeground(new Color(220, 200, 160));
         updateNPCBox();
         // If a specific NPC was requested, select them
         if (selectedNpcName != null) {
@@ -94,13 +88,17 @@ public class NPCConversation extends JPanel {
                 }
             }
         }
-        rightPanel.add(new JLabel("NPC:"), BorderLayout.NORTH);
+        JLabel npcLabel = new JLabel("NPC:");
+        npcLabel.setForeground(new Color(230, 205, 70));
+        npcLabel.setFont(GameFonts.pressBold(16f));
+        rightPanel.add(npcLabel, BorderLayout.NORTH);
         rightPanel.add(npcBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
         // Dialogue buttons (will show actual choice text)
         buttons = new JPanel();
         buttons.setOpaque(false);
+        buttons.setBorder(BorderFactory.createEmptyBorder(0, 0, 24, 0)); // lift away from bottom
 
         for (int i = 0; i < 3; i++) {
             optionButtons[i] = styledBtn("Option " + (i+1));
@@ -144,14 +142,24 @@ public class NPCConversation extends JPanel {
     }
 
     private JButton styledBtn(String txt) {
-        JButton btn = new JButton(txt);
+        JButton btn = new JButton(txt) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setComposite(AlphaComposite.SrcOver.derive(0.6f));
+                g2.setColor(new Color(0, 0, 0));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
         btn.setOpaque(false);
         btn.setContentAreaFilled(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(240, 220, 140), 2),
+            BorderFactory.createLineBorder(new Color(200, 180, 140), 2),
             BorderFactory.createEmptyBorder(8, 20, 8, 20)));
-        btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(GameFonts.pressBold(32f));
+        btn.setForeground(new Color(220, 200, 160));
+        btn.setFont(GameFonts.pressBold(18f));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -169,8 +177,8 @@ public class NPCConversation extends JPanel {
         String imagePath = null;
         if (lowerName.contains("elder")) {
             imagePath = "elder.png";
-        } else if (lowerName.contains("knight")) {
-            imagePath = "oldknight.png";
+        } else if (lowerName.contains("old knight garron")) {
+            imagePath = "old knight.png";
         } else if (lowerName.contains("priestess")) {
             imagePath = "priestess.png";
         }
@@ -201,14 +209,20 @@ public class NPCConversation extends JPanel {
         int arrayIdx = option - 1;
 
         String playerChoice = node.getPlayerChoice(arrayIdx);
-        log.append("\nYou: " + playerChoice);
+        log.append("\n\nYou: " + playerChoice);
 
         // Determine next node based on option
         String nextNode = node.getNextNode(arrayIdx);
         if (nextNode == null) {
             // End of conversation
-            log.append("\n" + current.getName() + ": " + node.getNPCResponse(arrayIdx));
+            log.append("\n\n" + current.getName() + ": " + node.getNPCResponse(arrayIdx));
             log.append("\n\n>> Conversation ended.");
+            // Hide buttons when conversation ends
+            for (JButton btn : optionButtons) {
+                btn.setVisible(false);
+            }
+            buttons.revalidate();
+            buttons.repaint();
             // Notify game that this NPC conversation ended so progression can continue
             try {
                 game.onNPCConversationEnded(current.getName(), nodeId);
@@ -234,7 +248,7 @@ public class NPCConversation extends JPanel {
         if (node == null) return;
 
         // Show NPC's current line (the initial message for this node)
-        log.append("\n" + npc.getName() + ": " + node.getNPCText());
+        log.append("\n\n" + npc.getName() + ": " + node.getNPCText());
 
         // Update option buttons to show actual player choices
         for (int i = 0; i < optionButtons.length; i++) {
@@ -264,16 +278,21 @@ public class NPCConversation extends JPanel {
         StyleConstants.setFontFamily(def, GameFonts.press(25f).getFamily());
         StyleConstants.setFontSize(def, 25);
         StyleConstants.setForeground(def, Color.WHITE);
+        StyleConstants.setLineSpacing(def, 0.2f);
 
         Style playerStyle = d.addStyle("player", def);
         StyleConstants.setForeground(playerStyle, Color.YELLOW);
 
         Style npcStyle = d.addStyle("npc", def);
-        StyleConstants.setForeground(npcStyle, new Color(0, 140, 255));
+        StyleConstants.setForeground(npcStyle, Color.BLACK);
+        // Semi-transparent light background behind NPC lines to keep black readable
+        StyleConstants.setBackground(npcStyle, new Color(255, 255, 255, 130));
 
         Style system = d.addStyle("system", def);
         StyleConstants.setForeground(system, new Color(100, 225, 100));
         StyleConstants.setBold(system, true);
+        // Subtle dark background for system hints
+        StyleConstants.setBackground(system, new Color(0, 0, 0, 100));
     }
 
     private void appendStyledByHeuristics(String raw) {
@@ -321,5 +340,6 @@ public class NPCConversation extends JPanel {
         if (useImageBackground && backgroundImage != null) {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
+        // If no image, let the panel remain transparent with no fallback fill
     }
 }
