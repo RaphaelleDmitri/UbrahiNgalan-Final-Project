@@ -134,22 +134,28 @@ public class Main extends JFrame {
         showMainMenu();
     }
 
-    
+    // Initialize NPCs and their dialogue nodes (moved to NPCDialogues.java)
     private void initNPCs() {   
         // Pass current boss-defeat and progression states so NPCs spawn according to story
         // Make Priestess available at game start so the player talks to her first
         npcList = NPCDialogues.createNPCs(renzDefeated, priestessAvailable, gleihDefeated, eumDefeated, false);
     }
 
+    // Method called when Corrupted King Renz is defeated
     public void onRenzDefeated() {
-        renzDefeated = true;
+        System.out.println("DEBUG: onRenzDefeated() called!"); // DEBUG
+        renzDefeated = true; // Mark that Renz was defeated
+        // Change the Castle to Ruins
         if (gamePanel != null) {
             gamePanel.changeCastleToRuins();
         }
+        // Spawn the Spire
         if (gamePanel != null) {
             gamePanel.spawnSpire();
         }
+        // Rebuild NPC list so story NPCs (like Old Knight) become available
         initNPCs();
+        // Place Old Knight on the map (only one NPC at a time)
         if (gamePanel != null) {
             gamePanel.placeOldKnight();
         }
@@ -158,9 +164,9 @@ public class Main extends JFrame {
     
     // Return to map and spawn Spire if Renz was defeated
     public void returnToMap() {
-        System.out.println("DEBUG: returnToMap() called"); 
-        System.out.println("DEBUG: renzDefeated = " + renzDefeated);
-        System.out.println("DEBUG: gamePanel = " + gamePanel); 
+        System.out.println("DEBUG: returnToMap() called"); // DEBUG
+        System.out.println("DEBUG: renzDefeated = " + renzDefeated); // DEBUG
+        System.out.println("DEBUG: gamePanel = " + gamePanel); // DEBUG
         
         // Ensure we have a valid game panel instance before setting it
         if (gamePanel == null) {
@@ -170,30 +176,31 @@ public class Main extends JFrame {
         revalidate();
         repaint();
         
-        // Note: spire spawn is now gated by NPC conversation flow
         
-        // Requesting focus multiple times to para mag work
+
+        // Note: spire spawn is now gated by NPC conversation flow (Priestess),
+        // so don't automatically spawn it here.
+        
+        // CRITICAL: Request focus multiple times to ensure it works
         SwingUtilities.invokeLater(() -> {
             gamePanel.setFocusable(true);
             gamePanel.requestFocusInWindow();
         });
         
-        // Double-check pagd
+        // Double-check focus after a short delay
         Timer focusTimer = new Timer(100, e -> {
             gamePanel.requestFocusInWindow();
         });
         focusTimer.setRepeats(false);
-        focusTimer.start(); 
+        focusTimer.start();
     }
 
     // Called when an NPC conversation ends
     public void onNPCConversationEnded(String npcName, String lastNodeId) {
         System.out.println("DEBUG: Conversation ended with " + npcName + " node=" + lastNodeId);
         if (npcName.equals("Old Knight Garron")) {
-            // After Knight finishes guiding player, make Priestess available and spawn her
-            priestessAvailable = true;
-            initNPCs();
-            if (gamePanel != null) gamePanel.spawnPriestess();
+            // After Knight finishes guiding the player, do NOT respawn the Priestess.
+            // (Elder location from earlier in the story should remain unchanged.)
         } else if (npcName.equals("Priestess of Tine")) {
             // After Priestess talks, spawn the Village Elder
             if (gamePanel != null) gamePanel.spawnElder();
@@ -221,7 +228,7 @@ public class Main extends JFrame {
         // Start the battle first
         startBattle(eum);
         
-        // intro ni eumee 
+        // Call intro using the log from the BattlePanel
         if (battlePanel != null && battlePanel.getLog() != null) {
             eum.intro(battlePanel.getLog(), player);
         }
