@@ -21,6 +21,7 @@ public class MapPanel extends JPanel {
     Random rand = new Random();
     private boolean spireSpawned = false; // Boolean to track if Spire has spawned
     private boolean renzDefeated = false; // Boolean to track if Renz has been defeated
+    private boolean castleSpawned = false; // Boolean to track if Castle has spawned
 
     public MapPanel(Main game){
         this.game = game;
@@ -304,12 +305,15 @@ public class MapPanel extends JPanel {
 
     // Spawn the Castle randomly on the map; called after talking to both Priestess and Elder
     public void spawnCastle() {
-        int randomXSpawn = rand.nextInt(6) + 5;
-        int randomYSpawn = rand.nextInt(6) + 5;
-        tiles[randomXSpawn][randomYSpawn].setText("CASTLE");
-        tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
-        tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
-        updatePlayerPosition();
+        if (!castleSpawned) {
+            int randomXSpawn = rand.nextInt(6) + 5;
+            int randomYSpawn = rand.nextInt(6) + 5;
+            tiles[randomXSpawn][randomYSpawn].setText("CASTLE");
+            tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
+            tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
+            castleSpawned = true;
+            updatePlayerPosition();
+        }
     }
 
     // Clear any story NPC labels from the map (ELDER, KNIGHT, PRIESTESS)
