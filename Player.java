@@ -52,13 +52,6 @@ public class Player extends Character {
         availableArmor.add(new Armor("Armor of Retribution", 30, 300, true));
         availableArmor.add(new Armor("Armor of the GodKing", 50, 500, true));
         availableArmor.add(new Armor("Developer Deflector", 100, 20, true));
-
-        availableArmor.add(new Armor("Leather Armor", 8, 30, true));
-        availableArmor.add(new Armor("Chainmail Armor", 12, 60, true));
-        availableArmor.add(new Armor("Steel Armor", 16, 120, true));
-        availableArmor.add(new Armor("Diamond Armor", 24, 200, true));
-        availableArmor.add(new Armor("Armor of Retribution", 30, 300, true));
-
     }
 
     // ================= COMBAT =================
