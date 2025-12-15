@@ -44,21 +44,21 @@ public class Player extends Character {
         availableWeapons.add(new Weapon("Developer Destroyer", 200, 20));
 
 
-<<<<<<< HEAD
-        availableArmor.add(new Armor("Leather Armor", 8, 30));
-        availableArmor.add(new Armor("Chainmail Armor", 12, 60));
-        availableArmor.add(new Armor("Steel Armor", 16, 120));
-        availableArmor.add(new Armor("Diamond Armor", 24, 200));
-        availableArmor.add(new Armor("Armor of Retribution", 30, 300));
-        availableArmor.add(new Armor("Armor of the GodKing", 50, 500));
-        availableArmor.add(new Armor("Developer Deflector", 100, 20));
-=======
+
         availableArmor.add(new Armor("Leather Armor", 8, 30, true));
         availableArmor.add(new Armor("Chainmail Armor", 12, 60, true));
         availableArmor.add(new Armor("Steel Armor", 16, 120, true));
         availableArmor.add(new Armor("Diamond Armor", 24, 200, true));
         availableArmor.add(new Armor("Armor of Retribution", 30, 300, true));
->>>>>>> 9bc5240cc9ffc4abfb9e46c510c6bdaf8f22fe66
+        availableArmor.add(new Armor("Armor of the GodKing", 50, 500, true));
+        availableArmor.add(new Armor("Developer Deflector", 100, 20, true));
+
+        availableArmor.add(new Armor("Leather Armor", 8, 30, true));
+        availableArmor.add(new Armor("Chainmail Armor", 12, 60, true));
+        availableArmor.add(new Armor("Steel Armor", 16, 120, true));
+        availableArmor.add(new Armor("Diamond Armor", 24, 200, true));
+        availableArmor.add(new Armor("Armor of Retribution", 30, 300, true));
+
     }
 
     // ================= COMBAT =================

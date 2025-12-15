@@ -1,10 +1,10 @@
 import java.awt.*;
-import java.util.Random;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class MapPanel extends JPanel {
     
@@ -102,16 +102,16 @@ public class MapPanel extends JPanel {
         }
 
         // trial buildings
-<<<<<<< HEAD
+
         tiles[0][1].setText("Shop");
         //tiles[0][1].setForeground(Color.WHITE);
         tiles[0][6].setText("TestArea");
-=======
+
         tiles[0][1].setText("SHOP");
         tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
         tiles[0][1].setFont(GameFonts.pressBold(18f));
 
->>>>>>> 9bc5240cc9ffc4abfb9e46c510c6bdaf8f22fe66
+
         
         tiles[0][3].setText("INN");
         tiles[0][3].setForeground(new Color(255, 223, 0)); // Bright gold
