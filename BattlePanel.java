@@ -60,7 +60,7 @@ public class BattlePanel extends JPanel {
         styledPane.setBackground(new Color(0, 0, 0, 0));
         styledPane.setForeground(Color.WHITE);
         styledPane.setFont(GameFonts.press(25f));
-        styledPane.setBorder(null);
+        styledPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
         doc = styledPane.getStyledDocument();
         createStyles(doc);
         JScrollPane scroll = new JScrollPane(styledPane);
@@ -82,6 +82,7 @@ public class BattlePanel extends JPanel {
         add(rightPanel, BorderLayout.EAST);
         buttons = new JPanel();
         buttons.setOpaque(false);
+        buttons.setBorder(BorderFactory.createEmptyBorder(0, 0, 24, 0)); // lift away from bottom
         buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton attackBtn = styledBtn("Attack");
         JButton defendBtn = styledBtn("Defend");
@@ -141,10 +142,10 @@ public class BattlePanel extends JPanel {
         btn.setOpaque(false);
         btn.setContentAreaFilled(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(240,220,140), 2),
+            BorderFactory.createLineBorder(new Color(200, 180, 140), 2),
             innerPadding));
         btn.setFocusPainted(false);
-        btn.setForeground(new Color(240,220,140));
+        btn.setForeground(new Color(220, 200, 160));
         btn.setFont(GameFonts.press(20f));
         btn.setMargin(new Insets(6, 18, 6, 18));
         return btn;
@@ -302,23 +303,16 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> Eum lets out a final, deafening scream...");
                 log.append("\n\n>> The battlefield grows silent.");
                 log.append("\n>> Your journey has reached its end.");
+                log.append("\n\n>> VICTORY!");
                 disablePlayerControls();
-                JButton endButton = new JButton("End Game");
-                endButton.setFont(new Font("Serif", Font.BOLD, 18));
-    
-                endButton.addActionListener(e -> {
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "Thank you for playing.\n\nThe light endures.",
-                        "THE END",
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
-                    System.exit(0);
-                });
-    
-                this.add(endButton);
-                this.revalidate();
-                this.repaint();
+                
+                JButton endButton = styledBtn("End Game");
+                endButton.setVisible(true);
+                endButton.setEnabled(true);
+                endButton.addActionListener(e -> game.resetGame());
+                buttons.add(endButton);
+                buttons.revalidate();
+                buttons.repaint();
                 return;
             }
             else {
@@ -370,6 +364,7 @@ public class BattlePanel extends JPanel {
         StyleConstants.setFontFamily(def, GameFonts.press(30f).getFamily());
         StyleConstants.setFontSize(def, 24);
         StyleConstants.setForeground(def, Color.WHITE);
+        StyleConstants.setLineSpacing(def, 0.2f);
         Style playerStyle = d.addStyle("player", def);
         StyleConstants.setForeground(playerStyle, Color.YELLOW);
         Style enemyStyle = d.addStyle("enemy", def);
@@ -522,22 +517,15 @@ public class BattlePanel extends JPanel {
         Timer delayTimer = new Timer(2000, e -> {
             log.append("\n\n>> The battlefield grows silent.");
             log.append("\n>> Your journey has reached its end.");
-            JButton endButton = new JButton("End Game");
-            endButton.setFont(new Font("Serif", Font.BOLD, 18));
-        
-            endButton.addActionListener(ev -> {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Thank you for playing.\n\nThe light endures.",
-                    "THE END",
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-                System.exit(0);
-            });
-        
-            this.add(endButton);
-            this.revalidate();
-            this.repaint();
+            log.append("\n\n>> VICTORY!");
+            
+            JButton endButton = styledBtn("End Game");
+            endButton.setVisible(true);
+            endButton.setEnabled(true);
+            endButton.addActionListener(ev -> game.resetGame());
+            buttons.add(endButton);
+            buttons.revalidate();
+            buttons.repaint();
         });
         delayTimer.setRepeats(false);
         delayTimer.start();
@@ -548,7 +536,10 @@ public class BattlePanel extends JPanel {
             if (buttons != null) {
                 for (Component c : buttons.getComponents()) {
                     c.setEnabled(false);
+                    c.setVisible(false);
                 }
+                buttons.revalidate();
+                buttons.repaint();
             }
         });
     }

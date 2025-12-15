@@ -36,35 +36,40 @@ public class ShopPanel extends JPanel {
         setBackground(new Color(25, 25, 25));
         // Keep default opacity; background image + optional tint will be painted manually
 
+        // Left panel container for vertical centering
+        JPanel leftContainer = new JPanel(new GridBagLayout());
+        leftContainer.setOpaque(false);
+        
         // Left panel for buttons
-        JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
+        JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 25));
         leftPanel.setOpaque(false);
-        leftPanel.setPreferredSize(new Dimension(600, 30));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+        leftPanel.setPreferredSize(new Dimension(620, 500));
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
 
         // Weapon button
         weaponBtn = styledButton("");
         updateWeaponButton();
-        weaponBtn.setFont(GameFonts.press(16f));
+        weaponBtn.setFont(GameFonts.press(14f));
         leftPanel.add(weaponBtn);
 
         // Armor button
         armorBtn = styledButton("");
         updateArmorButton();
-        armorBtn.setFont(GameFonts.press(14f));
+        armorBtn.setFont(GameFonts.press(12f));
         leftPanel.add(armorBtn);
 
         // Potion button
         JButton potionBtn = styledButton("Health Potion (+20 HP) - 10 Gold");
-        potionBtn.setFont(GameFonts.press(17f));
+        potionBtn.setFont(GameFonts.press(15f));
         leftPanel.add(potionBtn);
 
         // Exit button
         JButton exitBtn = styledButton("EXIT SHOP");
-        exitBtn.setFont(GameFonts.press(28f));
+        exitBtn.setFont(GameFonts.press(22f));
         leftPanel.add(exitBtn);
 
-        add(leftPanel, BorderLayout.WEST);
+        leftContainer.add(leftPanel);
+        add(leftContainer, BorderLayout.WEST);
 
         // Log area in the center
         log = new JTextArea();
@@ -93,8 +98,19 @@ public class ShopPanel extends JPanel {
     }
 
     private JButton styledButton(String text) {
-        JButton btn = new JButton(text);
-        btn.setBackground(new Color(60, 60, 60));
+        JButton btn = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setComposite(AlphaComposite.SrcOver.derive(0.6f));
+                g2.setColor(new Color(60, 60, 60));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
         btn.setForeground(new Color(240, 220, 140));
         btn.setFocusPainted(false);
         return btn;
