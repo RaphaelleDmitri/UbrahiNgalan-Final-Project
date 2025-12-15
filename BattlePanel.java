@@ -4,45 +4,36 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.text.*;
-
 public class BattlePanel extends JPanel {
     private Main game;
     private Player player;
-
     
     private List<Enemy> enemies;
     private JComboBox<String> targetBox;
-
     private JTextArea log;
-
     private JTextPane styledPane;
     private StyledDocument doc;
-
     private JLabel stats;
     Random rand = new Random();
-
     private int lastPlayerAction = 0;
     private JPanel buttons; // moved to field so we can toggle buttons on game over
     private JButton restartBtn; // shown when player dies
+    private boolean hasFled = false;
 
     public BattlePanel(Main game, Player player, Enemy enemy) {
         this(game, player, List.of(enemy));
     }
-
     public BattlePanel(Main game, Player player, List<Enemy> enemies) {
         this.game = game;
         this.player = player;
         this.enemies = new ArrayList<>(enemies);
-
         setLayout(new BorderLayout());
         setBackground(new Color(25,25,25));
-
         stats = new JLabel(updateStatsForEnemies(), SwingConstants.CENTER);
         stats.setForeground(new Color(230,205,70));
         stats.setFont(GameFonts.press(20f));
         stats.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         add(stats, BorderLayout.NORTH);
-
         styledPane = new JTextPane();
         styledPane.setEditable(false);
         styledPane.setBackground(new Color(40,40,40));
@@ -50,14 +41,10 @@ public class BattlePanel extends JPanel {
         styledPane.setFont(GameFonts.press(25f));
         styledPane.setBorder(BorderFactory.createLineBorder(new Color(200,200,100), 2));
         doc = styledPane.getStyledDocument();
-
         createStyles(doc);
-
         JScrollPane scroll = new JScrollPane(styledPane);
         add(scroll, BorderLayout.CENTER);
-
         log = new ForwardingTextArea();
-
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(new Color(25,25,25));
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
@@ -69,7 +56,6 @@ public class BattlePanel extends JPanel {
         rightPanel.add(new JLabel("Target:"), BorderLayout.NORTH);
         rightPanel.add(targetBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
-
         buttons = new JPanel();
         buttons.setBackground(new Color(25,25,25));
         buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
@@ -77,28 +63,22 @@ public class BattlePanel extends JPanel {
         JButton defendBtn = styledBtn("Defend");
         JButton healBtn   = styledBtn("Heal");
         JButton fleeBtn = styledBtn("Flee");
-
         restartBtn = styledBtn("Restart");
         restartBtn.setVisible(false);
-
         buttons.add(attackBtn);
         buttons.add(defendBtn);
         buttons.add(healBtn);
         buttons.add(fleeBtn);
         buttons.add(restartBtn);
         add(buttons, BorderLayout.SOUTH);
-
-
         attackBtn.addActionListener(e -> doTurn(1));
         defendBtn.addActionListener(e -> doTurn(2));
         healBtn.addActionListener(e -> doTurn(3));
         fleeBtn.addActionListener(e -> doTurn(4));
-
         restartBtn.addActionListener(e -> {
             // Reset game to main menu
             game.resetGame();
         });
-
        
         
         if (!this.enemies.isEmpty()) {
@@ -130,7 +110,6 @@ public class BattlePanel extends JPanel {
             } 
         }
     }
-
     private JButton styledBtn(String txt){
         JButton btn = new JButton(txt);
         btn.setBackground(new Color(60,60,60));
@@ -140,85 +119,81 @@ public class BattlePanel extends JPanel {
         btn.setFocusPainted(false);
         return btn;
     }
-
     
-    private void doTurn(int action){
-        if(!player.isAlive() || enemies.isEmpty()) return;
-
-       
+    private void doTurn(int action) {
+        if (!player.isAlive() || enemies.isEmpty() || hasFled) return; // Prevent actions if the player has fled
+    
         lastPlayerAction = action;
-        switch(action){
+        switch (action) {
             case 1 -> { 
                 int idx = targetBox.getSelectedIndex();
                 if (idx >= 0 && idx < enemies.size()) {
                     Enemy chosen = enemies.get(idx);
                     player.attack(chosen, log);
-
-                  
+    
                     if (chosen instanceof BossEnemyWitch bw && bw.isPunishActive()) bw.clearPunish();
                     else if (chosen instanceof BossEnemy boss && boss.isPunishActive()) boss.clearPunish();
                 } else {
-                   
                     Enemy chosen = enemies.get(0);
                     player.attack(chosen, log);
                 }
             }
             case 2 -> player.defend(log);
-            
             case 3 -> player.heal(log);
-            case 4 -> player.flee(log);
+            case 4 -> {
+                boolean containsBoss = enemies.stream().anyMatch(e -> e instanceof BossEnemy || e instanceof BossEnemyWitch || e instanceof BossEnemyFinal);
+
+                int fleeChance = containsBoss ? 5 : 40; // Reduced chance if boss present
+
+                log.append("\n\n>> You attempt to flee...");
+                if (rand.nextInt(100) <fleeChance) {  
+                    log.append("\n>> You successfully fled the battle!");
+                    hasFled = true; // Mark as fled
+                    disablePlayerControls(); // Disable further actions
+                    Timer t = new Timer(3000, e -> game.returnToMap()); // Return to map after 3 seconds
+                    t.setRepeats(false);
+                    t.start();
+                    return;
+                } else {
+                    log.append("\n>> You failed to flee!");
+                }
+            }
         }
-
         stats.setText(updateStatsForEnemies());
-        // Immediately refresh target list so HP changes from the player's action
         updateTargetBox();
-
         // Enemy turn - only alive enemies attack
         for (int i = 0; i < enemies.size(); i++) {
             if (!player.isAlive()) break;
-
             Enemy e = enemies.get(i);
-            
-            // CRITICAL FIX: Skip dead enemies
+    
+            // Skip dead enemies
             if (!e.isAlive()) continue;
-            
+    
             if (e instanceof BossEnemyWitch witch) {
                 witch.bossTurn(player, log, lastPlayerAction);
-
                 MinionEnemy minion = witch.getPendingSummon();
                 if (minion != null) {
                     enemies.add(minion);
-                    appendWithDelay("\n\nA foul spawn has been summoned and joins the battle!", 500);
+                    log.append("\n\nA foul spawn has been summoned and joins the battle!");
                     updateTargetBox();
                 }
-            } else if (e instanceof BossEnemy boss) {              
-                    boss.bossTurn(player, log, lastPlayerAction);
-                    // Update HP/UI immediately when a boss performs an action
-                    stats.setText(updateStatsForEnemies());
-                    updateTargetBox();
-                    // Continue processing other enemies (do not abort the turn)
-                    continue;                
-            } else if (e instanceof BossEnemyFinal boss) {
+            } else if (e instanceof BossEnemy boss) {
                 boss.bossTurn(player, log, lastPlayerAction);
-                if (!boss.isAlive()) {
-                    endFinalBossBattle();
-                    return;
-                }
+                stats.setText(updateStatsForEnemies());
+                updateTargetBox();
             } else {
                 e.attack(player, log);
             }
             stats.setText(updateStatsForEnemies());
             updateTargetBox();
         }
-
-
+    
         // Remove dead enemies from the list
         List<Enemy> dead = new ArrayList<>();
         for (Enemy e : enemies) if (!e.isAlive()) dead.add(e);
         for (Enemy d : dead) {
             enemies.remove(d);
         }
-
         if (enemies.isEmpty()) {
             int reward = rand.nextInt(10) + 2000;
         
@@ -250,6 +225,7 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> DING DONG, The Dancing Witch is Dead!");
                 log.append("\n\n>> VICTORY!");
                 log.append("\n>> Darkness rises from Gleih's fallen form...");
+                disablePlayerControls();
                 Timer t = new Timer(5000, e -> {
                     game.startBossBattle3();
                 });
@@ -263,11 +239,8 @@ public class BattlePanel extends JPanel {
                 player.weapons.add(new Weapon("Blade of Oblivion", 100, 9999, false));
                 player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
                 log.append("\nYou scavenged The Blade of Oblivion and The Aegis of Eternity from the Fallen King!, both are added to inventory.");
-                
-                // NEW: Spawn the Spire when Renz is defeated
+                disablePlayerControls();
                 if (renzDefeated) {
-                    System.out.println("DEBUG BattlePanel: Calling game.onRenzDefeated()"); // DEBUG
-                    
                     game.onRenzDefeated();
                 } else {
                     System.out.println("DEBUG BattlePanel: renzDefeated is FALSE <RECHECK PO>"); // DEBUG
@@ -276,7 +249,7 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> Eum lets out a final, deafening scream...");
                 log.append("\n\n>> The battlefield grows silent.");
                 log.append("\n>> Your journey has reached its end.");
-    
+                disablePlayerControls();
                 JButton endButton = new JButton("End Game");
                 endButton.setFont(new Font("Serif", Font.BOLD, 18));
     
@@ -301,16 +274,14 @@ public class BattlePanel extends JPanel {
         
             log.append("\n You have obtained " + reward + " coins! ");
             game.addCoins(reward);
-        
+            disablePlayerControls();
             Timer t2 = new Timer(5000, ev -> game.returnToMap());
             t2.setRepeats(false);
             t2.start();
             return;
         }
-
         updateTargetBox();
         stats.setText(updateStatsForEnemies());
-
         if(!player.isAlive()) {
             log.append("\n\n>> GAME OVER");
             // Show restart button and disable other actions
@@ -322,7 +293,6 @@ public class BattlePanel extends JPanel {
                 }
                 // Optionally hide target selector as well
                 if (targetBox != null) targetBox.setVisible(false);
-
                 restartBtn.setVisible(true);
                 restartBtn.setEnabled(true);
                 buttons.revalidate();
@@ -330,7 +300,6 @@ public class BattlePanel extends JPanel {
             });
         }
     }
-
     private String updateStatsForEnemies(){
         StringBuilder sb = new StringBuilder();
         sb.append("Hero HP: ").append(player.getHealth()).append(" Potions Left:").append(player.potionAmount);
@@ -342,39 +311,30 @@ public class BattlePanel extends JPanel {
         }
         return sb.toString();
     }
-
     
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
         StyleConstants.setFontFamily(def, GameFonts.jetts(30f).getFamily());
         StyleConstants.setFontSize(def, 24);
         StyleConstants.setForeground(def, Color.WHITE);
-
         Style playerStyle = d.addStyle("player", def);
         StyleConstants.setForeground(playerStyle, Color.YELLOW);
-
         Style enemyStyle = d.addStyle("enemy", def);
         StyleConstants.setForeground(enemyStyle, new Color(255, 140, 0)); // orange
-
         Style bossStyle = d.addStyle("boss", def);
         StyleConstants.setForeground(bossStyle, Color.RED);
         StyleConstants.setBold(bossStyle, true);
-
         Style bossHeavy = d.addStyle("bossHeavy", bossStyle);
         StyleConstants.setForeground(bossHeavy, new Color(165, 20, 20));
-
         Style phase = d.addStyle("phase", def);
         StyleConstants.setForeground(phase, new Color(160, 32, 240));
         StyleConstants.setBold(phase, true);
-
         Style system = d.addStyle("system", def);
         StyleConstants.setForeground(system, new Color(100, 225, 100));
         StyleConstants.setBold(system, true);
     }
-
     private void appendStyledByHeuristics(String raw) {
         if (raw == null || raw.isEmpty()) return;
-
         String[] parts = raw.split("(?<=\\n)");
         for (String part : parts) {
             String trimmed = part.stripLeading();
@@ -384,13 +344,11 @@ public class BattlePanel extends JPanel {
                     doc.insertString(doc.getLength(), part, doc.getStyle("player"));
                     continue;
                 }
-
                 
                 if (trimmed.contains("VICTORY") || trimmed.contains("You have obtained") || trimmed.startsWith(">>")) {
                     doc.insertString(doc.getLength(), part, doc.getStyle("system"));
                     continue;
                 }
-
                 
                 Enemy matched = null;
                 boolean matchedIsBoss = false;
@@ -402,7 +360,6 @@ public class BattlePanel extends JPanel {
                         break;
                     }
                 }
-
                 if (matched != null) {
                     String up = trimmed.toUpperCase();
                     if (matchedIsBoss) {
@@ -431,7 +388,6 @@ public class BattlePanel extends JPanel {
                     }
                     continue;
                 }
-
                 boolean startsWithEnemy = false;
                 for (Enemy e : enemies) {
                     if (trimmed.startsWith(e.getName())) {
@@ -443,27 +399,21 @@ public class BattlePanel extends JPanel {
                     doc.insertString(doc.getLength(), part, doc.getStyle("enemy"));
                     continue;
                 }
-
                 doc.insertString(doc.getLength(), part, doc.getStyle("default"));
-
             } catch (BadLocationException ex) {
                 styledPane.setText(styledPane.getText() + part);
             }
         }
-
         SwingUtilities.invokeLater(() -> styledPane.setCaretPosition(doc.getLength()));
     }
-
     private class ForwardingTextArea extends JTextArea {
         public ForwardingTextArea() {
             super();
         }
-
         @Override
         public void append(String str) {
             appendStyledSafely(str);
         }
-
         @Override
         public void setText(String text) {
             try {
@@ -473,13 +423,11 @@ public class BattlePanel extends JPanel {
             }
             appendStyledSafely(text);
         }
-
         private void appendStyledSafely(String s) {
             if (s == null) return;
             appendStyledByHeuristics(s);
         }
     }
-
     private void updateTargetBox() {
         SwingUtilities.invokeLater(() -> {
             int selectedIndex = targetBox.getSelectedIndex(); 
@@ -501,15 +449,11 @@ public class BattlePanel extends JPanel {
         });
     }
 
-    public void appendWithDelay(String text, int delayMs) {
-        Timer t = new Timer(delayMs, e -> log.append(text));
-        t.setRepeats(false);
-        t.start();
-    }
     public JTextArea getLog() {
         return log;
     }
     private void endFinalBossBattle() {
+        disablePlayerControls();
         log.append("\n\n>> Eum lets out a final, deafening scream...");
         log.append("\n>> The shadows collapse in on themselves.");
         log.append("\n\n>> Eum, The VoidMother, HAS FINALLY FALLEN.");
@@ -522,7 +466,6 @@ public class BattlePanel extends JPanel {
         log.append("\n\n>> Lura smiles one last time before fading into light.");
     
         
-
         Timer delayTimer = new Timer(2000, e -> {
             log.append("\n\n>> The battlefield grows silent.");
             log.append("\n>> Your journey has reached its end.");
@@ -546,4 +489,16 @@ public class BattlePanel extends JPanel {
         delayTimer.setRepeats(false);
         delayTimer.start();
     }
+    private void disablePlayerControls() {
+        SwingUtilities.invokeLater(() -> {
+            if (targetBox != null) targetBox.setEnabled(false);
+            if (buttons != null) {
+                for (Component c : buttons.getComponents()) {
+                    c.setEnabled(false);
+                }
+            }
+        });
+    }
 }
+
+
