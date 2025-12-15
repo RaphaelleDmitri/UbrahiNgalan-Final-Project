@@ -61,16 +61,16 @@ public class BossEnemyFinal extends Enemy {
             case 3 -> misfire(player, log);
         }
 
-        // Rage follow-up
+        
         if (rageCharged && move != 2) {
             devastatingBlow(player, log);
             rageCharged = false;
         }
 
-        // 🚑 Lura save (AFTER damage)
+       
         if (checkLuraSave(player, log)) return;
 
-        // Phase 2 bonus attacks
+        
         if (phase2 && rand.nextInt(100) < 40) {
             shadowStrike(player, log);
         }
@@ -81,18 +81,17 @@ public class BossEnemyFinal extends Enemy {
         // Lura auto-attack
         if (luraSummoned && lura.health > 0) {
             int dmg = lura.attackPower + rand.nextInt(5);
-            log.append("\n>> Lura strikes Umbra for " + dmg + " damage!");
+            log.append("\n>> Lura strikes Eum for " + dmg + " damage!");
             this.health -= dmg;
         }      
     }
 
-    /* =========================
-       LURA LAST-STAND SAVE
-       ========================= */
+    
+       
     private boolean checkLuraSave(Player player, JTextArea log) {
         if (!luraSummoned && player.health > 0 && player.health <= player.maxHealth * 0.3) {
             luraSummoned = true;
-            lura = new Ally("Lura, the Previous Hero", 150, 25, 10);
+            lura = new Ally("Lura, the Previous Hero", 150, 45, 10);
 
             log.append("\n>> A blinding light shatters the darkness!");
             log.append("\n>> LURA, THE PREVIOUS HERO, STANDS BESIDE YOU!");
@@ -108,9 +107,7 @@ public class BossEnemyFinal extends Enemy {
         return false;
     }
 
-    /* =========================
-       DAMAGE HANDLER (SAFE)
-       ========================= */
+    
     private void dealDamage(Player target, int dmg, JTextArea log) {
         dmg = Math.max(0, dmg);
 
@@ -125,9 +122,7 @@ public class BossEnemyFinal extends Enemy {
         log.append(" (" + dmg + " dmg)");
     }
 
-    /* =========================
-       ATTACKS
-       ========================= */
+    
     private void shadowStrike(Player target, JTextArea log) {
         int dmg = attackPower + rand.nextInt(10) - target.defense / 4;
         log.append("\n\n" + name + " slashes with shadowy claws!");
