@@ -35,7 +35,7 @@ public class NPCConversation extends JPanel {
     // Tracks current dialogue node per NPC
     private Map<NPC, String> currentNode = new HashMap<>();
 
-    public NPCConversation(Main game, Player player, List<NPC> npcs) {
+    public NPCConversation(Main game, Player player, List<NPC> npcs, String selectedNpcName) {
         this.game = game;
         this.player = player;
         this.npcs = new ArrayList<>(npcs);
@@ -73,6 +73,16 @@ public class NPCConversation extends JPanel {
         npcBox.setBackground(new Color(60, 60, 60));
         npcBox.setForeground(new Color(240, 220, 140));
         updateNPCBox();
+        // If a specific NPC was requested, select them
+        if (selectedNpcName != null) {
+            for (int i = 0; i < this.npcs.size(); i++) {
+                if (this.npcs.get(i).getName().equals(selectedNpcName)) {
+                    final int idx = i;
+                    SwingUtilities.invokeLater(() -> npcBox.setSelectedIndex(idx));
+                    break;
+                }
+            }
+        }
         rightPanel.add(new JLabel("NPC:"), BorderLayout.NORTH);
         rightPanel.add(npcBox, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
@@ -99,15 +109,24 @@ public class NPCConversation extends JPanel {
                 // Clear log and show fresh dialogue
                 log.setText(selNpc.getName() + " speaks:\n");
                 displayCurrentDialogue(selNpc);
+                infoLabel.setText("Talking to: " + selNpc.getName());
             }
         });
 
-        // Start conversation with first NPC
+        // Start conversation with selected NPC or the first NPC
         if (!npcs.isEmpty()) {
-            NPC first = npcs.get(0);
+            int startIdx = 0;
+            if (selectedNpcName != null) {
+                for (int i = 0; i < this.npcs.size(); i++) if (this.npcs.get(i).getName().equals(selectedNpcName)) { startIdx = i; break; }
+            }
+            NPC first = this.npcs.get(startIdx);
             currentNode.put(first, first.getStartNode());
             log.setText(first.getName() + " approaches you...\n");
+            // ensure npcBox selection is synced
+            final int sel = startIdx;
+            SwingUtilities.invokeLater(() -> npcBox.setSelectedIndex(sel));
             displayCurrentDialogue(first);
+            infoLabel.setText("Talking to: " + first.getName());
         }
     }
 
@@ -143,6 +162,12 @@ public class NPCConversation extends JPanel {
             // End of conversation
             log.append("\n" + current.getName() + ": " + node.getNPCResponse(arrayIdx));
             log.append("\n\n>> Conversation ended.");
+            // Notify game that this NPC conversation ended so progression can continue
+            try {
+                game.onNPCConversationEnded(current.getName(), nodeId);
+            } catch (Exception ex) {
+                System.out.println("DEBUG: onNPCConversationEnded not handled: " + ex.getMessage());
+            }
             // Wait 3 seconds so the player can read the final lines, then return to the map
             javax.swing.Timer timer = new javax.swing.Timer(3000, ev -> {
                 game.returnToMap();

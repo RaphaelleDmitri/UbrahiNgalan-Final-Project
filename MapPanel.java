@@ -21,6 +21,7 @@ public class MapPanel extends JPanel {
     Random rand = new Random();
     private boolean spireSpawned = false; // Boolean to track if Spire has spawned
     private boolean renzDefeated = false; // Boolean to track if Renz has been defeated
+    private boolean castleSpawned = false; // Boolean to track if Castle has spawned
 
     public MapPanel(Main game){
         this.game = game;
@@ -34,40 +35,6 @@ public class MapPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-    JPanel leftPanel = new JPanel();
-    leftPanel.setLayout(new BorderLayout());
-    leftPanel.setOpaque(false);
-
-        // Stats button
-    JButton statsBtn = new JButton("Stats");
-    statsBtn.setFont(GameFonts.press(18f));
-    statsBtn.setBackground(new Color(60, 60, 60));
-    statsBtn.setForeground(new Color(255, 255, 155));
-    statsBtn.setFocusPainted(false);
-
-        
-    JPanel statsBtnPanel = new JPanel();
-    statsBtnPanel.setOpaque(false);
-    statsBtnPanel.add(statsBtn);
-
-    leftPanel.add(statsBtnPanel, BorderLayout.NORTH);
-    add(leftPanel, BorderLayout.WEST);
-
-        //Inventory Button
-    JButton inventoryBtn = new JButton("Inventory");
-    inventoryBtn.setFont(GameFonts.press(18f));
-    inventoryBtn.setBackground(new Color(60, 60, 60));
-    inventoryBtn.setForeground(new Color(255, 255, 155));
-    inventoryBtn.setFocusPainted(false);
-
-    JPanel inventoryBtnPanel = new JPanel();
-    inventoryBtnPanel.setOpaque(false);
-    inventoryBtnPanel.add(inventoryBtn);
-    leftPanel.add(inventoryBtnPanel, BorderLayout.SOUTH);
-
-    inventoryBtn.addActionListener(e -> {
-        toggleSidePanel(new InventoryPanel(game.player));
-    });
             // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
@@ -100,54 +67,39 @@ public class MapPanel extends JPanel {
         //tiles[0][1].setForeground(Color.WHITE);
         tiles[0][6].setText("TestArea");
 
-        tiles[0][1].setText("Shop");
-        //tiles[0][1].setForeground(Color.WHITE);
-        tiles[0][6].setText("TestArea");
-
         tiles[0][1].setText("SHOP");
         tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
         tiles[0][1].setFont(GameFonts.pressBold(18f));
 
 
-        
+        tiles[0][1].setText("SHOP");
+        tiles[0][1].setForeground(Color.BLUE); // Change text color to blue
+        tiles[0][1].setBackground(Color.DARK_GRAY); // Change background color to dark gray
+        tiles[0][1].setOpaque(true);
+        tiles[0][1].setContentAreaFilled(true);
+        tiles[0][1].setFont(GameFonts.pressBold(20f)); // Change font size
+
         tiles[0][3].setText("INN");
-        tiles[0][3].setForeground(new Color(255, 223, 0)); // Bright gold
-        tiles[0][3].setFont(GameFonts.pressBold(18f));
+        tiles[0][3].setForeground(Color.GREEN); // Change text color to green
+        tiles[0][3].setBackground(Color.LIGHT_GRAY); // Change background color to light gray
+        tiles[0][3].setOpaque(true);
+        tiles[0][3].setContentAreaFilled(true);
+        tiles[0][3].setFont(GameFonts.pressBold(22f));
 
-        int randomXSpawn = rand.nextInt(6) + 5;
-        int randomYSpawn = rand.nextInt(6) + 5;
-        tiles[0][0].setText("CASTLE");
-        tiles[0][0].setForeground(new Color(186, 85, 211)); // Purple for mystery
-        tiles[0][0].setFont(GameFonts.pressBold(16f));
-        // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
-        tiles[randomXSpawn][randomYSpawn].setText("CASTLE"); //castle real location
-        tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
-        tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
-
-        int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
-        int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
+        
         
 
-        //npc ammount
-            int npcAmount = 2;
-        for(int k = 0; k < npcAmount; k++){
-        int x,y;
+        // Place the Priestess of Tine in the safe zone (player's initial destination)
+        tiles[0][0].setText("Priestess of Tine");
+        tiles[0][0].setForeground(new Color(144, 238, 144)); // Light green for NPC
+        tiles[0][0].setFont(GameFonts.pressBold(18f));
+        // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
+        
 
-        while(true) {
-            // spawn around bottom-mid area so it feels distributed adventure exploring
-            x = rand.nextInt(ROWS - 6) + 6; // rows 6-11
-            y = rand.nextInt(COLS);        // cols 0-11
-            String text = tiles[x][y].getText();
-            if(text.isEmpty() || text.equals(".")) break;
-        }
-        tiles[x][y].setText("NPC");
-        tiles[x][y].setForeground(new Color(144, 238, 144)); // Light green
-        tiles[x][y].setFont(GameFonts.pressBold(18f));
-        }
+        // Only the Village Elder NPC should appear in the safe zone at start.
+        // The elder is placed at tiles[0][0] above; do not spawn other NPCs here.
 
-            //prioritize later
-            //tile Colorization
-        //    tiles[0][0].setText(".");
+    
         tiles[0][2].setText(".");
         //tiles[0][4].setText(".");
 
@@ -174,18 +126,32 @@ public class MapPanel extends JPanel {
     
     // Return to Main Menu button
     JButton returnHomeBtn = new JButton("Main Menu");
-    returnHomeBtn.setFont(GameFonts.press(16f));
+    returnHomeBtn.setFont(GameFonts.press(24f));
     returnHomeBtn.setBackground(new Color(60, 60, 60));
     returnHomeBtn.setForeground(new Color(255, 255, 155));
     returnHomeBtn.setFocusPainted(false);
-    returnHomeBtn.setBorder(new EmptyBorder(5, 15, 5, 15));
     returnHomeBtn.addActionListener(e -> {
         game.setContentPane(new MainMenuPanel(game));
         game.revalidate();
     });
-    
-    controls.add(returnHomeBtn, BorderLayout.EAST);
 
+    // Inventory button with border
+    //Inventory Button
+    JButton inventoryBtn = new JButton("Inventory");
+    inventoryBtn.setFont(GameFonts.press(24f));
+    inventoryBtn.setBackground(new Color(60, 60, 60));
+    inventoryBtn.setForeground(new Color(255, 255, 155));
+    inventoryBtn.setFocusPainted(false);
+    JPanel inventoryBtnPanel = new JPanel();
+    inventoryBtnPanel.setOpaque(false);
+    inventoryBtnPanel.add(inventoryBtn);
+
+    inventoryBtn.addActionListener(e -> {
+        toggleSidePanel(new InventoryPanel(game.player));
+    });
+
+    controls.add(returnHomeBtn, BorderLayout.EAST);
+    controls.add(inventoryBtnPanel, BorderLayout.WEST);
     add(controls, BorderLayout.SOUTH);
 
     // Enable arrow key movement
@@ -198,32 +164,25 @@ public class MapPanel extends JPanel {
         //add option to  move player with wasd controls
         updatePlayerPosition();
     }
-
-        
-     //work on this later (randomLocationNamer)
-         /* 
-        if(playerX == secretAreaLocationX && playerY == secretAreaLocationY){
-            int randomArea = rand.nextInt(3);
-            String secretName = "???";
-            switch(randomArea){
-                case 1: secretName = "Church";
-                break;
-                case 2: secretName = "Cemetery";
-                break;
-                case 3: secretName = "Medic";
-            }
-            
-            tiles[secretAreaLocationX][secretAreaLocationY].setText(secretName);
-        }else {tiles[secretAreaLocationX][secretAreaLocationY].setText("???");}
-    */
-        
-    
-        
+       
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
         btn.setFont(GameFonts.jettsBold(16f));
         btn.setFocusPainted(false);
+    }
+
+    // Method to change the Castle to Ruins after defeating Renz
+    public void changeCastleToRuins() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (tiles[i][j].getText().equals("CASTLE")) {
+                    tiles[i][j].setText("RUINS");
+                    tiles[i][j].setForeground(new Color(128, 128, 128)); // Gray
+                    tiles[i][j].setFont(GameFonts.pressBold(16f));
+                }
+            }
+        }
     }
 
     // Method to spawn the Spire after Corrupted King Renz is defeated
@@ -250,21 +209,124 @@ public class MapPanel extends JPanel {
             tiles[spireX][spireY].setForeground(new Color(255, 0, 255)); // Bright magenta
             tiles[spireX][spireY].setFont(GameFonts.pressBold(18f));
             spireSpawned = true;
-            renzDefeated = true; // Mark that Renz has been defeated
             
-            // Remove the Castle tile so Renz can't be fought again
-            for (int i = 0; i < ROWS; i++) {
-                for (int j = 0; j < COLS; j++) {
-                    if (tiles[i][j].getText().equals("CASTLE")) {
-                        tiles[i][j].setText("RUINS"); // Change to "Ruins" or empty
-                        tiles[i][j].setForeground(new Color(128, 128, 128)); // Gray
-                        tiles[i][j].setFont(GameFonts.pressBold(16f));
+            info.setText("A mysterious Spire has appeared on the map!");
+            // Remove any existing story NPC tiles so only the Spire remains
+            clearStoryNPCs();
+            updatePlayerPosition(); // Refresh the map visually
+        }
+    }
+
+    // Place the Old Knight on the map (called after Renz is defeated)
+    public void placeOldKnight() {
+        // Clear existing story NPCs
+        clearStoryNPCs();
+
+        // Try to place near the player's current position first, otherwise find any empty tile
+        boolean placed = false;
+        for (int dx = -2; dx <= 2 && !placed; dx++) {
+            for (int dy = -2; dy <= 2 && !placed; dy++) {
+                int nx = playerX + dx;
+                int ny = playerY + dy;
+                if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS) {
+                    String t = tiles[nx][ny].getText();
+                    if ((t.isEmpty() || t.equals(".")) && !(nx == playerX && ny == playerY)) {
+                        tiles[nx][ny].setText("Old Knight Garron");
+                        tiles[nx][ny].setForeground(new Color(144, 238, 144));
+                        tiles[nx][ny].setFont(GameFonts.pressBold(18f));
+                        placed = true;
                     }
                 }
             }
-            
-            info.setText("A mysterious Spire has appeared on the map!");
-            updatePlayerPosition(); // Refresh the map visually
+        }
+        if (!placed) {
+            for (int i = 0; i < ROWS && !placed; i++) {
+                for (int j = 0; j < COLS && !placed; j++) {
+                    String t = tiles[i][j].getText();
+                    if ((t.isEmpty() || t.equals("."))) {
+                        tiles[i][j].setText("Old Knight Garron");
+                        tiles[i][j].setForeground(new Color(144, 238, 144));
+                        tiles[i][j].setFont(GameFonts.pressBold(18f));
+                        placed = true;
+                    }
+                }
+            }
+        }
+        updatePlayerPosition();
+    }
+
+    // Spawn the Priestess near the player; called after Knight conversation ends
+    public void spawnPriestess() {
+        // Remove existing story NPCs
+        clearStoryNPCs();
+
+        boolean placed = false;
+        for (int dx = -1; dx <= 1 && !placed; dx++) {
+            for (int dy = -1; dy <= 1 && !placed; dy++) {
+                int nx = playerX + dx;
+                int ny = playerY + dy;
+                if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS) {
+                    String t = tiles[nx][ny].getText();
+                    if ((t.isEmpty() || t.equals(".")) && !(nx == playerX && ny == playerY)) {
+                        tiles[nx][ny].setText("Priestess of Tine");
+                        tiles[nx][ny].setForeground(new Color(240, 200, 240));
+                        tiles[nx][ny].setFont(GameFonts.pressBold(18f));
+                        placed = true;
+                    }
+                }
+            }
+        }
+        if (!placed) updatePlayerPosition();
+        else updatePlayerPosition();
+    }
+
+    // Spawn the Village Elder randomly in the safe zone (top 5x5 area, excluding top-left corner); called after Priestess conversation
+    public void spawnElder() {
+        // Remove existing story NPCs
+        clearStoryNPCs();
+
+        boolean placed = false;
+        // Safe zone: i=0 to 4, j=0 to 4, but not [0][0]
+        while (!placed) {
+            int i = rand.nextInt(5); // 0-4
+            int j = rand.nextInt(5); // 0-4
+            if (!(i == 0 && j == 0)) { // Exclude top-left
+                String t = tiles[i][j].getText();
+                if (t.equals(".") || t.isEmpty()) {
+                    tiles[i][j].setText("Village Elder");
+                    tiles[i][j].setForeground(new Color(144, 238, 144)); // Light green for NPC
+                    tiles[i][j].setFont(GameFonts.pressBold(18f));
+                    placed = true;
+                }
+            }
+        }
+        updatePlayerPosition();
+    }
+
+    // Spawn the Castle randomly on the map; called after talking to both Priestess and Elder
+    public void spawnCastle() {
+        if (!castleSpawned) {
+            int randomXSpawn = rand.nextInt(6) + 5;
+            int randomYSpawn = rand.nextInt(6) + 5;
+            tiles[randomXSpawn][randomYSpawn].setText("CASTLE");
+            tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
+            tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
+            castleSpawned = true;
+            updatePlayerPosition();
+        }
+    }
+
+    // Clear any story NPC labels from the map (ELDER, KNIGHT, PRIESTESS)
+    private void clearStoryNPCs() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                String t = tiles[i][j].getText();
+                if (t.equals("Village Elder") || t.equals("Old Knight Garron") || t.equals("Priestess of Tine") || t.equals("NPC")) {
+                    tiles[i][j].setText(".");
+                    tiles[i][j].setForeground(Color.WHITE);
+                    tiles[i][j].setFont(GameFonts.press(16f));
+                }
+            }
         }
     }
 
@@ -327,9 +389,15 @@ public class MapPanel extends JPanel {
                 }
             } else if(tileName.equals("Ruins")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
-            } else if(tileName.equals("NPC")){
-                    info.setText("You approach an NPC... (dialogue system coming soon)");
-                    game.startConversation();
+            } else if(tileName.equals("Village Elder")){
+                    info.setText("You approach the Village Elder.");
+                    game.startConversation("Village Elder");
+                } else if(tileName.equals("Old Knight Garron")){
+                    info.setText("You approach Old Knight Garron.");
+                    game.startConversation("Old Knight Garron");
+                } else if(tileName.equals("Priestess of Tine")){
+                    info.setText("You approach the Priestess of Tine.");
+                    game.startConversation("Priestess of Tine");
                 } else if(tileName.equals("SPIRE")){
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
@@ -399,28 +467,47 @@ public class MapPanel extends JPanel {
             }
         }
 
-        private void updatePlayerPosition(){
-        for(int i=0;i<ROWS;i++){
-            for(int j=0;j<COLS;j++){
-                // Make all tiles transparent by default
-                tiles[i][j].setOpaque(false);
-                tiles[i][j].setContentAreaFilled(false);
-                
-                if(!tiles[i][j].getText().isEmpty()){
-                    if(!tiles[i][j].getText().equals(".")){
-                        // Buildings are visible
-                        tiles[i][j].setBackground(new Color(60,120,60));
-                        tiles[i][j].setOpaque(true);
-                        tiles[i][j].setContentAreaFilled(true);
+        private void updatePlayerPosition() {
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+        
+                    JButton tile = tiles[i][j];
+                    String text = tile.getText();
+        
+                    // Reset visuals
+                    tile.setOpaque(false);
+                    tile.setContentAreaFilled(false);
+        
+                    if (text == null || text.isEmpty() || text.equals(".")) {
+                        continue;
                     }
+        
+                    // 🏪 SHOP
+                    if (text.equals("SHOP")) {
+                        tile.setBackground(new Color(101, 67, 33));                  // brown
+                        tile.setForeground(Color.BLACK);
+                    }
+                    // 🏨 INN
+                    else if (text.equals("INN")) {
+                        tile.setBackground(new Color(101, 67, 33));                  // brown
+                        tile.setForeground(Color.BLACK);
+                    }
+                    // 🏰 CASTLE / RUINS / SPIRE
+                    else {
+                        tile.setBackground(new Color(60, 120, 60)); // default building green
+                    }
+        
+                    tile.setOpaque(true);
+                    tile.setContentAreaFilled(true);
                 }
             }
+        
+            // 👤 Player tile always overrides
+            JButton playerTile = tiles[playerX][playerY];
+            playerTile.setBackground(Color.WHITE);
+            playerTile.setOpaque(true);
+            playerTile.setContentAreaFilled(true);
         }
-        // Player position is visible
-        tiles[playerX][playerY].setBackground(Color.WHITE);
-        tiles[playerX][playerY].setOpaque(true);
-        tiles[playerX][playerY].setContentAreaFilled(true);
-         }
 
          private void toggleSidePanel(JPanel newPanel) {
             boolean closingSamePanel = sidePanel != null && sidePanel.getClass().equals(newPanel.getClass());
