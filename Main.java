@@ -11,9 +11,9 @@ public class Main extends JFrame {
     ShopPanel shopPanel;
     NPCConversation npcPanel;
 
-    private List<NPC> npcList;  // MUST be initialized
-    private boolean renzDefeated = false; // Track if Renz was defeated
-    private boolean priestessAvailable = true; // Priestess welcomes the player first
+    private List<NPC> npcList;  
+    private boolean renzDefeated = false; 
+    private boolean priestessAvailable = true; 
     private boolean gleihDefeated = false;
     private boolean eumDefeated = false;
 
@@ -33,18 +33,14 @@ public class Main extends JFrame {
         enemies.add(new Enemy("Slime", 20, 2, 6, 0, 0));
 
 
-        // Boss 1
+        // Bosses 1-3
         enemies.add(new Enemy("Renz, the Corrupted King", 500, 30, 20, 0, 0));
-        // Boss 2
-        enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 0, 0));
-        // Boss 3
-        //Eum, The VoidMother, health 800, attack 70, defense 30
+        enemies.add(new Enemy("Gleih, the Dancing Witch", 250, 50, 10, 0, 0)); 
         enemies.add(new Enemy("Eum, The VoidMother", 700, 40, 20, 0, 0));
+            
+        initNPCs();
+        npcPanel = new NPCConversation(this, player, npcList, null);
         
-        // Initialize NPCs and dialogue nodes
-            initNPCs();
-            npcPanel = new NPCConversation(this, player, npcList, null);
-        // -----------------------------------------------------
         showMainMenu();
         setVisible(true);
     }
@@ -87,7 +83,7 @@ public class Main extends JFrame {
         revalidate();
     }
 
-    // Start conversation and open directly to a named NPC if present
+    // Start conversation
     public void startConversation(String npcName) {
         npcPanel = new NPCConversation(this, player, npcList, npcName);
         setContentPane(npcPanel);
@@ -102,12 +98,12 @@ public class Main extends JFrame {
         player.coins += reward;
     }
 
-    // Reset the game state and return to main menu
+    // Reset the game 
     public void resetGame() {
-        // Recreate player (fresh inventory/stats)
+        // Recreate player 
         player = new Player("Hero", 100, 10, 5, 3, 100000, this);
 
-        // Recreate enemy templates (same as constructor)
+        // Recreate enemy templates
         enemies = new ArrayList<>();
         enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
@@ -121,16 +117,15 @@ public class Main extends JFrame {
         gleihDefeated = false;
         eumDefeated = false;
 
-        // Initialize NPCs and dialogue nodes
+        // Initialize NPCs
         initNPCs();
         npcPanel = new NPCConversation(this, player, npcList, null);
 
-        // Clear any existing panels so state is rebuilt when needed
+        // Clear any existing panels
         battlePanel = null;
         shopPanel = null;
         gamePanel = null;
 
-        // Show main menu to the player
         showMainMenu();
     }
 
@@ -140,9 +135,8 @@ public class Main extends JFrame {
         npcList = NPCDialogues.createNPCs(renzDefeated, priestessAvailable, gleihDefeated, eumDefeated, false);
     }
 
-    // Method called when Corrupted King Renz is defeated
+    // Method called when Renz defeated
     public void onRenzDefeated() {
-        System.out.println("DEBUG: onRenzDefeated() called!"); // DEBUG
         renzDefeated = true; // Mark that Renz was defeated
         // Change the Castle to Ruins
         if (gamePanel != null) {
@@ -159,18 +153,13 @@ public class Main extends JFrame {
     
     // Return to map and spawn Spire if Renz was defeated
     public void returnToMap() {
-        System.out.println("DEBUG: returnToMap() called"); // DEBUG
-        System.out.println("DEBUG: renzDefeated = " + renzDefeated); // DEBUG
-        System.out.println("DEBUG: gamePanel = " + gamePanel); // DEBUG
-        
-        // Ensure we have a valid game panel before setting it
+
         if (gamePanel == null) {
             gamePanel = new MapPanel(this);
         }
         setContentPane(gamePanel);
         revalidate();
         repaint();
-        
         
 
         // Note: spire spawn is now gated by NPC conversation flow (Priestess),
@@ -191,7 +180,6 @@ public class Main extends JFrame {
 
 
     public void onNPCConversationEnded(String npcName, String lastNodeId) {
-        System.out.println("DEBUG: Conversation ended with " + npcName + " node=" + lastNodeId);
         if (npcName.equals("Old Knight Garron")) {
             // After Knight finishes guiding the player, spawn the Spire.
             if (gamePanel != null) {
@@ -222,10 +210,10 @@ public class Main extends JFrame {
         Enemy template = enemies.get(5);
         BossEnemyFinal eum = new BossEnemyFinal(template.name, template.health, template.attackPower, template.defense, 0, 0);
         
-        // Start the battle first
+        
         startBattle(eum);
         
-        // Call intro using the log from the BattlePanel
+        // Call intro
         if (battlePanel != null && battlePanel.getLog() != null) {
             eum.intro(battlePanel.getLog(), player);
         }

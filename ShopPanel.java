@@ -13,7 +13,6 @@ public class ShopPanel extends JPanel {
     private JTextArea log;
     private JButton weaponBtn;
     private JButton armorBtn;
-    // Using Queue interface instead of LinkedList
     private Queue<Weapon> weaponQueue;
     private Queue<Armor> armorQueue;
 
@@ -34,36 +33,29 @@ public class ShopPanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
-        // Keep default opacity; background image + optional tint will be painted manually
 
-        // Left panel container for vertical centering
         JPanel leftContainer = new JPanel(new GridBagLayout());
         leftContainer.setOpaque(false);
         
-        // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 25));
         leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new Dimension(620, 500));
         leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
 
-        // Weapon button
         weaponBtn = styledButton("");
         updateWeaponButton();
         weaponBtn.setFont(GameFonts.press(14f));
         leftPanel.add(weaponBtn);
 
-        // Armor button
         armorBtn = styledButton("");
         updateArmorButton();
         armorBtn.setFont(GameFonts.press(12f));
         leftPanel.add(armorBtn);
 
-        // Potion button
         JButton potionBtn = styledButton("Health Potion (+20 HP) - 10 Gold");
         potionBtn.setFont(GameFonts.press(15f));
         leftPanel.add(potionBtn);
 
-        // Exit button
         JButton exitBtn = styledButton("EXIT SHOP");
         exitBtn.setFont(GameFonts.press(22f));
         leftPanel.add(exitBtn);
@@ -71,7 +63,6 @@ public class ShopPanel extends JPanel {
         leftContainer.add(leftPanel);
         add(leftContainer, BorderLayout.WEST);
 
-        // Log area in the center
         log = new JTextArea();
         log.setEditable(false);
         log.setLineWrap(true);
@@ -90,7 +81,6 @@ public class ShopPanel extends JPanel {
 
         log.setText("Welcome to the shop!\n\n Coins: " + player.coins + "\n\n");
 
-        // Button actions
         weaponBtn.addActionListener(e -> buyWeapon());
         armorBtn.addActionListener(e -> buyArmor());
         potionBtn.addActionListener(e -> buyPotion());
@@ -226,15 +216,10 @@ private void buyWeapon() {
         }
     }
 
-    // === Background tint controls ===
-    private float bgAlpha = 0.0f; // 0.0 (no tint) to 1.0 (fully opaque)
+
+    private float bgAlpha = 0.0f; 
     private Color bgTintColor = new Color(0, 0, 0); // default: black tint
 
-    /**
-     * Set a semi-transparent tint over the shop background.
-     * @param color base tint color (RGB used)
-     * @param alpha 0.0f (no tint) .. 1.0f (fully opaque)
-     */
     public void setBackgroundTint(Color color, float alpha) {
         if (color != null) {
             this.bgTintColor = new Color(color.getRed(), color.getGreen(), color.getBlue());

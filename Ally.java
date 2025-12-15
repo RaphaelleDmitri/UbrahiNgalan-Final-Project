@@ -3,7 +3,7 @@ import javax.swing.*;
 public class Ally extends Character {
 
     public Ally(String name, int health, int attackPower, int defense) {
-        super(name, health, attackPower, defense, 0, 0); // Added missing parameters
+        super(name, health, attackPower, defense, 0, 0);
         this.maxHealth = health;
     }
 

@@ -9,26 +9,22 @@ public class Enemy extends Character {
         this.maxHealth = health;
     }
 
-    
-
     @Override
     public void attack(Character target, JTextArea log) {
         Random rand = new Random();
-        int rawDamage = attackPower + rand.nextInt(5); // attack power + random variance
+        int rawDamage = attackPower + rand.nextInt(5);
     
         // Subtract target defense and any active block
         int totalDefense = (target.defense / 4) + target.tempBlock;
         int dmg = rawDamage - totalDefense;
     
-        // Prevent negative damage
         if (dmg < 0) dmg = 0;
     
         // Apply damage
         target.health -= dmg;
-    
-        // Block is consumed after attack
+
         target.tempBlock = 0;
-    
+
         log.append("\n\n" + name + " deals " + dmg + " damage!");
     }
 

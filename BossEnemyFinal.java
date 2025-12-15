@@ -1,5 +1,6 @@
 import java.util.Random;
 import javax.swing.*;
+import javax.swing.Timer;
 
 public class BossEnemyFinal extends Enemy {
 
@@ -16,15 +17,13 @@ public class BossEnemyFinal extends Enemy {
 
     private Ally lura;
 
+
     public BossEnemyFinal(String name, int health, int attackPower, int defense,
                           int potionAmount, int coins) {
         super(name, health, attackPower, defense, potionAmount, coins);
         this.maxHealth = health;
     }
 
-    /* =========================
-       INTRO (RUNS ONCE)
-       ========================= */
     public void intro(JTextArea log, Player player) {
         if (introDone) return;
         introDone = true;
@@ -37,9 +36,7 @@ public class BossEnemyFinal extends Enemy {
         player.defense = (int) (player.defense * 0.95);
     }
 
-    /* =========================
-       BOSS TURN
-       ========================= */
+
     public void bossTurn(Player player, JTextArea log, int lastPlayerAction) {
 
         
@@ -75,7 +72,6 @@ public class BossEnemyFinal extends Enemy {
             shadowStrike(player, log);
         }
 
-        // Pattern advance
         patternIndex = (patternIndex + 1) % pattern.length;
 
         // Lura auto-attack
@@ -92,15 +88,22 @@ public class BossEnemyFinal extends Enemy {
         if (!luraSummoned && player.health > 0 && player.health <= player.maxHealth * 0.3) {
             luraSummoned = true;
             lura = new Ally("Lura, the Previous Hero", 150, 45, 10);
+            log.append("\n>> Eum lands a crushing blow!");
+            log.append("\n>> As your vision fades, you feel the darkness swallowing you");
 
-            log.append("\n>> A blinding light shatters the darkness!");
-            log.append("\n>> LURA, THE PREVIOUS HERO, STANDS BESIDE YOU!");
-            log.append("\n>> Your wounds are healed by his light!");
+            Timer luraSpawn = new Timer(1500, e -> {
+                log.append("\n>> A blinding light shatters the darkness!");
+                log.append("\n>> LURA, THE PREVIOUS HERO, STANDS BESIDE YOU!");
+                log.append("\n>> Your wounds are healed by his light!");
 
-            player.health = player.maxHealth / 2;
-            player.defense = (int) (player.defense * 1.3);
-            rageCharged = false;
-            patternIndex = 0;
+                player.health = player.maxHealth / 2;
+                player.defense = (int) (player.defense * 1.3);
+                rageCharged = false;
+                patternIndex = 0;
+            });
+            
+            luraSpawn.setRepeats(false);
+            luraSpawn.start();
 
             return true; // boss loses this turn
         }
@@ -114,7 +117,7 @@ public class BossEnemyFinal extends Enemy {
         int newHP = target.health - dmg;
 
         if (!luraSummoned && newHP <= 0) {
-            target.health = 1; // prevent instant death
+            target.health = 1;
             return;
         }
 
@@ -125,13 +128,13 @@ public class BossEnemyFinal extends Enemy {
     
     private void shadowStrike(Player target, JTextArea log) {
         int dmg = attackPower + rand.nextInt(10) - target.defense / 4;
-        log.append("\n\n" + name + " slashes with shadowy claws!");
+        log.append("\n\n" + name + " calls forth shadow blades to attack you!");
         dealDamage(target, dmg, log);
     }
 
     private void flameWave(Player target, JTextArea log) {
         int dmg = 5 + rand.nextInt(8) - target.defense / 4;
-        log.append("\n\n" + name + " unleashes a wave of void flames!");
+        log.append("\n\n" + name + " unleashes a wave of void flames that burns the battlefield!");
         dealDamage(target, dmg, log);
     }
 
@@ -142,13 +145,13 @@ public class BossEnemyFinal extends Enemy {
 
     private void misfire(Player target, JTextArea log) {
         int dmg = 2 + rand.nextInt(4);
-        log.append("\n\n" + name + " miscasts a spell!");
+        log.append("\n\n" + name + " failed to maximise her power, dealing minor damage to you!");
         dealDamage(target, dmg, log);
     }
 
     private void devastatingBlow(Player target, JTextArea log) {
         int dmg = attackPower + 20 + rand.nextInt(15) - target.defense / 5;
-        log.append("\n\n" + name + " unleashes a DEVASTATING BLOW!");
+        log.append("\n\n" + name + " unleashes a DEVASTATING BLOW of void energy!");
         dealDamage(target, dmg, log);
     }
 

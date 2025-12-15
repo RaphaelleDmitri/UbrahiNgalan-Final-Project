@@ -307,11 +307,11 @@ class CardSortingGame extends JDialog {
         innPanel.updateCoinsDisplay();
         mainLog.append("\nYou paid 75 gold to play.\n");
         
-        // Generate random cards
-        int cardCount = 5 + (int)(Math.random() * 4); // 5-8 cards
+        // Generate cards
+        int cardCount = 5 + (int)(Math.random() * 4);
         cards = new ArrayList<>();
         for (int i = 0; i < cardCount; i++) {
-            cards.add(1 + (int)(Math.random() * 9)); // Cards 1-9
+            cards.add(1 + (int)(Math.random() * 9)); 
         }
         
         sortedCards = new ArrayList<>(cards);
@@ -332,7 +332,7 @@ class CardSortingGame extends JDialog {
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(new Color(25, 25, 25));
         
-        // Top panel with instructions
+        // Top panel
         JPanel topPanel = new JPanel(new GridLayout(4, 1, 5, 5));
         topPanel.setBackground(new Color(25, 25, 25));
         
@@ -359,7 +359,7 @@ class CardSortingGame extends JDialog {
         
         add(topPanel, BorderLayout.NORTH);
         
-        // Center panel for cards
+        
         cardsPanel = new JPanel();
         cardsPanel.setBackground(new Color(40, 40, 40));
         cardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 30));
@@ -367,7 +367,7 @@ class CardSortingGame extends JDialog {
         
         add(cardsPanel, BorderLayout.CENTER);
         
-        // Bottom panel with hint
+        
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(25, 25, 25));
         JLabel hintLabel = new JLabel("TIP: Place cards in ascending order (small → large)");
@@ -381,7 +381,6 @@ class CardSortingGame extends JDialog {
     private void updateCardsDisplay() {
         cardsPanel.removeAll();
         
-        // Add insertion slots and cards
         for (int i = 0; i < sortedCards.size(); i++) {
             final int position = i;
             

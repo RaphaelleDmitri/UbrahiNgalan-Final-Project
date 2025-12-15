@@ -47,7 +47,7 @@ public class InventoryPanel extends JPanel {
 
         add(statsPanel, BorderLayout.NORTH);
 
-        // ===== INVENTORY LISTS =====
+        
         weaponModel = new DefaultListModel<>();
         armorModel = new DefaultListModel<>();
 
@@ -67,7 +67,7 @@ public class InventoryPanel extends JPanel {
 
         add(inventoryPanel, BorderLayout.CENTER);
 
-        // ===== EQUIP BUTTONS =====
+       
         JButton equipWeaponBtn = createButton("Equip Weapon");
         JButton equipArmorBtn = createButton("Equip Armor");
         JButton sellWeaponBtn = createButton("Sell Weapon");
@@ -85,7 +85,6 @@ public class InventoryPanel extends JPanel {
         equipPanel.add(sellWeaponBtn);
         equipPanel.add(sellArmorBtn);
 
-        // ===== SORT BUTTONS =====
         JButton sortByDamageBtn = createButton("Sort Weapons by Damage");
         JButton sortByNameBtn = createButton("Sort Weapons by Name");
         JButton sortArmorDefenseBtn = createButton("Sort Armors by Defense");
@@ -104,7 +103,6 @@ public class InventoryPanel extends JPanel {
         sortPanel.add(sortArmorNameBtn);
 
 
-        // ===== BOTTOM PANEL =====
         JPanel bottomPanel = new JPanel(new GridLayout(2, 1, 10, 10));
         bottomPanel.setBackground(new Color(25, 25, 25));
         bottomPanel.add(equipPanel);
@@ -128,7 +126,7 @@ public class InventoryPanel extends JPanel {
         }
 
         int ok = JOptionPane.showConfirmDialog(this, 
-            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
+            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.8) + " coins?",
             "Confirm Sale", 
             JOptionPane.YES_NO_OPTION);
 
@@ -169,8 +167,6 @@ public class InventoryPanel extends JPanel {
         }
     }
 
-    // ================= METHODS =================
-
     private void equipWeapon() {
         Weapon selected = weaponList.getSelectedValue();
         if (selected == null) return;
@@ -185,7 +181,6 @@ public class InventoryPanel extends JPanel {
         updateStats();
     }
 
-    // ===== Weapon Sorting (Bubble Sort) =====
     private void sortWeaponsByName() {
         ArrayList<Weapon> list = player.weapons;
         int n = list.size();
@@ -221,7 +216,6 @@ public class InventoryPanel extends JPanel {
         for (Weapon w : player.weapons) weaponModel.addElement(w);
     }
 
-    // ===== Armor Sorting (Bubble Sort) =====
     private void sortArmorsByName() {
         ArrayList<Armor> list = player.armors;
         int n = list.size();
@@ -257,9 +251,7 @@ public class InventoryPanel extends JPanel {
         for (Armor a : player.armors) armorModel.addElement(a);
     }
 
-    // ===== Update Stats =====
     public void updateStats() {
-    // Set the font once
     Font labelFont = GameFonts.press(16f);
     
         
@@ -285,7 +277,7 @@ public class InventoryPanel extends JPanel {
     
         repaint();
 }
-    // ===== Helper Methods =====
+
     private JPanel createListPanel(String title, JList<?> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(25, 25, 25));

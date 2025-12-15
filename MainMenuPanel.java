@@ -13,7 +13,7 @@ public class MainMenuPanel extends JPanel {
         try {
             backgroundImage = ImageIO.read(new File("front.png"));
         } catch (IOException e) {
-            System.out.println("Background image not found, using color instead");
+            System.out.println("Background image 404, using color instead");
         }
 
         setLayout(new BorderLayout());

@@ -6,18 +6,17 @@ public abstract class Character {
     protected int maxHealth;
     protected int attackPower;
     protected int defense;
-    protected int baseDefense; // Track base defense for reset
+    protected int baseDefense; 
     protected int potionAmount;
     protected int coins;
-    protected int tempBlock = 0; // Temporary block value for defense
-
+    protected int tempBlock = 0;
     public Character(String name, int health, int attackPower, int defense, int potionAmount, int coins) {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
         this.attackPower = attackPower;
         this.defense = defense;
-        this.baseDefense = defense; // Store base defense
+        this.baseDefense = defense; 
         this.potionAmount = potionAmount;
         this.coins = coins;
     }
@@ -57,7 +56,7 @@ public abstract class Character {
     }
 
     public void setHealth(int health) {
-        this.health = Math.min(health, maxHealth); // Cap at max health
+        this.health = Math.min(health, maxHealth); 
     }
 
     public void addCoins(int amount) {
@@ -68,7 +67,6 @@ public abstract class Character {
         this.potionAmount++;
     }
 
-    // Reset defense to base value (call at start of each battle)
     public void resetDefense() {
         this.defense = this.baseDefense;
     }

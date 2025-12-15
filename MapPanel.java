@@ -64,11 +64,9 @@ public class MapPanel extends JPanel {
             }
         }
 
-        // trial buildings
-        tiles[0][1].setText("SHOP");
-        //tiles[0][1].setForeground(Color.WHITE);
-        
 
+        tiles[0][1].setText("SHOP");
+ 
         tiles[0][1].setText("SHOP");
         tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
         tiles[0][1].setFont(GameFonts.pressBold(18f));
@@ -91,19 +89,11 @@ public class MapPanel extends JPanel {
         
         
 
-        // Place the Priestess of Tine in the safe zone (player's initial destination)
         tiles[0][0].setText("Priestess of Tine");
-        tiles[0][0].setForeground(new Color(144, 238, 144)); // Light green for NPC
+        tiles[0][0].setForeground(new Color(144, 238, 144)); 
         tiles[0][0].setFont(GameFonts.pressBold(18f));
-        // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
-        
 
-        // Only the Village Elder NPC should appear in the safe zone at start.
-        // The elder is placed at tiles[0][0] above; do not spawn other NPCs here.
-
-    
         tiles[0][2].setText(".");
-        //tiles[0][4].setText(".");
 
         for(int i =0; i<5;i++){ // ROWS
             for (int j = 0; j<5; j++){ //COLUMNS
@@ -192,14 +182,11 @@ public class MapPanel extends JPanel {
         }
     }
 
-    // Method to spawn the Spire after Corrupted King Renz is defeated
     public void spawnSpire() {
-        System.out.println("DEBUG: spawnSpire() called, spireSpawned = " + spireSpawned); // DEBUG
         
         if (!spireSpawned) {
             int spireX, spireY;
             
-            // Find a random empty location for the Spire
             while (true) {
                 spireX = rand.nextInt(ROWS);
                 spireY = rand.nextInt(COLS);
@@ -211,25 +198,20 @@ public class MapPanel extends JPanel {
                 }
             }
             
-            System.out.println("DEBUG: Spawning Spire at [" + spireX + "][" + spireY + "]"); // DEBUG
             tiles[spireX][spireY].setText("SPIRE");
             tiles[spireX][spireY].setForeground(new Color(255, 0, 255)); // Bright magenta
             tiles[spireX][spireY].setFont(GameFonts.pressBold(18f));
             spireSpawned = true;
             
             info.setText("A mysterious Spire has appeared on the map!");
-            // Remove any existing story NPC tiles so only the Spire remains
             clearStoryNPCs();
             updatePlayerPosition(); // Refresh the map visually
         }
     }
 
-    // Place the Old Knight on the map (called after Renz is defeated)
     public void placeOldKnight() {
-        // Clear existing story NPCs
         clearStoryNPCs();
 
-        // Try to place near the player's current position first, otherwise find any empty tile
         boolean placed = false;
         for (int dx = -2; dx <= 2 && !placed; dx++) {
             for (int dy = -2; dy <= 2 && !placed; dy++) {
@@ -262,9 +244,7 @@ public class MapPanel extends JPanel {
         updatePlayerPosition();
     }
 
-    // Spawn the Priestess near the player; called after Knight conversation ends
     public void spawnPriestess() {
-        // Remove existing story NPCs
         clearStoryNPCs();
 
         boolean placed = false;
@@ -287,9 +267,7 @@ public class MapPanel extends JPanel {
         else updatePlayerPosition();
     }
 
-    // Spawn the Village Elder randomly in the safe zone (top 5x5 area, excluding top-left corner); called after Priestess conversation
     public void spawnElder() {
-        // If the Elder has already been placed once, don't spawn another copy
         if (elderPlaced) {
             return;
         }
@@ -298,11 +276,10 @@ public class MapPanel extends JPanel {
         clearStoryNPCs();
 
         boolean placed = false;
-        // Safe zone: i=0 to 4, j=0 to 4, but not [0][0]
         while (!placed) {
-            int i = rand.nextInt(5); // 0-4
-            int j = rand.nextInt(5); // 0-4
-            if (!(i == 0 && j == 0)) { // Exclude top-left
+            int i = rand.nextInt(5); 
+            int j = rand.nextInt(5); 
+            if (!(i == 0 && j == 0)) { 
                 String t = tiles[i][j].getText();
                 if (t.equals(".") || t.isEmpty()) {
                     tiles[i][j].setText("Village Elder");
@@ -312,12 +289,10 @@ public class MapPanel extends JPanel {
                 }
             }
         }
-        // Once the Elder has been spawned, mark him as permanent so later story NPC clears don't remove him
         elderPlaced = true;
         updatePlayerPosition();
     }
 
-    // Spawn the Castle randomly on the map; called after talking to both Priestess and Elder
     public void spawnCastle() {
         if (!castleSpawned) {
             int randomXSpawn = rand.nextInt(6) + 5;
@@ -330,8 +305,6 @@ public class MapPanel extends JPanel {
         }
     }
 
-    // Clear any story NPC labels from the map (KNIGHT, PRIESTESS, generic NPC).
-    // If the Village Elder has already been placed, keep him on the map.
     private void clearStoryNPCs() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -359,7 +332,7 @@ public class MapPanel extends JPanel {
             case "Left"  -> newY--;
         }
     
-        // Prevent moving outside the map
+        
         if(newX < 0 || newX >= ROWS || newY < 0 || newY >= COLS) return;
     
         playerX = newX;
@@ -376,13 +349,12 @@ public class MapPanel extends JPanel {
                 game.revalidate();
                 game.repaint();
             });
-            return; // exit after opening shop
+            return; 
         }
     
         // Trigger fights or special events
-        if(tileName.isEmpty()){ // empty tile → random encounter or item
+        if(tileName.isEmpty()){ 
             int r = rand.nextInt(20); // 0-19
-            //int n = rand.nextInt(10); //disable encounters
             if(r ==  1|| r == 2 || r == 3 || r == 4) {
                 game.startBattle(game.createEnemy(0));
             }
@@ -395,7 +367,7 @@ public class MapPanel extends JPanel {
                 game.addPotion();
                 info.setText("You found a potion left behind by another unfortunate hero.");
             } else {
-                info.setText("You walk on the grass. Nothing happened." + " R VALUE: " + r);
+                info.setText("You walk on the grass. Nothing happened.");
             }
         } else { 
             // Non-empty tile → predefined enemy or event
@@ -403,7 +375,7 @@ public class MapPanel extends JPanel {
                 if (!renzDefeated) {
                     game.startBossBattle();
                 } 
-            } else if(tileName.equals("Ruins")){
+            } else if(tileName.equals("RUINS")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
             } else if(tileName.equals("Village Elder")){
                     info.setText("You approach the Village Elder.");
@@ -493,18 +465,14 @@ public class MapPanel extends JPanel {
                     if (text == null || text.isEmpty() || text.equals(".")) {
                         continue;
                     }
-        
-                    // 🏪 SHOP
                     if (text.equals("SHOP")) {
                         tile.setBackground(new Color(101, 67, 33));                  // brown
                         tile.setForeground(Color.BLACK);
                     }
-                    // 🏨 INN
                     else if (text.equals("INN")) {
                         tile.setBackground(new Color(101, 67, 33));                  // brown
                         tile.setForeground(Color.BLACK);
                     }
-                    // 🏰 CASTLE / RUINS / SPIRE
                     else {
                         tile.setBackground(new Color(60, 120, 60)); // default building green
                     }
@@ -514,7 +482,6 @@ public class MapPanel extends JPanel {
                 }
             }
         
-            // 👤 Player tile always overrides
             JButton playerTile = tiles[playerX][playerY];
             playerTile.setBackground(Color.WHITE);
             playerTile.setOpaque(true);
@@ -530,7 +497,6 @@ public class MapPanel extends JPanel {
             }
 
             if (closingSamePanel) {
-                // Restore map if we were closing the current panel
                 ensureGridAttached();
                 gridPanel.setVisible(true);
                 revalidate();
@@ -538,13 +504,11 @@ public class MapPanel extends JPanel {
                 return;
             }
 
-            // Inventory takes the whole gameplay area (except the left button column)
             if (newPanel instanceof InventoryPanel) {
                 ensureGridDetached();
                 sidePanel = newPanel;
                 add(sidePanel, BorderLayout.CENTER);
             } else {
-                // Other panels stay as a side drawer while keeping the map visible
                 ensureGridAttached();
                 gridPanel.setVisible(true);
                 sidePanel = newPanel;
