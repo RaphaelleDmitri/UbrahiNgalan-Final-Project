@@ -6,7 +6,6 @@ public class InnPanel extends JPanel {
     private Main game;
     private Player player;
     private JTextArea log;
-    private StatPanel statPanel; // live stats
     private JButton weaponBtn;
     private JButton armorBtn;
 
@@ -20,9 +19,6 @@ public class InnPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
 
-        // Stat panel on the right
-        statPanel = new StatPanel(player);
-        add(statPanel, BorderLayout.EAST);
 
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
@@ -92,9 +88,7 @@ public class InnPanel extends JPanel {
                     log.append("\nThe banker is closer to 9, you lost this round.");
                 } else {
                     log.append("\nIt's a tie! The bank keeps your bet.");
-                }
-                statPanel.updateStats();
-            } else {
+                }} else {
                 log.append("\nNot enough gold to play Lucky 9.");
             }
         });
@@ -143,7 +137,7 @@ public class InnPanel extends JPanel {
                 } catch (Exception ex) {
                     log.append("\nInvalid number — bet cancelled.");
                     player.coins += 100; // refund
-                    statPanel.updateStats();
+
                     return;
                 }
         
@@ -196,10 +190,8 @@ public class InnPanel extends JPanel {
                 log.append("\nYOU WON! You receive " + payout + " gold!");
             } else {
                 log.append("\nYou lost the round.");
-            }
-        
-            statPanel.updateStats();
-        });
+            }       
+         });
         
         exitBtn.addActionListener(e -> game.returnToMap());
     }

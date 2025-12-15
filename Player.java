@@ -44,7 +44,6 @@ public class Player extends Character {
         availableWeapons.add(new Weapon("Developer Destroyer", 200, 20));
 
 
-
         availableArmor.add(new Armor("Leather Armor", 8, 30, true));
         availableArmor.add(new Armor("Chainmail Armor", 12, 60, true));
         availableArmor.add(new Armor("Steel Armor", 16, 120, true));
