@@ -151,7 +151,7 @@ public class NPCConversation extends JPanel {
             BorderFactory.createLineBorder(new Color(240, 220, 140), 2),
             BorderFactory.createEmptyBorder(8, 20, 8, 20)));
         btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(GameFonts.jettsBold(32f));
+        btn.setFont(GameFonts.pressBold(32f));
         btn.setFocusPainted(false);
         return btn;
     }
@@ -261,7 +261,7 @@ public class NPCConversation extends JPanel {
 
     private void createStyles(StyledDocument d) {
         Style def = d.addStyle("default", null);
-        StyleConstants.setFontFamily(def, GameFonts.jetts(25f).getFamily());
+        StyleConstants.setFontFamily(def, GameFonts.press(25f).getFamily());
         StyleConstants.setFontSize(def, 25);
         StyleConstants.setForeground(def, Color.WHITE);
 

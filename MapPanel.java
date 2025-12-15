@@ -123,7 +123,7 @@ public class MapPanel extends JPanel {
     JLabel moveInstr = new JLabel("Use the ARROW KEYS to move", SwingConstants.CENTER);
     moveInstr.setForeground(new Color(240,220,140));
     moveInstr.setBorder(new EmptyBorder(5, 10, 5, 10)); 
-    moveInstr.setFont(GameFonts.jettsBold(16f));
+    moveInstr.setFont(GameFonts.pressBold(16f));
     controls.add(moveInstr, BorderLayout.CENTER);
     
     // Return to Main Menu button
@@ -170,7 +170,7 @@ public class MapPanel extends JPanel {
     private void styleButton(JButton btn){
         btn.setBackground(new Color(60,60,60));
         btn.setForeground(new Color(240,220,140));
-        btn.setFont(GameFonts.jettsBold(16f));
+        btn.setFont(GameFonts.pressBold(16f));
         btn.setFocusPainted(false);
     }
 
