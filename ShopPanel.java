@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.LinkedList;
 import java.util.Queue;
 import javax.swing.*;
 import javax.imageio.ImageIO;
@@ -10,17 +11,20 @@ public class ShopPanel extends JPanel {
     private Main game;
     private Player player;
     private JTextArea log;
-    private InventoryPanel statPanel; // live stats
     private JButton weaponBtn;
     private JButton armorBtn;
     // Using Queue interface instead of LinkedList
     private Queue<Weapon> weaponQueue;
     private Queue<Armor> armorQueue;
 
+    
     public ShopPanel(Main game, Player player) {
         this.game = game;
         this.player = player;
 
+
+        weaponQueue = player.availableWeapons != null ? player.availableWeapons : new LinkedList<>();
+        armorQueue = player.availableArmor != null ? player.availableArmor : new LinkedList<>();
         // Load background image
         try {
             backgroundImage = ImageIO.read(new File("shop.png"));
@@ -31,14 +35,6 @@ public class ShopPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
         // Keep default opacity; background image + optional tint will be painted manually
-
-        // Stat panel on the right (use InventoryPanel which provides updateStats)
-        statPanel = new InventoryPanel(player);
-        add(statPanel, BorderLayout.EAST);
-
-        // Initialize queues from player's available items
-        weaponQueue = player.availableWeapons;
-        armorQueue = player.availableArmor;
 
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
@@ -142,7 +138,7 @@ private void buyWeapon() {
 
             weaponQueue.poll();
             updateWeaponButton();
-            statPanel.updateStats();
+
         } else {
             log.append(
                 "\nNot enough coins to buy " + nextWeapon.name + "!\n" +
@@ -170,7 +166,6 @@ private void buyWeapon() {
 
             armorQueue.poll();
             updateArmorButton();
-            statPanel.updateStats();
         } else {
             log.append(
                 "\nNot enough coins to buy " + nextArmor.name + "!\n" +
@@ -191,8 +186,6 @@ private void buyWeapon() {
                 "(+20 HP)\n" +
                 "Coins: " + player.coins + "\n\n"
             );
-
-            statPanel.updateStats(); 
         } else {
             log.append(
                 "\nNot enough coins to buy a potion!\n" +

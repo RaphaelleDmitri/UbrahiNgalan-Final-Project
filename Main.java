@@ -192,7 +192,7 @@ public class Main extends JFrame {
             gamePanel.requestFocusInWindow();
         });
         focusTimer.setRepeats(false);
-        focusTimer.start();
+        focusTimer.start(); 
     }
 
     // Called when an NPC conversation ends
