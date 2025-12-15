@@ -185,7 +185,7 @@ public class NPCConversation extends JPanel {
         }
         repaint();
     }
-
+    //yessirr
     private void handleDialogue(int option) {
         int idx = npcBox.getSelectedIndex();
         if (idx < 0 || idx >= npcs.size()) return;
