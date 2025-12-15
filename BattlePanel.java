@@ -251,11 +251,10 @@ public class BattlePanel extends JPanel {
                 log.append("\n\n>> VICTORY!");
                 log.append("\n>> Darkness rises from Gleih's fallen form...");
                 Timer t = new Timer(5000, e -> {
-                    log.append("\n\n>> Prepare for the final battle against Eum, The VoidMother!");
+                    game.startBossBattle3();
                 });
                 t.setRepeats(false);
                 t.start();
-                game.startBossBattle3();
                 return;
                 
             } else if (wasBoss) {
