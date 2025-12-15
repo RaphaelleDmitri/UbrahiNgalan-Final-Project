@@ -65,7 +65,7 @@ public class MapPanel extends JPanel {
         // trial buildings
         tiles[0][1].setText("SHOP");
         //tiles[0][1].setForeground(Color.WHITE);
-        tiles[0][6].setText("TestArea");
+        
 
         tiles[0][1].setText("SHOP");
         tiles[0][1].setForeground(new Color(255, 223, 0)); // Bright gold
@@ -384,9 +384,7 @@ public class MapPanel extends JPanel {
             if(tileName.equals("CASTLE")){
                 if (!renzDefeated) {
                     game.startBossBattle();
-                } else {
-                    info.setText("The castle lies in ruins. The Corrupted King is no more.");
-                }
+                } 
             } else if(tileName.equals("Ruins")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
             } else if(tileName.equals("Village Elder")){
@@ -409,11 +407,7 @@ public class MapPanel extends JPanel {
                             game.revalidate();
                             game.repaint();
                         });
-                    }else if(tileName.equals("TestArea")){
-                        info.setText("You have entered the Castle!");
-                        game.startBossBattle3();
-                    }
-            else {
+                    } else {
                 info.setText("You are at: " + tileName);
                 System.out.println("Currently on: " + tileName);
             }
