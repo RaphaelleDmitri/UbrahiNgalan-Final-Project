@@ -267,7 +267,12 @@ public class BattlePanel extends JPanel {
                 boss.bossTurn(player, log, lastPlayerAction);
                 stats.setText(updateStatsForEnemies());
                 updateTargetBox();
-            } else {
+            }else if(e instanceof BossEnemyFinal finalBoss) {
+                finalBoss.bossTurn(player, log, lastPlayerAction);
+                stats.setText(updateStatsForEnemies());
+                updateTargetBox();
+            } 
+            else {
                 e.attack(player, log);
             }
             stats.setText(updateStatsForEnemies());

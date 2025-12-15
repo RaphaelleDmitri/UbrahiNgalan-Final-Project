@@ -1,6 +1,10 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class InnPanel extends JPanel {
@@ -13,17 +17,25 @@ public class InnPanel extends JPanel {
 
     private LinkedList<Weapon> weaponQueue;
     private LinkedList<Armor> armorQueue;
+    private BufferedImage backgroundImage;
 
     public InnPanel(Main game, Player player) {
         this.game = game;
         this.player = player;
 
+        // Load background image
+        try {
+            backgroundImage = ImageIO.read(new File("inn.png"));
+        } catch (IOException e) {
+            System.err.println("Failed to load inn background image: " + e.getMessage());
+        }
+
         setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(25, 25, 25));
+        setOpaque(true);
 
         // Top panel for coins display
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        topPanel.setBackground(new Color(25, 25, 25));
+        topPanel.setOpaque(false);
         
         coinsLabel = new JLabel("Gold: " + player.coins);
         coinsLabel.setForeground(new Color(255, 215, 0));
@@ -34,7 +46,7 @@ public class InnPanel extends JPanel {
 
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(6, 1, 20, 20));
-        leftPanel.setBackground(new Color(25, 25, 25));
+        leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new Dimension(600, 0));
 
         // Exit button
@@ -64,12 +76,15 @@ public class InnPanel extends JPanel {
         log.setEditable(false);
         log.setLineWrap(true);
         log.setWrapStyleWord(true);
-        log.setBackground(new Color(40, 40, 40));
+        log.setOpaque(false);
         log.setForeground(Color.WHITE);
         log.setFont(GameFonts.press(18f));
-        log.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
+        log.setBorder(null);
 
         JScrollPane scroll = new JScrollPane(log);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.setBorder(null);
         scroll.setPreferredSize(new Dimension(700, 0));
         add(scroll, BorderLayout.CENTER);
 
@@ -244,7 +259,11 @@ public class InnPanel extends JPanel {
 
     private JButton styledButton(String text) {
         JButton btn = new JButton(text);
-        btn.setBackground(new Color(60, 60, 60));
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(240,220,140), 2),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)));
         btn.setForeground(new Color(240, 220, 140));
         btn.setFocusPainted(false);
         return btn;
@@ -252,6 +271,15 @@ public class InnPanel extends JPanel {
     
     public void updateCoinsDisplay() {
         coinsLabel.setText("Gold: " + player.coins);
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            // Draw the background scaled to the panel size
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }
 
