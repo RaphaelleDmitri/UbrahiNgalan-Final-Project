@@ -428,22 +428,18 @@ class CardSortingGame extends JDialog {
     }
     
     private void insertCardAt(int position) {
-        // Get the card to insert
+       
         int cardToInsert = sortedCards.get(currentIndex);
-        
-        // Remove from current position
+            
         sortedCards.remove(currentIndex);
-        
-        // Insert at new position
+          
         sortedCards.add(position, cardToInsert);
         
         moves++;
         movesLabel.setText("Moves: " + moves + " | Optimal: " + optimalMoves);
         
-        // Move to next card
         currentIndex++;
         
-        // Check if done
         if (currentIndex >= sortedCards.size()) {
             finishGame();
         } else {
@@ -453,7 +449,7 @@ class CardSortingGame extends JDialog {
     }
     
     private void finishGame() {
-        // Check if sorted correctly
+        
         boolean correct = true;
         for (int i = 1; i < sortedCards.size(); i++) {
             if (sortedCards.get(i) < sortedCards.get(i-1)) {
@@ -499,14 +495,14 @@ class CardSortingGame extends JDialog {
             mainLog.append("\nFinal order: " + sortedCards + "\n");
         }
         
-        // Close after delay
+     
         Timer timer = new Timer(3000, e -> dispose());
         timer.setRepeats(false);
         timer.start();
     }
     
     private int calculateOptimalMoves() {
-        // Calculate minimum moves needed (actual insertion sort moves)
+       
         ArrayList<Integer> temp = new ArrayList<>(cards);
         int count = 0;
         

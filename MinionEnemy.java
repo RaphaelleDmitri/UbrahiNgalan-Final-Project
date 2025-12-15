@@ -1,9 +1,7 @@
 import javax.swing.JTextArea;
 import java.util.Random;
 
-/**
- * MinionEnemy - small summoned minion for witch boss
- */
+
 public class MinionEnemy extends Enemy {
     private Random rand = new Random();
     public boolean isSummon = true;
