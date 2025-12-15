@@ -34,11 +34,15 @@ public class BattlePanel extends JPanel {
         this.enemies = new ArrayList<>(enemies);
         setLayout(new BorderLayout());
         
-        // Check if any enemy is a goblin, orc, slime, or witch and load appropriate background
+        // Check if any enemy is a goblin, orc, slime, witch, or final boss and load appropriate background
         String backgroundImagePath = null;
         for (Enemy e : enemies) {
             String name = e.getName().toLowerCase();
-            if (e instanceof BossEnemyWitch || name.contains("witch") || name.contains("gleih")) {
+            if (e instanceof BossEnemyFinal || name.contains("void")) {
+                backgroundImagePath = "void.png";
+                useImageBackground = true;
+                break;
+            } else if (e instanceof BossEnemyWitch || name.contains("witch") || name.contains("gleih")) {
                 backgroundImagePath = "witch.png";
                 useImageBackground = true;
                 break;
@@ -48,7 +52,7 @@ public class BattlePanel extends JPanel {
                 break;
             }
         }
-        
+
         // Load background image if applicable
         if (useImageBackground && backgroundImagePath != null) {
             try {
@@ -59,7 +63,11 @@ public class BattlePanel extends JPanel {
             }
         }
         
-        setBackground(new Color(25,25,25));
+        if (!useImageBackground) {
+            setBackground(new Color(25,25,25));
+        } else {
+            setOpaque(true); // we paint image ourselves
+        }
         stats = new JLabel(updateStatsForEnemies(), SwingConstants.CENTER);
         stats.setForeground(new Color(230,205,70));
         stats.setFont(GameFonts.press(20f));
@@ -172,16 +180,25 @@ public class BattlePanel extends JPanel {
     }
     private JButton styledBtn(String txt){
         JButton btn = new JButton(txt);
+        // Give breathing room between text and border
+        var innerPadding = BorderFactory.createEmptyBorder(8, 20, 8, 20);
         if (useImageBackground) {
             btn.setOpaque(false);
             btn.setContentAreaFilled(false);
+            btn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(240,220,140), 2),
+                innerPadding));
+            btn.setFocusPainted(false);
         } else {
             btn.setBackground(new Color(60,60,60));
+            btn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200,200,100), 2),
+                innerPadding));
+            btn.setFocusPainted(false);
         }
         btn.setForeground(new Color(240,220,140));
         btn.setFont(GameFonts.press(20f));
-        btn.setMargin(new Insets(10, 28, 10, 28));
-        btn.setFocusPainted(false);
+        btn.setMargin(new Insets(6, 18, 6, 18));
         return btn;
     }
     
