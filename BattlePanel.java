@@ -34,12 +34,16 @@ public class BattlePanel extends JPanel {
         this.enemies = new ArrayList<>(enemies);
         setLayout(new BorderLayout());
         
-        // Check if any enemy is a goblin, orc, slime, witch, or final boss and load appropriate background
+        // Check if any enemy is a final boss, king boss, witch, or goblin/orc/slime and load appropriate background
         String backgroundImagePath = null;
         for (Enemy e : enemies) {
             String name = e.getName().toLowerCase();
             if (e instanceof BossEnemyFinal || name.contains("void")) {
                 backgroundImagePath = "void.png";
+                useImageBackground = true;
+                break;
+            } else if (e instanceof BossEnemy || name.contains("king") || name.contains("renz")) {
+                backgroundImagePath = "king.png";
                 useImageBackground = true;
                 break;
             } else if (e instanceof BossEnemyWitch || name.contains("witch") || name.contains("gleih")) {
