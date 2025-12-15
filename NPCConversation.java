@@ -51,7 +51,7 @@ public class NPCConversation extends JPanel {
 
         infoLabel = new JLabel(updateNPCInfo(), SwingConstants.CENTER);
         infoLabel.setForeground(new Color(230, 205, 70));
-        infoLabel.setFont(GameFonts.jettsBold(20f));
+        infoLabel.setFont(GameFonts.pressBold(20f));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         infoLabel.setOpaque(false);
         add(infoLabel, BorderLayout.NORTH);
@@ -62,7 +62,7 @@ public class NPCConversation extends JPanel {
         styledPane.setOpaque(false);
         styledPane.setBackground(new Color(0, 0, 0, 0));
         styledPane.setForeground(Color.WHITE);
-        styledPane.setFont(GameFonts.jetts(25f));
+        styledPane.setFont(GameFonts.press(25f));
         styledPane.setBorder(null);
         doc = styledPane.getStyledDocument();
         createStyles(doc);
@@ -79,7 +79,7 @@ public class NPCConversation extends JPanel {
         rightPanel.setOpaque(false);
         rightPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         npcBox = new JComboBox<>();
-        npcBox.setFont(GameFonts.jettsBold(20f));
+        npcBox.setFont(GameFonts.pressBold(20f));
         npcBox.setOpaque(false);
         npcBox.setBackground(new Color(0, 0, 0, 0));
         npcBox.setForeground(new Color(240, 220, 140));
