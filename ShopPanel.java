@@ -84,7 +84,8 @@ public class ShopPanel extends JPanel {
         scroll.setPreferredSize(new Dimension(700, 0));
         add(scroll, BorderLayout.CENTER);
 
-        log.setText("Welcome to the shop!\nCoins: " + player.coins);
+        log.setText("Welcome to the shop!\n\n Coins: " + player.coins + "\n\n");
+
 
         // Button actions
         weaponBtn.addActionListener(e -> buyWeapon());
@@ -133,8 +134,12 @@ public class ShopPanel extends JPanel {
                 // ADD TO INVENTORY (NOT EQUIP)
                 player.weapons.add(nextWeapon);
     
-                log.append("\nYou bought " + nextWeapon.name +
-                    "! Added to inventory.\nCoins: " + player.coins);
+                 log.append(
+                "\nYou bought " + nextWeapon.name + "!\n" +
+                "Added to inventory.\n" +
+                "Coins: " + player.coins + "\n\n"
+            );
+
     
                 weaponQueue.poll();
                 updateWeaponButton();
@@ -156,9 +161,11 @@ public class ShopPanel extends JPanel {
                 // ADD TO INVENTORY (NOT EQUIP)
                 player.armors.add(nextArmor);
     
-                log.append("\nYou bought " + nextArmor.name +
-                    "! Added to inventory.\nCoins: " + player.coins);
-    
+               log.append(
+                    "\nYou bought " + nextArmor.name + "!\n" +
+                    "Added to inventory.\n" +
+                    "Coins: " + player.coins + "\n\n"
+            );
                 armorQueue.poll();
                 updateArmorButton();
                 
@@ -174,9 +181,15 @@ public class ShopPanel extends JPanel {
         if (player.coins >= 10) {
             player.coins -= 10;
             player.potionAmount++;
-            log.append("\nYou bought a Health Potion! (+20 HP) Coins: " + player.coins);
+            log.append("\nYou bought a Health Potion!\n" +
+            "(+20 HP)\n" +
+            "Coins: " + player.coins + "\n\n"
+          );
+
         } else {
-            log.append("\nNot enough coins to buy a potion! Coins: " + player.coins);
+            log.append("\nNot enough coins to buy a potion!\n" +
+            "Coins: " + player.coins + "\n\n"
+          );
         }
     }
     
