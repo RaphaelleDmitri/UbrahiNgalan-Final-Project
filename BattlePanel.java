@@ -102,35 +102,34 @@ public class BattlePanel extends JPanel {
 
        
         
-        String[] appearanceTexts = {
-            "%s appears!\n",
-            "%s has appeared!\n",
-            "You encounter %s!\n",
-            "Suddenly, %s jumps in front of you!\n",
-            "%s blocks your path!\n",
-            "From the shadows, %s emerges!\n",
-            "You hear a rustle… it's %s!\n",
-            "Prepare yourself! %s appears!\n",
-            "%s is approaching!\n",
-            "Enemy spotted! It's %s!\n"};
-        
         if (!this.enemies.isEmpty()) {
+            Enemy first = this.enemies.get(0);
+            
+            String[] appearanceTexts = {
+                "%s appears!\n",
+                "%s has appeared!\n",
+                "You encounter %s!\n",
+                "Suddenly, %s jumps in front of you!\n",
+                "%s blocks your path!\n",
+                "From the shadows, %s emerges!\n",
+                "You hear a rustle… it's %s!\n",
+                "Prepare yourself! %s appears!\n",
+                "%s is approaching!\n",
+                "Enemy spotted! It's %s!\n"
+            };
+            
             int index = rand.nextInt(appearanceTexts.length);
-            log.setText(String.format(appearanceTexts[index], this.enemies.get(0).getName()));
-        } else {
-            log.setText("No enemies? Strange...\n");
+            log.setText(String.format(appearanceTexts[index], first.getName()));
+        
+            // Boss-specific intro
+            if (first instanceof BossEnemy) {
+                log.append("\n\"This world will be mine.\"\n");
+                log.append("\nRenz eyes you coldly — read his moves in the log.\n");
+            } else if (first instanceof BossEnemyWitch) {
+                log.append("\n\"Care to dance a little?\"\n");
+                log.append("\nGleih eyes you coldly — read his moves in the log.\n");
+            } 
         }
-    
-
-        if (!this.enemies.isEmpty() && this.enemies.get(0) instanceof BossEnemy) {
-            log.append("\n\"" + "This world will be mine." + "\"\n");
-            log.append("\nRenz eyes you coldly — read his moves in the log.\n");
-        }
-        if (!this.enemies.isEmpty() && this.enemies.get(0) instanceof BossEnemyWitch) {
-            log.append("\n\"" + "Care to dance a little?" + "\"\n");
-            log.append("\nGleih eyes you coldly — read his moves in the log.\n");
-        }
-
     }
 
     private JButton styledBtn(String txt){
@@ -191,17 +190,21 @@ public class BattlePanel extends JPanel {
                     appendWithDelay("\n\nA foul spawn has been summoned and joins the battle!", 500);
                     updateTargetBox();
                 }
-            } else if (e instanceof BossEnemy boss) {
-                try {
+            } else if (e instanceof BossEnemy boss) {              
                     boss.bossTurn(player, log, lastPlayerAction);
-                } catch (Exception ex) {
-                    e.attack(player, log);
+                    return;                
+            } else if (e instanceof BossEnemyFinal boss) {
+                boss.bossTurn(player, log, lastPlayerAction);
+                if (!boss.isAlive()) {
+                    endFinalBossBattle();
+                    return;
                 }
             } else {
                 e.attack(player, log);
             }
             stats.setText(updateStatsForEnemies());
         }
+
 
         // Remove dead enemies from the list
         List<Enemy> dead = new ArrayList<>();
@@ -213,6 +216,7 @@ public class BattlePanel extends JPanel {
         if (enemies.isEmpty()) {
             int reward = rand.nextInt(10) + 2000;
         
+            boolean eumDefeated = false;
             boolean wasBoss = false;
             boolean gleihDefeated = false;
             boolean renzDefeated = false; // NEW: Track if Renz was defeated
@@ -229,6 +233,10 @@ public class BattlePanel extends JPanel {
                         System.out.println("DEBUG BattlePanel: RENZ DETECTED!"); // DEBUG
                         renzDefeated = true;
                     }
+                } else if(e instanceof BossEnemyFinal){
+                    // FINAL BOSS DEFEATED
+                    endFinalBossBattle();
+                    return;
                 }
             }
         
@@ -241,6 +249,9 @@ public class BattlePanel extends JPanel {
                 player.armors.add(new Armor("Aegis of Eternity", 100, 9999, false));
                 System.out.println("DEBUG BattlePanel: Gleih rewards granted to player");
                 log.append("\nYou found something... a legendary armor?");
+                game.startBossBattle3();
+                return;
+                
             } else if (wasBoss) {
                 log.append("\n\n>> The Corrupted King collapses... The final blow!");
                 log.append("\n\n>> VICTORY!");
@@ -253,7 +264,30 @@ public class BattlePanel extends JPanel {
                 } else {
                     System.out.println("DEBUG BattlePanel: renzDefeated is FALSE"); // DEBUG
                 }
-            } else {
+            } else if (eumDefeated) {
+                log.append("\n\n>> Eum lets out a final, deafening scream...");
+                log.append("\n\n>> The battlefield grows silent.");
+                log.append("\n>> Your journey has reached its end.");
+    
+                JButton endButton = new JButton("End Game");
+                endButton.setFont(new Font("Serif", Font.BOLD, 18));
+    
+                endButton.addActionListener(e -> {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Thank you for playing.\n\nThe light endures.",
+                        "THE END",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                    System.exit(0);
+                });
+    
+                this.add(endButton);
+                this.revalidate();
+                this.repaint();
+                return;
+            }
+            else {
                 log.append("\n\n>> VICTORY!");
             }
         
@@ -463,5 +497,45 @@ public class BattlePanel extends JPanel {
         Timer t = new Timer(delayMs, e -> log.append(text));
         t.setRepeats(false);
         t.start();
+    }
+    public JTextArea getLog() {
+        return log;
+    }
+    private void endFinalBossBattle() {
+        log.append("\n\n>> Eum lets out a final, deafening scream...");
+        log.append("\n>> The shadows collapse in on themselves.");
+        log.append("\n\n>> Eum, The VoidMother, HAS FINALLY FALLEN.");
+        
+            // Lura's final moments
+        log.append("\n\n>> Lura staggers, his light flickering...");
+        log.append("\n\"It seems... this is as far as I go.\"");
+        log.append("\n\"You must finish what I could not.\"");
+        log.append("\n\"Live... not just survive.\"");
+        log.append("\n\n>> Lura smiles one last time before fading into light.");
+    
+        
+
+        Timer delayTimer = new Timer(2000, e -> {
+            log.append("\n\n>> The battlefield grows silent.");
+            log.append("\n>> Your journey has reached its end.");
+            JButton endButton = new JButton("End Game");
+            endButton.setFont(new Font("Serif", Font.BOLD, 18));
+        
+            endButton.addActionListener(ev -> {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Thank you for playing.\n\nThe light endures.",
+                    "THE END",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                System.exit(0);
+            });
+        
+            this.add(endButton);
+            this.revalidate();
+            this.repaint();
+        });
+        delayTimer.setRepeats(false);
+        delayTimer.start();
     }
 }
