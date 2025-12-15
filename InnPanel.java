@@ -27,16 +27,22 @@ public class InnPanel extends JPanel {
 
 
         // Exit button
-        JButton exitBtn = styledButton("Exit Shop");
+        JButton exitBtn = styledButton("EXIT INN");
         leftPanel.add(exitBtn);
+        exitBtn.setFont(GameFonts.press(26f));
+
 
         // Lucky 9 Button
         JButton lucky9Btn = styledButton("Play Lucky 9 (50 Gold)");
         leftPanel.add(lucky9Btn);
+        lucky9Btn.setFont(GameFonts.press(20f));
+
         
         //Roulette Button
         JButton rouletteBtn = styledButton("Play Roulette (100 Gold)");
         leftPanel.add(rouletteBtn);
+        rouletteBtn.setFont(GameFonts.press(20f));
+
 
         add(leftPanel, BorderLayout.WEST);
 
@@ -47,7 +53,7 @@ public class InnPanel extends JPanel {
         log.setWrapStyleWord(true);
         log.setBackground(new Color(40, 40, 40));
         log.setForeground(Color.WHITE);
-        log.setFont(GameFonts.jettsBold(28f));
+        log.setFont(GameFonts.press(18f));
         log.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 100), 3));
 
         JScrollPane scroll = new JScrollPane(log);
@@ -196,7 +202,6 @@ public class InnPanel extends JPanel {
         JButton btn = new JButton(text);
         btn.setBackground(new Color(60, 60, 60));
         btn.setForeground(new Color(240, 220, 140));
-        btn.setFont(GameFonts.jettsBold(26f));
         btn.setFocusPainted(false);
         return btn;
     }
