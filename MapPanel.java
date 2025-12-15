@@ -68,13 +68,7 @@ public class MapPanel extends JPanel {
     inventoryBtn.addActionListener(e -> {
         toggleSidePanel(new InventoryPanel(game.player));
     });
-    
-    statsBtn.addActionListener(e -> {
-        toggleSidePanel(new StatPanel(game.player));
-    });
-    
-
-        // info label
+            // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
         info.setFont(GameFonts.press(18f));
@@ -102,6 +96,9 @@ public class MapPanel extends JPanel {
         }
 
         // trial buildings
+        tiles[0][1].setText("SHOP");
+        //tiles[0][1].setForeground(Color.WHITE);
+        tiles[0][6].setText("TestArea");
 
         tiles[0][1].setText("Shop");
         //tiles[0][1].setForeground(Color.WHITE);

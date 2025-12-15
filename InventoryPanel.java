@@ -221,36 +221,34 @@ public class InventoryPanel extends JPanel {
         for (Weapon w : player.weapons) weaponModel.addElement(w);
     }
 
-    // ===== Armor Sorting (Insertion Sort) =====
+    // ===== Armor Sorting (Bubble Sort) =====
     private void sortArmorsByName() {
-        ArrayList<Armor> list = new ArrayList<>(player.armors);
+        ArrayList<Armor> list = player.armors;
         int n = list.size();
-        for (int i = 1; i < n; i++) {
-            Armor key = list.get(i);
-            int j = i - 1;
-            while (j >= 0 && list.get(j).name.compareToIgnoreCase(key.name) > 0) {
-                list.set(j + 1, list.get(j));
-                j--;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (list.get(j).name.compareToIgnoreCase(list.get(j + 1).name) > 0) {
+                    Armor temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
             }
-            list.set(j + 1, key);
         }
-        player.armors = list;
         refreshArmorList();
     }
 
     private void sortArmorsByDefense() {
-        ArrayList<Armor> list = new ArrayList<>(player.armors);
+        ArrayList<Armor> list = player.armors;
         int n = list.size();
-        for (int i = 1; i < n; i++) {
-            Armor key = list.get(i);
-            int j = i - 1;
-            while (j >= 0 && list.get(j).defense < key.defense) {
-                list.set(j + 1, list.get(j));
-                j--;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (list.get(j).defense < list.get(j + 1).defense) {
+                    Armor temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
             }
-            list.set(j + 1, key);
         }
-        player.armors = list;
         refreshArmorList();
     }
 
