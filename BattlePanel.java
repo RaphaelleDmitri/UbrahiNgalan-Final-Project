@@ -171,6 +171,8 @@ public class BattlePanel extends JPanel {
         }
 
         stats.setText(updateStatsForEnemies());
+        // Immediately refresh target list so HP changes from the player's action
+        updateTargetBox();
 
         // Enemy turn - only alive enemies attack
         for (int i = 0; i < enemies.size(); i++) {
@@ -192,7 +194,11 @@ public class BattlePanel extends JPanel {
                 }
             } else if (e instanceof BossEnemy boss) {              
                     boss.bossTurn(player, log, lastPlayerAction);
-                    return;                
+                    // Update HP/UI immediately when a boss performs an action
+                    stats.setText(updateStatsForEnemies());
+                    updateTargetBox();
+                    // Continue processing other enemies (do not abort the turn)
+                    continue;                
             } else if (e instanceof BossEnemyFinal boss) {
                 boss.bossTurn(player, log, lastPlayerAction);
                 if (!boss.isAlive()) {
@@ -203,6 +209,7 @@ public class BattlePanel extends JPanel {
                 e.attack(player, log);
             }
             stats.setText(updateStatsForEnemies());
+            updateTargetBox();
         }
 
 
