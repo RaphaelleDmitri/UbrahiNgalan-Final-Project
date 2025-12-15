@@ -202,6 +202,9 @@ public class Main extends JFrame {
         } else if (npcName.equals("Priestess of Tine")) {
             // After Priestess talks, spawn the Village Elder
             if (gamePanel != null) gamePanel.spawnElder();
+        } else if (npcName.equals("Village Elder")) {
+            // After talking to both Priestess and Elder, spawn the Castle
+            if (gamePanel != null) gamePanel.spawnCastle();
         }
     }
 

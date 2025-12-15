@@ -80,19 +80,11 @@ public class MapPanel extends JPanel {
         tiles[0][3].setForeground(new Color(255, 223, 0)); // Bright gold
         tiles[0][3].setFont(GameFonts.pressBold(18f));
 
-        int randomXSpawn = rand.nextInt(6) + 5;
-        int randomYSpawn = rand.nextInt(6) + 5;
         // Place the Priestess of Tine in the safe zone (player's initial destination)
         tiles[0][0].setText("Priestess of Tine");
         tiles[0][0].setForeground(new Color(144, 238, 144)); // Light green for NPC
         tiles[0][0].setFont(GameFonts.pressBold(18f));
         // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
-        tiles[randomXSpawn][randomYSpawn].setText("CASTLE"); //castle real location
-        tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
-        tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
-
-        int secretAreaLocationX = randomXSpawn - rand.nextInt(4);
-        int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
         
 
         // Only the Village Elder NPC should appear in the safe zone at start.
@@ -321,6 +313,16 @@ public class MapPanel extends JPanel {
                 }
             }
         }
+        updatePlayerPosition();
+    }
+
+    // Spawn the Castle randomly on the map; called after talking to both Priestess and Elder
+    public void spawnCastle() {
+        int randomXSpawn = rand.nextInt(6) + 5;
+        int randomYSpawn = rand.nextInt(6) + 5;
+        tiles[randomXSpawn][randomYSpawn].setText("CASTLE");
+        tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
+        tiles[randomXSpawn][randomYSpawn].setFont(GameFonts.pressBold(16f));
         updatePlayerPosition();
     }
 
