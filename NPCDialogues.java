@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NPCDialogues {
-    public static List<NPC> createNPCs() {
+    public static List<NPC> createNPCs(boolean renzDefeated, boolean priestessAvailable, boolean elderAvailable, boolean gleihDefeated, boolean eumDefeated) {
         List<NPC> npcList = new ArrayList<>();
 
         // Village Elder: introduces the main quest and the three tyrants
@@ -250,9 +250,18 @@ public class NPCDialogues {
                           "Tine hopes so too.")
         ));
 
-        npcList.add(elder);
-        npcList.add(knight);
-        npcList.add(priestess);
+        // Only add the Elder after Priestess has been spoken to
+        if (elderAvailable) {
+            npcList.add(elder);
+        }
+        // Only add the Knight after Renz has been defeated, per story
+        if (renzDefeated) {
+            npcList.add(knight);
+        }
+        // Only add the Priestess when she's been marked available
+        if (priestessAvailable) {
+            npcList.add(priestess);
+        }
 
         return npcList;
     }

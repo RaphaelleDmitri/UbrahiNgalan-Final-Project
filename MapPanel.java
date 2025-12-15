@@ -119,9 +119,10 @@ public class MapPanel extends JPanel {
 
         int randomXSpawn = rand.nextInt(6) + 5;
         int randomYSpawn = rand.nextInt(6) + 5;
-        tiles[0][0].setText("CASTLE");
-        tiles[0][0].setForeground(new Color(186, 85, 211)); // Purple for mystery
-        tiles[0][0].setFont(GameFonts.pressBold(16f));
+        // Place the Priestess of Tine in the safe zone (player's initial destination)
+        tiles[0][0].setText("Priestess of Tine");
+        tiles[0][0].setForeground(new Color(144, 238, 144)); // Light green for NPC
+        tiles[0][0].setFont(GameFonts.pressBold(18f));
         // tiles[0][4].setText("Spire"); // REMOVED - Spire now spawns after defeating Renz
         tiles[randomXSpawn][randomYSpawn].setText("CASTLE"); //castle real location
         tiles[randomXSpawn][randomYSpawn].setForeground(new Color(186, 85, 211)); // Purple
@@ -131,22 +132,8 @@ public class MapPanel extends JPanel {
         int secretAreaLocationY = randomYSpawn - rand.nextInt(4);
         
 
-        //npc ammount
-            int npcAmount = 2;
-        for(int k = 0; k < npcAmount; k++){
-        int x,y;
-
-        while(true) {
-            // spawn around bottom-mid area so it feels distributed adventure exploring
-            x = rand.nextInt(ROWS - 6) + 6; // rows 6-11
-            y = rand.nextInt(COLS);        // cols 0-11
-            String text = tiles[x][y].getText();
-            if(text.isEmpty() || text.equals(".")) break;
-        }
-        tiles[x][y].setText("NPC");
-        tiles[x][y].setForeground(new Color(144, 238, 144)); // Light green
-        tiles[x][y].setFont(GameFonts.pressBold(18f));
-        }
+        // Only the Village Elder NPC should appear in the safe zone at start.
+        // The elder is placed at tiles[0][0] above; do not spawn other NPCs here.
 
             //prioritize later
             //tile Colorization
@@ -253,8 +240,7 @@ public class MapPanel extends JPanel {
             tiles[spireX][spireY].setForeground(new Color(255, 0, 255)); // Bright magenta
             tiles[spireX][spireY].setFont(GameFonts.pressBold(18f));
             spireSpawned = true;
-            renzDefeated = true; // Mark that Renz has been defeated
-            
+
             // Remove the Castle tile so Renz can't be fought again
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLS; j++) {
@@ -267,7 +253,86 @@ public class MapPanel extends JPanel {
             }
             
             info.setText("A mysterious Spire has appeared on the map!");
+            // Remove any existing story NPC tiles so only the Spire remains
+            clearStoryNPCs();
             updatePlayerPosition(); // Refresh the map visually
+        }
+    }
+
+    // Place the Old Knight on the map (called after Renz is defeated)
+    public void placeOldKnight() {
+        // Clear existing story NPCs
+        clearStoryNPCs();
+
+        // Try to place near the player's current position first, otherwise find any empty tile
+        boolean placed = false;
+        for (int dx = -2; dx <= 2 && !placed; dx++) {
+            for (int dy = -2; dy <= 2 && !placed; dy++) {
+                int nx = playerX + dx;
+                int ny = playerY + dy;
+                if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS) {
+                    String t = tiles[nx][ny].getText();
+                    if ((t.isEmpty() || t.equals(".")) && !(nx == playerX && ny == playerY)) {
+                        tiles[nx][ny].setText("Old Knight Garron");
+                        tiles[nx][ny].setForeground(new Color(144, 238, 144));
+                        tiles[nx][ny].setFont(GameFonts.pressBold(18f));
+                        placed = true;
+                    }
+                }
+            }
+        }
+        if (!placed) {
+            for (int i = 0; i < ROWS && !placed; i++) {
+                for (int j = 0; j < COLS && !placed; j++) {
+                    String t = tiles[i][j].getText();
+                    if ((t.isEmpty() || t.equals("."))) {
+                        tiles[i][j].setText("Old Knight Garron");
+                        tiles[i][j].setForeground(new Color(144, 238, 144));
+                        tiles[i][j].setFont(GameFonts.pressBold(18f));
+                        placed = true;
+                    }
+                }
+            }
+        }
+        updatePlayerPosition();
+    }
+
+    // Spawn the Priestess near the player; called after Knight conversation ends
+    public void spawnPriestess() {
+        // Remove existing story NPCs
+        clearStoryNPCs();
+
+        boolean placed = false;
+        for (int dx = -1; dx <= 1 && !placed; dx++) {
+            for (int dy = -1; dy <= 1 && !placed; dy++) {
+                int nx = playerX + dx;
+                int ny = playerY + dy;
+                if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS) {
+                    String t = tiles[nx][ny].getText();
+                    if ((t.isEmpty() || t.equals(".")) && !(nx == playerX && ny == playerY)) {
+                        tiles[nx][ny].setText("Priestess of Tine");
+                        tiles[nx][ny].setForeground(new Color(240, 200, 240));
+                        tiles[nx][ny].setFont(GameFonts.pressBold(18f));
+                        placed = true;
+                    }
+                }
+            }
+        }
+        if (!placed) updatePlayerPosition();
+        else updatePlayerPosition();
+    }
+
+    // Clear any story NPC labels from the map (ELDER, KNIGHT, PRIESTESS)
+    private void clearStoryNPCs() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                String t = tiles[i][j].getText();
+                if (t.equals("Village Elder") || t.equals("Old Knight Garron") || t.equals("Priestess of Tine") || t.equals("NPC")) {
+                    tiles[i][j].setText(".");
+                    tiles[i][j].setForeground(Color.WHITE);
+                    tiles[i][j].setFont(GameFonts.press(16f));
+                }
+            }
         }
     }
 
@@ -330,9 +395,15 @@ public class MapPanel extends JPanel {
                 }
             } else if(tileName.equals("Ruins")){
                 info.setText("The castle lies in ruins. The Corrupted King is no more.");
-            } else if(tileName.equals("NPC")){
-                    info.setText("You approach an NPC... (dialogue system coming soon)");
-                    game.startConversation();
+            } else if(tileName.equals("Village Elder")){
+                    info.setText("You approach the Village Elder.");
+                    game.startConversation("Village Elder");
+                } else if(tileName.equals("Old Knight Garron")){
+                    info.setText("You approach Old Knight Garron.");
+                    game.startConversation("Old Knight Garron");
+                } else if(tileName.equals("Priestess of Tine")){
+                    info.setText("You approach the Priestess of Tine.");
+                    game.startConversation("Priestess of Tine");
                 } else if(tileName.equals("SPIRE")){
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();

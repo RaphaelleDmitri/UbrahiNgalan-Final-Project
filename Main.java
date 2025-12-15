@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 
@@ -14,6 +13,9 @@ public class Main extends JFrame {
 
     private List<NPC> npcList;  // MUST be initialized
     private boolean renzDefeated = false; // Track if Renz was defeated
+    private boolean priestessAvailable = false; // Set true after Knight conversation
+    private boolean gleihDefeated = false;
+    private boolean eumDefeated = false;
 
     public Main() {
 
@@ -43,7 +45,7 @@ public class Main extends JFrame {
         
         // Initialize NPCs and dialogue nodes
             initNPCs();
-            npcPanel = new NPCConversation(this, player, npcList);
+            npcPanel = new NPCConversation(this, player, npcList, null);
         // -----------------------------------------------------
         showMainMenu();
         setVisible(true);
@@ -82,7 +84,14 @@ public class Main extends JFrame {
     }
 
     public void startConversation() {
-        npcPanel = new NPCConversation(this, player, npcList);
+        npcPanel = new NPCConversation(this, player, npcList, null);
+        setContentPane(npcPanel);
+        revalidate();
+    }
+
+    // Start conversation and open directly to a named NPC if present
+    public void startConversation(String npcName) {
+        npcPanel = new NPCConversation(this, player, npcList, npcName);
         setContentPane(npcPanel);
         revalidate();
     }
@@ -110,10 +119,13 @@ public class Main extends JFrame {
 
         // Reset boss defeat flag
         renzDefeated = false;
+        priestessAvailable = false;
+        gleihDefeated = false;
+        eumDefeated = false;
 
         // Initialize NPCs and dialogue nodes
         initNPCs();
-        npcPanel = new NPCConversation(this, player, npcList);
+        npcPanel = new NPCConversation(this, player, npcList, null);
 
         // Clear any existing panels so state is rebuilt when needed
         battlePanel = null;
@@ -126,13 +138,21 @@ public class Main extends JFrame {
 
     // Initialize NPCs and their dialogue nodes (moved to NPCDialogues.java)
     private void initNPCs() {
-        npcList = NPCDialogues.createNPCs();
+        // Pass current boss-defeat and progression states so NPCs spawn according to story
+        // Make Priestess available at game start so the player talks to her first
+        npcList = NPCDialogues.createNPCs(renzDefeated, true, gleihDefeated, eumDefeated);
     }
 
     // Method called when Corrupted King Renz is defeated
     public void onRenzDefeated() {
         System.out.println("DEBUG: onRenzDefeated() called!"); // DEBUG
         renzDefeated = true; // Mark that Renz was defeated
+        // Rebuild NPC list so story NPCs (like Old Knight) become available
+        initNPCs();
+        // Place Old Knight on the map (only one NPC at a time)
+        if (gamePanel != null) {
+            gamePanel.placeOldKnight();
+        }
     }
 
     
@@ -148,14 +168,8 @@ public class Main extends JFrame {
         
         
 
-        // Spawn spire after returning to map if Renz was defeated
-        if (renzDefeated && gamePanel != null) {
-            System.out.println("DEBUG: Spawning spire now!"); // DEBUG
-            SwingUtilities.invokeLater(() -> {
-                gamePanel.spawnSpire();
-                renzDefeated = false; // Reset flag
-            });
-        }
+        // Note: spire spawn is now gated by NPC conversation flow (Priestess),
+        // so don't automatically spawn it here.
         
         // CRITICAL: Request focus multiple times to ensure it works
         SwingUtilities.invokeLater(() -> {
@@ -169,6 +183,20 @@ public class Main extends JFrame {
         });
         focusTimer.setRepeats(false);
         focusTimer.start();
+    }
+
+    // Called when an NPC conversation ends
+    public void onNPCConversationEnded(String npcName, String lastNodeId) {
+        System.out.println("DEBUG: Conversation ended with " + npcName + " node=" + lastNodeId);
+        if (npcName.equals("Old Knight Garron")) {
+            // After Knight finishes guiding player, make Priestess available and spawn her
+            priestessAvailable = true;
+            initNPCs();
+            if (gamePanel != null) gamePanel.spawnPriestess();
+        } else if (npcName.equals("Priestess of Tine")) {
+            // After Priestess talks, spawn the Spire so the Witch can be challenged
+            if (gamePanel != null) gamePanel.spawnSpire();
+        }
     }
 
     public void startBossBattle() {
