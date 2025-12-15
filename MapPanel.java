@@ -68,13 +68,7 @@ public class MapPanel extends JPanel {
     inventoryBtn.addActionListener(e -> {
         toggleSidePanel(new InventoryPanel(game.player));
     });
-    
-    statsBtn.addActionListener(e -> {
-        toggleSidePanel(new StatPanel(game.player));
-    });
-    
-
-        // info label
+            // info label
         info = new JLabel("You are at the starting location.", SwingConstants.CENTER);
         info.setForeground(Color.WHITE);
         info.setFont(GameFonts.press(18f));
