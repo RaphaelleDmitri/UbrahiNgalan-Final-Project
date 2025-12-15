@@ -564,4 +564,13 @@ public class BattlePanel extends JPanel {
             }
         });
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (useImageBackground && backgroundImage != null) {
+            // Draw the background scaled to the panel size
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
 }
