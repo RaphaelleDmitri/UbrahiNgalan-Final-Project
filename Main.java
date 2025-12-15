@@ -6,7 +6,7 @@ public class Main extends JFrame {
     public Player player;
     private List<Enemy> enemies;
     MainMenuPanel mainMenu;
-    private MapPanel gamePanel;  // Changed from JPanel to MapPanel
+    private MapPanel gamePanel;  
     BattlePanel battlePanel;
     ShopPanel shopPanel;
     NPCConversation npcPanel;
@@ -27,8 +27,6 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setResizable(true);
 
-        //enemy list
-        //linked list nisya nga saket lng ulo kag ara iya
         enemies = new ArrayList<>();
         enemies.add(new Enemy("Goblin", 60, 5, 10, 0, 0));
         enemies.add(new Enemy("Orc", 80, 8, 15, 0, 0));
