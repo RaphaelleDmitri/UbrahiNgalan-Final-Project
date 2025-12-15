@@ -340,10 +340,6 @@ public class BattlePanel extends JPanel {
             log.append("\n You have obtained " + reward + " coins! ");
             game.addCoins(reward);
             disablePlayerControls();
-<<<<<<< HEAD
-
-=======
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
             Timer t2 = new Timer(5000, ev -> game.returnToMap());
             t2.setRepeats(false);
             t2.start();
@@ -558,10 +554,6 @@ public class BattlePanel extends JPanel {
         delayTimer.setRepeats(false);
         delayTimer.start();
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
     private void disablePlayerControls() {
         SwingUtilities.invokeLater(() -> {
             if (targetBox != null) targetBox.setEnabled(false);
@@ -573,6 +565,3 @@ public class BattlePanel extends JPanel {
         });
     }
 }
-
-
->>>>>>> a43799a12ac80862b9a253b536d9f0232ebc268d
