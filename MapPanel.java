@@ -1,10 +1,10 @@
 import java.awt.*;
-import java.util.Random;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class MapPanel extends JPanel {
     
@@ -327,7 +327,7 @@ public class MapPanel extends JPanel {
             } else if(tileName.equals("NPC")){
                     info.setText("You approach an NPC... (dialogue system coming soon)");
                     game.startConversation();
-                } else if(tileName.equals("Spire")){
+                } else if(tileName.equals("SPIRE")){
                     info.setText("The Dancing Witch has spotted your presence.");
                     game.startBossBattle2();
                     }
