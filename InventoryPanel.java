@@ -70,14 +70,20 @@ public class InventoryPanel extends JPanel {
         // ===== EQUIP BUTTONS =====
         JButton equipWeaponBtn = createButton("Equip Weapon");
         JButton equipArmorBtn = createButton("Equip Armor");
+        JButton sellWeaponBtn = createButton("Sell Weapon");
+        JButton sellArmorBtn = createButton("Sell Armor");
 
         equipWeaponBtn.addActionListener(e -> equipWeapon());
         equipArmorBtn.addActionListener(e -> equipArmor());
+        sellWeaponBtn.addActionListener(e -> sellWeapon());
+        sellArmorBtn.addActionListener(e -> sellArmor());
 
         JPanel equipPanel = new JPanel();
         equipPanel.setBackground(new Color(25, 25, 25));
         equipPanel.add(equipWeaponBtn);
         equipPanel.add(equipArmorBtn);
+        equipPanel.add(sellWeaponBtn);
+        equipPanel.add(sellArmorBtn);
 
         // ===== SORT BUTTONS =====
         JButton sortByDamageBtn = createButton("Sort Weapons by Damage");
@@ -107,6 +113,60 @@ public class InventoryPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
 
         updateStats();
+    }
+
+    private void sellWeapon() {
+        Weapon selected = weaponList.getSelectedValue();
+        if (selected == null) {
+            JOptionPane.showMessageDialog(this, "Select a weapon to sell.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!selected.tradable) {
+            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int ok = JOptionPane.showConfirmDialog(this, 
+            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
+            "Confirm Sale", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (ok == JOptionPane.YES_OPTION) {
+            int earned = player.sellWeapon(selected);
+            if (earned > 0) {
+                refreshWeaponList();
+                updateStats();
+                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    private void sellArmor() {
+        Armor selected = armorList.getSelectedValue();
+        if (selected == null) {
+            JOptionPane.showMessageDialog(this, "Select armor to sell.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!selected.tradable) {
+            JOptionPane.showMessageDialog(this, selected.name + " is soulbound and cannot be sold!", "Cannot Sell", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int ok = JOptionPane.showConfirmDialog(this, 
+            "Sell " + selected.name + " for " + (int) Math.round(selected.price * 0.7) + " coins?",
+            "Confirm Sale", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (ok == JOptionPane.YES_OPTION) {
+            int earned = player.sellArmor(selected);
+            if (earned > 0) {
+                refreshArmorList();
+                updateStats();
+                JOptionPane.showMessageDialog(this, "Sold for " + earned + " coins!", "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 
     // ================= METHODS =================

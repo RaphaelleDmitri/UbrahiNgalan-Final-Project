@@ -30,6 +30,7 @@ public class ShopPanel extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(25, 25, 25));
+        // Keep default opacity; background image + optional tint will be painted manually
 
         // Stat panel on the right
         statPanel = new StatPanel(player);
@@ -42,8 +43,8 @@ public class ShopPanel extends JPanel {
         // Left panel for buttons
         JPanel leftPanel = new JPanel(new GridLayout(5, 1, 20, 20));
         leftPanel.setOpaque(false);
-        leftPanel.setPreferredSize(new Dimension(600, 50));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(150, 0, 0, 0));
+        leftPanel.setPreferredSize(new Dimension(600, 30));
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
         // Weapon button
         weaponBtn = styledButton("");
@@ -189,5 +190,30 @@ public class ShopPanel extends JPanel {
         if (backgroundImage != null) {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
+        // Optional translucent tint over the background image
+        if (bgAlpha > 0f) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setComposite(AlphaComposite.SrcOver.derive(bgAlpha));
+            g2.setColor(bgTintColor);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+        }
+    }
+
+    // === Background tint controls ===
+    private float bgAlpha = 0.0f; // 0.0 (no tint) to 1.0 (fully opaque)
+    private Color bgTintColor = new Color(0, 0, 0); // default: black tint
+
+    /**
+     * Set a semi-transparent tint over the shop background.
+     * @param color base tint color (RGB used)
+     * @param alpha 0.0f (no tint) .. 1.0f (fully opaque)
+     */
+    public void setBackgroundTint(Color color, float alpha) {
+        if (color != null) {
+            this.bgTintColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+        }
+        this.bgAlpha = Math.max(0f, Math.min(1f, alpha));
+        repaint();
     }
 }
