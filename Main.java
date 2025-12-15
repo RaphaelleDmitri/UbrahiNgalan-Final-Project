@@ -161,7 +161,7 @@ public class Main extends JFrame {
             "Buy weapons and armor from our shops. Fight monsters to earn gold. Practice your combat skills.",
             Arrays.asList("Where is the shop?", "What type of gear helps most?", "Got it."),
             Arrays.asList(null, "gear", null),
-            Arrays.asList("The merchant is south of here.",
+            Arrays.asList("The merchant is north of here.",
                           "A strong sword and sturdy armor. Do not neglect your defense.",
                           "Wisdom speaks through your questions.")
         ));
@@ -186,7 +186,7 @@ public class Main extends JFrame {
             "Swords and armor. Potions too — they restore your health in battle. Spend your gold wisely.",
             Arrays.asList("Where again?", "Thanks.", null),
             Arrays.asList(null, null, null),
-            Arrays.asList("Follow the main path south.",
+            Arrays.asList("Follow the main path north.",
                           "Go, and return victorious.")
         ));
         elder.addNode(new DialogueNode(
