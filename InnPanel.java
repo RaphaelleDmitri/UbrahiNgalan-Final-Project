@@ -290,7 +290,6 @@ class CardSortingGame extends JDialog {
     private int currentIndex;
     private int moves;
     private int optimalMoves;
-    
     private JPanel cardsPanel;
     private JLabel statusLabel;
     private JLabel movesLabel;

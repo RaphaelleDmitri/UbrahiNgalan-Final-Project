@@ -134,10 +134,9 @@ public class Main extends JFrame {
         showMainMenu();
     }
 
-    // Initialize NPCs and their dialogue nodes (moved to NPCDialogues.java)
+    
     private void initNPCs() {   
-        // Pass current boss-defeat and progression states so NPCs spawn according to story
-        // Make Priestess available at game start so the player talks to her first
+        
         npcList = NPCDialogues.createNPCs(renzDefeated, priestessAvailable, gleihDefeated, eumDefeated, false);
     }
 
@@ -149,9 +148,9 @@ public class Main extends JFrame {
         if (gamePanel != null) {
             gamePanel.changeCastleToRuins();
         }
-        // Rebuild NPC list so story NPCs (like Old Knight) become available
+        
         initNPCs();
-        // Place Old Knight on the map (only one NPC at a time)
+        
         if (gamePanel != null) {
             gamePanel.placeOldKnight();
         }
@@ -164,7 +163,7 @@ public class Main extends JFrame {
         System.out.println("DEBUG: renzDefeated = " + renzDefeated); // DEBUG
         System.out.println("DEBUG: gamePanel = " + gamePanel); // DEBUG
         
-        // Ensure we have a valid game panel instance before setting it
+        // Ensure we have a valid game panel before setting it
         if (gamePanel == null) {
             gamePanel = new MapPanel(this);
         }
@@ -177,13 +176,12 @@ public class Main extends JFrame {
         // Note: spire spawn is now gated by NPC conversation flow (Priestess),
         // so don't automatically spawn it here.
         
-        // CRITICAL: Request focus multiple times to ensure it works
         SwingUtilities.invokeLater(() -> {
             gamePanel.setFocusable(true);
             gamePanel.requestFocusInWindow();
         });
         
-        // Double-check focus after a short delay
+
         Timer focusTimer = new Timer(100, e -> {
             gamePanel.requestFocusInWindow();
         });
@@ -191,7 +189,7 @@ public class Main extends JFrame {
         focusTimer.start();
     }
 
-    // Called when an NPC conversation ends
+
     public void onNPCConversationEnded(String npcName, String lastNodeId) {
         System.out.println("DEBUG: Conversation ended with " + npcName + " node=" + lastNodeId);
         if (npcName.equals("Old Knight Garron")) {
