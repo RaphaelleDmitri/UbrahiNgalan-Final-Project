@@ -8,6 +8,7 @@ public class Player extends Character {
 
     private Random rand = new Random();
     private Main game;
+    private int tempBlock = 0;
 
     // ===== INVENTORY =====
     public ArrayList<Weapon> weapons = new ArrayList<>();
@@ -75,9 +76,9 @@ public class Player extends Character {
 
     public void defend(JTextArea log) {
         int armorBonus = equippedArmor != null ? equippedArmor.defense : 0;
-        int block = armorBonus + rand.nextInt(5);
-
-        log.append("\n\nYou brace yourself, blocking " + block + " damage!");
+        tempBlock = armorBonus + new Random().nextInt(5); // random bonus from armor
+    
+        log.append("\n\nYou brace yourself, blocking " + tempBlock + " damage!");
     }
 
     public void heal(JTextArea log) {
